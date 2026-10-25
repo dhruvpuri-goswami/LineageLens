@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "6179c6fdd4baf81a4c",
+  "position": {
+    "x": 440,
+    "y": 250,
+    "z": 4000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Returns"
+                    }
+                  },
+                  "Property": "Return Date"
+                }
+              },
+              "queryRef": "Returns.Return Date",
+              "nativeQueryRef": "Return Date"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Inventory"
+                    }
+                  },
+                  "Property": "On Hand Units"
+                }
+              },
+              "queryRef": "Inventory.On Hand Units",
+              "nativeQueryRef": "On Hand Units"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'On Hand Units by Return Date'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+table Store
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000003001
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000003101
+		summarizeBy: none
+		sourceColumn: STORE_KEY
+
+	column 'Store Name'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000003102
+		summarizeBy: none
+		sourceColumn: STORE_NAME
+
+	column 'Sales Region'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000003103
+		summarizeBy: none
+		sourceColumn: SALES_REGION
+
+	column 'Country Code'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000003104
+		summarizeBy: none
+		sourceColumn: COUNTRY_CODE
+
+	column 'Manager Email'
+		dataType: string
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000003105
+		summarizeBy: none
+		sourceColumn: MANAGER_EMAIL
+
+	partition Store = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse),
+				    Navigation = Source{[Name="ANALYTICS",Kind="Database"]}[Data]{[Name="GOLD",Kind="Schema"]}[Data]{[Name="DIM_STORE",Kind="Table"]}[Data]
+				in
+				    Navigation

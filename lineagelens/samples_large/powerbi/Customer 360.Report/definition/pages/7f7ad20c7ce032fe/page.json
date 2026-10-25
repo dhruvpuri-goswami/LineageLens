@@ -1,0 +1,25 @@
+{
+  "name": "7f7ad20c7ce032fe",
+  "displayName": "Segments",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Orders"
+              }
+            },
+            "Property": "Order Revenue"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

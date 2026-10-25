@@ -1,0 +1,90 @@
+table Customer
+	lineageTag: 00005eed-0000-0000-0000-00000000003d
+
+	measure Customers = DISTINCTCOUNT(Customer[Customer Key])
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-00000000003e
+
+	measure 'Gold Customers' = CALCULATE([Customers], Customer[Value Tier] = "Gold")
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-00000000003f
+
+	measure 'Gold Share' = DIVIDE([Gold Customers], [Customers])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-000000000040
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000041
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'Customer Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000042
+		summarizeBy: none
+		sourceColumn: Customer Name
+
+	column 'Customer Email'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000043
+		summarizeBy: none
+		sourceColumn: Customer Email
+
+	column 'Country Code'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000044
+		summarizeBy: none
+		sourceColumn: Country Code
+
+	column 'Customer Segment'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000045
+		summarizeBy: none
+		sourceColumn: Customer Segment
+
+	column 'Loyalty Tier'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000046
+		summarizeBy: none
+		sourceColumn: Loyalty Tier
+
+	column 'Customer Since'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000047
+		summarizeBy: none
+		sourceColumn: Customer Since
+
+	column 'Customer Age'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000048
+		summarizeBy: none
+		sourceColumn: Customer Age
+
+	column 'Value Tier'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000049
+		summarizeBy: sum
+		sourceColumn: Value Tier
+
+	column 'First Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000004a
+		summarizeBy: none
+		sourceColumn: First Order Date
+
+	partition Customer = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_CUSTOMER", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"CUSTOMER_KEY", "CUSTOMER_NAME", "CUSTOMER_EMAIL", "COUNTRY_CODE", "CUSTOMER_SEGMENT", "LOYALTY_TIER", "CUSTOMER_SINCE", "CUSTOMER_AGE", "VALUE_TIER", "FIRST_ORDER_DATE"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"CUSTOMER_KEY", "Customer Key"}, {"CUSTOMER_NAME", "Customer Name"}, {"CUSTOMER_EMAIL", "Customer Email"}, {"COUNTRY_CODE", "Country Code"}, {"CUSTOMER_SEGMENT", "Customer Segment"}, {"LOYALTY_TIER", "Loyalty Tier"}, {"CUSTOMER_SINCE", "Customer Since"}, {"CUSTOMER_AGE", "Customer Age"}, {"VALUE_TIER", "Value Tier"}, {"FIRST_ORDER_DATE", "First Order Date"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lineagelens"
+version = "2.0.0"
+description = "Column-level impact analysis from dbt / Snowflake to Power BI measures, RLS and visuals. Local, offline, deterministic."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Dhruvpuri Goswami" }]
+keywords = ["lineage", "dbt", "snowflake", "power bi", "impact analysis", "tmdl", "pbir"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+]
+# Exact pins: same, tested versions on every machine.
+dependencies = [
+  "sqlglot==30.24.0",
+  "networkx==3.7; python_version >= '3.12'",
+  "networkx==3.5; python_version < '3.12'",
+  "fastapi==0.162.0",
+  "starlette==1.10.0",
+  "pydantic==2.14.1",
+  "uvicorn==0.54.0",
+  "typer==0.27.3",
+  "click==8.5.0",
+  "PyYAML==6.0.3",
+  "RapidFuzz==3.14.6",
+  "openpyxl==3.1.5",
+]
+
+[project.optional-dependencies]
+snowflake = ["snowflake-connector-python==4.8.0"]
+fabric = ["azure-identity==1.26.0"]
+dev = ["pytest==9.1.1", "httpx==0.28.1"]
+
+[project.scripts]
+lineagelens = "lineagelens.cli:run"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["lineagelens*"]
+
+[tool.setuptools.package-data]
+lineagelens = ["static/**/*", "samples/**/*", "samples_large/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore:Using `httpx`"]

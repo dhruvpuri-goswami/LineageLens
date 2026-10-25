@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "8486c6f94b3b771e15",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Amount USD"
+                }
+              },
+              "queryRef": "GL.Amount USD",
+              "nativeQueryRef": "Amount USD"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget"
+                    }
+                  },
+                  "Property": "Budget"
+                }
+              },
+              "queryRef": "Budget.Budget",
+              "nativeQueryRef": "Budget"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Budget by Amount USD'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

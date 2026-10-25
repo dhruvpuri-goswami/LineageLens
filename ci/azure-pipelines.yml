@@ -1,0 +1,70 @@
+# LineageLens impact check for pull requests (Azure DevOps Pipelines).
+# Use as azure-pipelines.yml (or a template) in your dbt repository and add it as a branch-policy build validation.
+#
+# It compiles dbt for the PR target branch and for the PR source, then runs `lineagelens diff`. The pipeline
+# publishes the markdown/JSON report and fails when a change would BREAK Power BI objects
+# (measures, RLS, visuals, filters).
+#
+# Assumptions (adapt the paths):
+#   - LineageLens is vendored at tools/lineagelens (the unzipped release) or installed from your Azure Artifacts feed.
+#   - lineagelens.yml at the repo root points at the dbt project and the PBIP folders (*.SemanticModel / *.Report).
+#   - A variable group "snowflake-ci" provides SNOWFLAKE_* secrets for `dbt compile` (compile / metadata only).
+trigger: none
+pr:
+  branches: { include: ["main"] }
+  paths: { include: ["models/*", "snapshots/*", "macros/*", "dbt_project.yml", "powerbi/*", "lineagelens.yml"] }
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: snowflake-ci
+  - name: DBT_PROFILES_DIR
+    value: $(Build.SourcesDirectory)/head/ci
+
+steps:
+  - checkout: self
+    path: s/head
+    fetchDepth: 0
+
+  - script: |
+      TARGET_BRANCH=${SYSTEM_PULLREQUEST_TARGETBRANCH#refs/heads/}
+      git -C head worktree add ../base "origin/${TARGET_BRANCH}"
+    displayName: Check out PR target branch into ./base
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - task: UsePythonVersion@0
+    inputs: { versionSpec: "3.12" }
+
+  - script: |
+      pip install "dbt-snowflake~=1.9"
+      pip install ./head/tools/lineagelens
+    displayName: Install dbt + LineageLens
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - script: |
+      for side in base head; do
+        (cd $side && dbt deps && dbt compile --target ci && dbt docs generate --target ci --no-compile) || exit 1
+      done
+    displayName: dbt compile (base and head)
+    workingDirectory: $(Build.SourcesDirectory)
+    env:
+      SNOWFLAKE_PASSWORD: $(SNOWFLAKE_PASSWORD)
+
+  - script: |
+      lineagelens diff ../base/target/manifest.json target/manifest.json \
+        -c lineagelens.yml --fail-on breaking \
+        -m $(Build.ArtifactStagingDirectory)/lineagelens-report.md \
+        --json-out $(Build.ArtifactStagingDirectory)/lineagelens-report.json
+    displayName: LineageLens diff (fails on breaking impact)
+    workingDirectory: $(Build.SourcesDirectory)/head
+
+  - script: echo "##vso[task.uploadsummary]$(Build.ArtifactStagingDirectory)/lineagelens-report.md"
+    displayName: Show report on the build summary
+    condition: always()
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: lineagelens-report

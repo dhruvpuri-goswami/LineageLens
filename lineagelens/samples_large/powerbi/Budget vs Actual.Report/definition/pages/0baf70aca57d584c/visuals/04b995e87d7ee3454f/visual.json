@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "04b995e87d7ee3454f",
+  "position": {
+    "x": 440,
+    "y": 250,
+    "z": 4000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Fiscal Date"
+                    }
+                  },
+                  "Property": "Calendar Month"
+                }
+              },
+              "queryRef": "Fiscal Date.Calendar Month",
+              "nativeQueryRef": "Calendar Month"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget"
+                    }
+                  },
+                  "Property": "Budget YTD"
+                }
+              },
+              "queryRef": "Budget.Budget YTD",
+              "nativeQueryRef": "Budget YTD"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget"
+                    }
+                  },
+                  "Property": "Variance Colour"
+                }
+              },
+              "queryRef": "Budget.Variance Colour",
+              "nativeQueryRef": "Variance Colour"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Budget"
+                    }
+                  },
+                  "Property": "Variance Flag"
+                }
+              },
+              "queryRef": "Budget.Variance Flag",
+              "nativeQueryRef": "Variance Flag"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Calendar Month'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

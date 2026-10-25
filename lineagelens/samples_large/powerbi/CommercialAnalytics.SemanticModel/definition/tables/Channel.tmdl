@@ -1,0 +1,30 @@
+table Channel
+	lineageTag: 00005eed-0000-0000-0000-000000000068
+
+	column 'Channel Key'
+		dataType: string
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000069
+		summarizeBy: none
+		sourceColumn: Channel Key
+
+	column 'Channel Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000006a
+		summarizeBy: none
+		sourceColumn: Channel Name
+
+	partition Channel = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_CHANNEL", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"CHANNEL_KEY", "CHANNEL_NAME"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"CHANNEL_KEY", "Channel Key"}, {"CHANNEL_NAME", "Channel Name"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

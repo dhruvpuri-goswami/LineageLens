@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "23ab1d1bee868b9c04",
+  "position": {
+    "x": 440,
+    "y": 20,
+    "z": 1000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Store League"
+                    }
+                  },
+                  "Property": "Store Name"
+                }
+              },
+              "queryRef": "Store League.Store Name",
+              "nativeQueryRef": "Store Name"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Store KPI"
+                    }
+                  },
+                  "Property": "KPI Revenue"
+                }
+              },
+              "queryRef": "Store KPI.KPI Revenue",
+              "nativeQueryRef": "KPI Revenue"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'KPI Revenue by Store Name'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,88 @@
+/// Order headers
+table Orders
+	lineageTag: 00005eed-0000-0000-0000-000000000030
+
+	measure Orders = COUNTROWS(Orders)
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-000000000031
+
+	measure 'Lines per Order' = DIVIDE(SUM(Orders[Line Count]), [Orders])
+		formatString: 0.0
+		lineageTag: 00005eed-0000-0000-0000-000000000032
+
+	measure 'Order Margin' = SUM(Orders[Order Margin])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000033
+
+	column 'Order Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000034
+		summarizeBy: none
+		sourceColumn: Order Key
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000035
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000036
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Channel Key'
+		dataType: string
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000037
+		summarizeBy: none
+		sourceColumn: Channel Key
+
+	column 'Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000038
+		summarizeBy: none
+		sourceColumn: Order Date
+
+	column 'Line Count'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000039
+		summarizeBy: none
+		sourceColumn: Line Count
+
+	column Units
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000003a
+		summarizeBy: none
+		sourceColumn: Units
+
+	column 'Order Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000003b
+		summarizeBy: sum
+		sourceColumn: Order Revenue
+
+	column 'Order Margin'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000003c
+		summarizeBy: sum
+		sourceColumn: Order Margin
+
+	partition Orders = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_ORDERS", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"ORDER_KEY", "CUSTOMER_KEY", "STORE_KEY", "CHANNEL_KEY", "ORDER_DATE", "LINE_COUNT", "UNITS", "ORDER_REVENUE", "ORDER_MARGIN"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"ORDER_KEY", "Order Key"}, {"CUSTOMER_KEY", "Customer Key"}, {"STORE_KEY", "Store Key"}, {"CHANNEL_KEY", "Channel Key"}, {"ORDER_DATE", "Order Date"}, {"LINE_COUNT", "Line Count"}, {"UNITS", "Units"}, {"ORDER_REVENUE", "Order Revenue"}, {"ORDER_MARGIN", "Order Margin"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

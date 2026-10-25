@@ -1,0 +1,82 @@
+table 'Customer LTV'
+	lineageTag: 00005eed-0000-0000-0000-00000000006b
+
+	measure 'Avg LTV' = AVERAGE('Customer LTV'[Lifetime Revenue])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-00000000006c
+
+	measure 'Avg Lifetime Margin' = AVERAGE('Customer LTV'[Lifetime Margin])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-00000000006d
+
+	measure 'Churn Risk Customers' = CALCULATE(COUNTROWS('Customer LTV'), 'Customer LTV'[Days Since Last Order] > 180)
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-00000000006e
+
+	measure 'Churn Risk %' = DIVIDE([Churn Risk Customers], [Customers])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-00000000006f
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000070
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'First Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000071
+		summarizeBy: none
+		sourceColumn: First Order Date
+
+	column 'Last Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000072
+		summarizeBy: none
+		sourceColumn: Last Order Date
+
+	column 'Lifetime Orders'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000073
+		summarizeBy: none
+		sourceColumn: Lifetime Orders
+
+	column 'Lifetime Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000074
+		summarizeBy: sum
+		sourceColumn: Lifetime Revenue
+
+	column 'Lifetime Margin'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000075
+		summarizeBy: sum
+		sourceColumn: Lifetime Margin
+
+	column 'Avg Order Value'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000076
+		summarizeBy: sum
+		sourceColumn: Avg Order Value
+
+	column 'Days Since Last Order'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000077
+		summarizeBy: none
+		sourceColumn: Days Since Last Order
+
+	partition 'Customer LTV' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_CUSTOMER_LTV", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"CUSTOMER_KEY", "FIRST_ORDER_DATE", "LAST_ORDER_DATE", "LIFETIME_ORDERS", "LIFETIME_REVENUE", "LIFETIME_MARGIN", "AVG_ORDER_VALUE", "DAYS_SINCE_LAST_ORDER"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"CUSTOMER_KEY", "Customer Key"}, {"FIRST_ORDER_DATE", "First Order Date"}, {"LAST_ORDER_DATE", "Last Order Date"}, {"LIFETIME_ORDERS", "Lifetime Orders"}, {"LIFETIME_REVENUE", "Lifetime Revenue"}, {"LIFETIME_MARGIN", "Lifetime Margin"}, {"AVG_ORDER_VALUE", "Avg Order Value"}, {"DAYS_SINCE_LAST_ORDER", "Days Since Last Order"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

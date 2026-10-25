@@ -1,0 +1,25 @@
+{
+  "name": "7ab32782ddd7ff81",
+  "displayName": "OTIF",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Product"
+              }
+            },
+            "Property": "List Price"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

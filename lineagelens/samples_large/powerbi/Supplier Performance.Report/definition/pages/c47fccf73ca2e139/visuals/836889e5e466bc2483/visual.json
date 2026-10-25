@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "836889e5e466bc2483",
+  "position": {
+    "x": 860,
+    "y": 20,
+    "z": 2000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Supplier Scorecard"
+                    }
+                  },
+                  "Property": "Avg Days Late"
+                }
+              },
+              "queryRef": "Supplier Scorecard.Avg Days Late",
+              "nativeQueryRef": "Avg Days Late"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Avg Days Late'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

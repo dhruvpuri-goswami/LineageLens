@@ -1,0 +1,2794 @@
+{
+ "metadata": {
+  "dbt_schema_version": "https://schemas.getdbt.com/dbt/catalog/v1.json",
+  "dbt_version": "1.9.4",
+  "generated_at": "2026-10-24T08:00:00.000Z"
+ },
+ "nodes": {
+  "model.helios_analytics.stg_erp_orders": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_ERP_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ORDER_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_ID"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "STORE_ID"
+    },
+    "CHANNEL_CODE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "CHANNEL_CODE"
+    },
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 5,
+     "name": "ORDER_DATE"
+    },
+    "ORDER_STATUS": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "ORDER_STATUS"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 7,
+     "name": "CURRENCY_CODE"
+    },
+    "HAS_PROMO": {
+     "type": "BOOLEAN",
+     "index": 8,
+     "name": "HAS_PROMO"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_erp_orders"
+  },
+  "model.helios_analytics.stg_erp_order_lines": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_ERP_ORDER_LINES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "LINE_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "LINE_ID"
+    },
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ORDER_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "QUANTITY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "QUANTITY"
+    },
+    "UNIT_PRICE": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "UNIT_PRICE"
+    },
+    "UNIT_COST": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "UNIT_COST"
+    },
+    "DISCOUNT_PCT": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "DISCOUNT_PCT"
+    },
+    "TAX_RATE": {
+     "type": "NUMBER(38,4)",
+     "index": 8,
+     "name": "TAX_RATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_erp_order_lines"
+  },
+  "model.helios_analytics.stg_crm_customers": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_CRM_CUSTOMERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CUSTOMER_ID"
+    },
+    "CUSTOMER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CUSTOMER_NAME"
+    },
+    "EMAIL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "EMAIL"
+    },
+    "COUNTRY_CODE": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "CUSTOMER_SEGMENT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "CUSTOMER_SEGMENT"
+    },
+    "LOYALTY_TIER": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "LOYALTY_TIER"
+    },
+    "CREATED_AT": {
+     "type": "TIMESTAMP_NTZ",
+     "index": 7,
+     "name": "CREATED_AT"
+    },
+    "BIRTH_YEAR": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "BIRTH_YEAR"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_crm_customers"
+  },
+  "model.helios_analytics.stg_pim_products": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_PIM_PRODUCTS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PRODUCT_ID"
+    },
+    "SKU": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SKU"
+    },
+    "PRODUCT_NAME": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "PRODUCT_NAME"
+    },
+    "BRAND": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "BRAND"
+    },
+    "CATEGORY": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "CATEGORY"
+    },
+    "SUBCATEGORY": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "SUBCATEGORY"
+    },
+    "LIST_PRICE": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "LIST_PRICE"
+    },
+    "LAUNCH_DATE": {
+     "type": "DATE",
+     "index": 8,
+     "name": "LAUNCH_DATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_pim_products"
+  },
+  "model.helios_analytics.stg_ops_stores": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_OPS_STORES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "STORE_ID"
+    },
+    "STORE_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "STORE_NAME"
+    },
+    "SALES_REGION": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "SALES_REGION"
+    },
+    "COUNTRY_CODE": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "STORE_FORMAT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "STORE_FORMAT"
+    },
+    "OPENED_ON": {
+     "type": "DATE",
+     "index": 6,
+     "name": "OPENED_ON"
+    },
+    "MANAGER_EMAIL": {
+     "type": "NUMBER",
+     "index": 7,
+     "name": "MANAGER_EMAIL"
+    },
+    "SQ_FT": {
+     "type": "NUMBER(38,4)",
+     "index": 8,
+     "name": "SQ_FT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_ops_stores"
+  },
+  "model.helios_analytics.stg_wms_inventory": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_WMS_INVENTORY",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SNAPSHOT_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "SNAPSHOT_DATE"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "STORE_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "ON_HAND_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ON_HAND_QTY"
+    },
+    "ON_ORDER_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ON_ORDER_QTY"
+    },
+    "SAFETY_STOCK": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "SAFETY_STOCK"
+    },
+    "UNIT_COST": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "UNIT_COST"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_wms_inventory"
+  },
+  "model.helios_analytics.stg_scm_purchase_orders": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_SCM_PURCHASE_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PO_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PO_ID"
+    },
+    "SUPPLIER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "SUPPLIER_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "ORDERED_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ORDERED_QTY"
+    },
+    "RECEIVED_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "RECEIVED_QTY"
+    },
+    "PO_DATE": {
+     "type": "DATE",
+     "index": 6,
+     "name": "PO_DATE"
+    },
+    "EXPECTED_DATE": {
+     "type": "DATE",
+     "index": 7,
+     "name": "EXPECTED_DATE"
+    },
+    "RECEIVED_DATE": {
+     "type": "DATE",
+     "index": 8,
+     "name": "RECEIVED_DATE"
+    },
+    "PO_COST": {
+     "type": "NUMBER(38,4)",
+     "index": 9,
+     "name": "PO_COST"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_scm_purchase_orders"
+  },
+  "model.helios_analytics.stg_scm_suppliers": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_SCM_SUPPLIERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SUPPLIER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "SUPPLIER_ID"
+    },
+    "SUPPLIER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SUPPLIER_NAME"
+    },
+    "COUNTRY_CODE": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "COUNTRY_CODE"
+    },
+    "RATING": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "RATING"
+    },
+    "LEAD_TIME_DAYS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "LEAD_TIME_DAYS"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_scm_suppliers"
+  },
+  "model.helios_analytics.stg_fin_gl_entries": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_FIN_GL_ENTRIES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ENTRY_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ENTRY_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_ID"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "COST_CENTER_ID"
+    },
+    "POSTING_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "POSTING_DATE"
+    },
+    "AMOUNT_LOCAL": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "AMOUNT_LOCAL"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "CURRENCY_CODE"
+    },
+    "ENTRY_TYPE": {
+     "type": "VARCHAR",
+     "index": 7,
+     "name": "ENTRY_TYPE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_fin_gl_entries"
+  },
+  "model.helios_analytics.stg_fin_accounts": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_FIN_ACCOUNTS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ACCOUNT_ID"
+    },
+    "ACCOUNT_NAME": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_NAME"
+    },
+    "ACCOUNT_GROUP": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_GROUP"
+    },
+    "PL_LINE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "PL_LINE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_fin_accounts"
+  },
+  "model.helios_analytics.stg_fin_budgets": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_FIN_BUDGETS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "BUDGET_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "BUDGET_ID"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "COST_CENTER_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_ID"
+    },
+    "PERIOD_MONTH": {
+     "type": "DATE",
+     "index": 4,
+     "name": "PERIOD_MONTH"
+    },
+    "BUDGET_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "BUDGET_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_fin_budgets"
+  },
+  "model.helios_analytics.stg_mkt_campaigns": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_MKT_CAMPAIGNS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CAMPAIGN_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CAMPAIGN_ID"
+    },
+    "CAMPAIGN_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CAMPAIGN_NAME"
+    },
+    "MARKETING_CHANNEL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "MARKETING_CHANNEL"
+    },
+    "START_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "START_DATE"
+    },
+    "END_DATE": {
+     "type": "DATE",
+     "index": 5,
+     "name": "END_DATE"
+    },
+    "SPEND": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "SPEND"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_mkt_campaigns"
+  },
+  "model.helios_analytics.stg_web_sessions": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_WEB_SESSIONS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SESSION_ID": {
+     "type": "VARCHAR",
+     "index": 1,
+     "name": "SESSION_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_ID"
+    },
+    "SESSION_DATE": {
+     "type": "DATE",
+     "index": 3,
+     "name": "SESSION_DATE"
+    },
+    "DEVICE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "DEVICE"
+    },
+    "PAGE_VIEWS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "PAGE_VIEWS"
+    },
+    "CAMPAIGN_ID": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "CAMPAIGN_ID"
+    },
+    "IS_CONVERTED": {
+     "type": "BOOLEAN",
+     "index": 7,
+     "name": "IS_CONVERTED"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_web_sessions"
+  },
+  "model.helios_analytics.stg_hr_cost_centers": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_HR_COST_CENTERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "COST_CENTER_ID"
+    },
+    "COST_CENTER_NAME": {
+     "type": "NUMBER(38,4)",
+     "index": 2,
+     "name": "COST_CENTER_NAME"
+    },
+    "REGION": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "REGION"
+    },
+    "OWNER_EMAIL": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "OWNER_EMAIL"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_hr_cost_centers"
+  },
+  "model.helios_analytics.stg_fx_rates": {
+   "metadata": {
+    "type": "VIEW",
+    "schema": "STAGING",
+    "name": "STG_FX_RATES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "RATE_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "RATE_DATE"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CURRENCY_CODE"
+    },
+    "RATE_TO_USD": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "RATE_TO_USD"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.stg_fx_rates"
+  },
+  "model.helios_analytics.int_order_lines_enriched": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_ORDER_LINES_ENRICHED",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "LINE_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "LINE_ID"
+    },
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ORDER_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "CUSTOMER_ID"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "STORE_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "PRODUCT_ID"
+    },
+    "CHANNEL_CODE": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "CHANNEL_CODE"
+    },
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 7,
+     "name": "ORDER_DATE"
+    },
+    "ORDER_STATUS": {
+     "type": "VARCHAR",
+     "index": 8,
+     "name": "ORDER_STATUS"
+    },
+    "HAS_PROMO": {
+     "type": "BOOLEAN",
+     "index": 9,
+     "name": "HAS_PROMO"
+    },
+    "QUANTITY": {
+     "type": "NUMBER",
+     "index": 10,
+     "name": "QUANTITY"
+    },
+    "GROSS_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 11,
+     "name": "GROSS_REVENUE"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 12,
+     "name": "NET_REVENUE"
+    },
+    "COST_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 13,
+     "name": "COST_AMOUNT"
+    },
+    "DISCOUNT_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 14,
+     "name": "DISCOUNT_AMOUNT"
+    },
+    "TAX_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 15,
+     "name": "TAX_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_order_lines_enriched"
+  },
+  "model.helios_analytics.int_customer_orders": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_CUSTOMER_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CUSTOMER_ID"
+    },
+    "FIRST_ORDER_DATE": {
+     "type": "DATE",
+     "index": 2,
+     "name": "FIRST_ORDER_DATE"
+    },
+    "LAST_ORDER_DATE": {
+     "type": "DATE",
+     "index": 3,
+     "name": "LAST_ORDER_DATE"
+    },
+    "LIFETIME_ORDERS": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "LIFETIME_ORDERS"
+    },
+    "LIFETIME_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "LIFETIME_REVENUE"
+    },
+    "LIFETIME_MARGIN": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "LIFETIME_MARGIN"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_customer_orders"
+  },
+  "model.helios_analytics.int_inventory_daily": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_INVENTORY_DAILY",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SNAPSHOT_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "SNAPSHOT_DATE"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "STORE_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "ON_HAND_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ON_HAND_QTY"
+    },
+    "ON_ORDER_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ON_ORDER_QTY"
+    },
+    "SAFETY_STOCK": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "SAFETY_STOCK"
+    },
+    "STOCK_VALUE": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "STOCK_VALUE"
+    },
+    "IS_BELOW_SAFETY": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "IS_BELOW_SAFETY"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_inventory_daily"
+  },
+  "model.helios_analytics.int_po_receipts": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_PO_RECEIPTS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PO_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PO_ID"
+    },
+    "SUPPLIER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "SUPPLIER_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "PO_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "PO_DATE"
+    },
+    "ORDERED_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ORDERED_QTY"
+    },
+    "RECEIVED_QTY": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "RECEIVED_QTY"
+    },
+    "PO_COST": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "PO_COST"
+    },
+    "ACTUAL_LEAD_DAYS": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "ACTUAL_LEAD_DAYS"
+    },
+    "DAYS_LATE": {
+     "type": "NUMBER",
+     "index": 9,
+     "name": "DAYS_LATE"
+    },
+    "FILL_RATE": {
+     "type": "NUMBER(38,4)",
+     "index": 10,
+     "name": "FILL_RATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_po_receipts"
+  },
+  "model.helios_analytics.int_gl_usd": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_GL_USD",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ENTRY_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ENTRY_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_ID"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "COST_CENTER_ID"
+    },
+    "POSTING_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "POSTING_DATE"
+    },
+    "ENTRY_TYPE": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "ENTRY_TYPE"
+    },
+    "AMOUNT_USD": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "AMOUNT_USD"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_gl_usd"
+  },
+  "model.helios_analytics.int_budget_monthly": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_BUDGET_MONTHLY",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PERIOD_MONTH": {
+     "type": "DATE",
+     "index": 1,
+     "name": "PERIOD_MONTH"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "COST_CENTER_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_ID"
+    },
+    "BUDGET_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "BUDGET_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_budget_monthly"
+  },
+  "model.helios_analytics.int_sessions_attributed": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_SESSIONS_ATTRIBUTED",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SESSION_ID": {
+     "type": "VARCHAR",
+     "index": 1,
+     "name": "SESSION_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_ID"
+    },
+    "SESSION_DATE": {
+     "type": "DATE",
+     "index": 3,
+     "name": "SESSION_DATE"
+    },
+    "DEVICE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "DEVICE"
+    },
+    "PAGE_VIEWS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "PAGE_VIEWS"
+    },
+    "IS_CONVERTED": {
+     "type": "BOOLEAN",
+     "index": 6,
+     "name": "IS_CONVERTED"
+    },
+    "CAMPAIGN_ID": {
+     "type": "NUMBER",
+     "index": 7,
+     "name": "CAMPAIGN_ID"
+    },
+    "MARKETING_CHANNEL": {
+     "type": "VARCHAR",
+     "index": 8,
+     "name": "MARKETING_CHANNEL"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_sessions_attributed"
+  },
+  "model.helios_analytics.int_product_margin": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "INTERMEDIATE",
+    "name": "INT_PRODUCT_MARGIN",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PRODUCT_ID"
+    },
+    "UNITS_SOLD": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "UNITS_SOLD"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "NET_REVENUE"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "MARGIN_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.int_product_margin"
+  },
+  "model.helios_analytics.dim_customer": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_CUSTOMER",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CUSTOMER_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CUSTOMER_KEY"
+    },
+    "CUSTOMER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CUSTOMER_NAME"
+    },
+    "CUSTOMER_EMAIL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "CUSTOMER_EMAIL"
+    },
+    "COUNTRY_CODE": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "CUSTOMER_SEGMENT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "CUSTOMER_SEGMENT"
+    },
+    "LOYALTY_TIER": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "LOYALTY_TIER"
+    },
+    "CUSTOMER_SINCE": {
+     "type": "TIMESTAMP_NTZ",
+     "index": 7,
+     "name": "CUSTOMER_SINCE"
+    },
+    "CUSTOMER_AGE": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "CUSTOMER_AGE"
+    },
+    "VALUE_TIER": {
+     "type": "NUMBER(38,4)",
+     "index": 9,
+     "name": "VALUE_TIER"
+    },
+    "FIRST_ORDER_DATE": {
+     "type": "DATE",
+     "index": 10,
+     "name": "FIRST_ORDER_DATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_customer"
+  },
+  "model.helios_analytics.dim_product": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_PRODUCT",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PRODUCT_KEY"
+    },
+    "SKU": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SKU"
+    },
+    "PRODUCT_NAME": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "PRODUCT_NAME"
+    },
+    "BRAND": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "BRAND"
+    },
+    "PRODUCT_CATEGORY": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "PRODUCT_CATEGORY"
+    },
+    "PRODUCT_SUBCATEGORY": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "PRODUCT_SUBCATEGORY"
+    },
+    "LIST_PRICE": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "LIST_PRICE"
+    },
+    "PRICE_BAND": {
+     "type": "NUMBER(38,4)",
+     "index": 8,
+     "name": "PRICE_BAND"
+    },
+    "LAUNCH_DATE": {
+     "type": "DATE",
+     "index": 9,
+     "name": "LAUNCH_DATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_product"
+  },
+  "model.helios_analytics.dim_store": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_STORE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "STORE_KEY"
+    },
+    "STORE_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "STORE_NAME"
+    },
+    "SALES_REGION": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "SALES_REGION"
+    },
+    "COUNTRY_CODE": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "STORE_FORMAT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "STORE_FORMAT"
+    },
+    "OPENED_ON": {
+     "type": "DATE",
+     "index": 6,
+     "name": "OPENED_ON"
+    },
+    "MANAGER_EMAIL": {
+     "type": "NUMBER",
+     "index": 7,
+     "name": "MANAGER_EMAIL"
+    },
+    "SQ_FT": {
+     "type": "NUMBER(38,4)",
+     "index": 8,
+     "name": "SQ_FT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_store"
+  },
+  "model.helios_analytics.dim_date": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_DATE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "DATE_DAY": {
+     "type": "DATE",
+     "index": 1,
+     "name": "DATE_DAY"
+    },
+    "CALENDAR_YEAR": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CALENDAR_YEAR"
+    },
+    "CALENDAR_QUARTER": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "CALENDAR_QUARTER"
+    },
+    "CALENDAR_MONTH": {
+     "type": "DATE",
+     "index": 4,
+     "name": "CALENDAR_MONTH"
+    },
+    "MONTH_NAME": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "MONTH_NAME"
+    },
+    "DAY_OF_WEEK": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "DAY_OF_WEEK"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_date"
+  },
+  "model.helios_analytics.dim_supplier": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_SUPPLIER",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SUPPLIER_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "SUPPLIER_KEY"
+    },
+    "SUPPLIER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SUPPLIER_NAME"
+    },
+    "SUPPLIER_COUNTRY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "SUPPLIER_COUNTRY"
+    },
+    "SUPPLIER_RATING": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "SUPPLIER_RATING"
+    },
+    "CONTRACTED_LEAD_DAYS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "CONTRACTED_LEAD_DAYS"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_supplier"
+  },
+  "model.helios_analytics.dim_account": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_ACCOUNT",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ACCOUNT_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ACCOUNT_KEY"
+    },
+    "ACCOUNT_NAME": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_NAME"
+    },
+    "ACCOUNT_GROUP": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_GROUP"
+    },
+    "PL_LINE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "PL_LINE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_account"
+  },
+  "model.helios_analytics.dim_cost_center": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_COST_CENTER",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "COST_CENTER_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "COST_CENTER_KEY"
+    },
+    "COST_CENTER_NAME": {
+     "type": "NUMBER(38,4)",
+     "index": 2,
+     "name": "COST_CENTER_NAME"
+    },
+    "COST_CENTER_REGION": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "COST_CENTER_REGION"
+    },
+    "OWNER_EMAIL": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "OWNER_EMAIL"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_cost_center"
+  },
+  "model.helios_analytics.dim_campaign": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_CAMPAIGN",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CAMPAIGN_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CAMPAIGN_KEY"
+    },
+    "CAMPAIGN_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CAMPAIGN_NAME"
+    },
+    "MARKETING_CHANNEL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "MARKETING_CHANNEL"
+    },
+    "CAMPAIGN_START": {
+     "type": "DATE",
+     "index": 4,
+     "name": "CAMPAIGN_START"
+    },
+    "CAMPAIGN_END": {
+     "type": "DATE",
+     "index": 5,
+     "name": "CAMPAIGN_END"
+    },
+    "CAMPAIGN_SPEND": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "CAMPAIGN_SPEND"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_campaign"
+  },
+  "model.helios_analytics.dim_channel": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "DIM_CHANNEL",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CHANNEL_KEY": {
+     "type": "VARCHAR",
+     "index": 1,
+     "name": "CHANNEL_KEY"
+    },
+    "CHANNEL_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CHANNEL_NAME"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.dim_channel"
+  },
+  "model.helios_analytics.fct_sales_lines": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_SALES_LINES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SALES_LINE_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "SALES_LINE_KEY"
+    },
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ORDER_ID"
+    },
+    "CUSTOMER_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "CUSTOMER_KEY"
+    },
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "PRODUCT_KEY"
+    },
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "STORE_KEY"
+    },
+    "CHANNEL_KEY": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "CHANNEL_KEY"
+    },
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 7,
+     "name": "ORDER_DATE"
+    },
+    "QUANTITY": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "QUANTITY"
+    },
+    "GROSS_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 9,
+     "name": "GROSS_REVENUE"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 10,
+     "name": "NET_REVENUE"
+    },
+    "COST_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 11,
+     "name": "COST_AMOUNT"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 12,
+     "name": "MARGIN_AMOUNT"
+    },
+    "DISCOUNT_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 13,
+     "name": "DISCOUNT_AMOUNT"
+    },
+    "TAX_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 14,
+     "name": "TAX_AMOUNT"
+    },
+    "DISCOUNT_BAND": {
+     "type": "NUMBER",
+     "index": 15,
+     "name": "DISCOUNT_BAND"
+    },
+    "IS_PROMO": {
+     "type": "BOOLEAN",
+     "index": 16,
+     "name": "IS_PROMO"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_sales_lines"
+  },
+  "model.helios_analytics.fct_orders": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ORDER_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ORDER_KEY"
+    },
+    "CUSTOMER_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_KEY"
+    },
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "STORE_KEY"
+    },
+    "CHANNEL_KEY": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "CHANNEL_KEY"
+    },
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 5,
+     "name": "ORDER_DATE"
+    },
+    "LINE_COUNT": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "LINE_COUNT"
+    },
+    "UNITS": {
+     "type": "NUMBER",
+     "index": 7,
+     "name": "UNITS"
+    },
+    "ORDER_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 8,
+     "name": "ORDER_REVENUE"
+    },
+    "ORDER_MARGIN": {
+     "type": "NUMBER(38,4)",
+     "index": 9,
+     "name": "ORDER_MARGIN"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_orders"
+  },
+  "model.helios_analytics.fct_daily_sales": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_DAILY_SALES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "ORDER_DATE"
+    },
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "STORE_KEY"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "NET_REVENUE"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "MARGIN_AMOUNT"
+    },
+    "UNITS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "UNITS"
+    },
+    "ORDER_COUNT": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "ORDER_COUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_daily_sales"
+  },
+  "model.helios_analytics.fct_inventory_snapshot": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_INVENTORY_SNAPSHOT",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SNAPSHOT_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "SNAPSHOT_DATE"
+    },
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "STORE_KEY"
+    },
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_KEY"
+    },
+    "ON_HAND_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ON_HAND_QTY"
+    },
+    "ON_ORDER_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ON_ORDER_QTY"
+    },
+    "SAFETY_STOCK": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "SAFETY_STOCK"
+    },
+    "STOCK_VALUE": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "STOCK_VALUE"
+    },
+    "IS_BELOW_SAFETY": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "IS_BELOW_SAFETY"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_inventory_snapshot"
+  },
+  "model.helios_analytics.fct_purchase_orders": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_PURCHASE_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PO_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PO_KEY"
+    },
+    "SUPPLIER_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "SUPPLIER_KEY"
+    },
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_KEY"
+    },
+    "PO_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "PO_DATE"
+    },
+    "ORDERED_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ORDERED_QTY"
+    },
+    "RECEIVED_QTY": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "RECEIVED_QTY"
+    },
+    "PO_COST": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "PO_COST"
+    },
+    "ACTUAL_LEAD_DAYS": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "ACTUAL_LEAD_DAYS"
+    },
+    "DAYS_LATE": {
+     "type": "NUMBER",
+     "index": 9,
+     "name": "DAYS_LATE"
+    },
+    "FILL_RATE": {
+     "type": "NUMBER(38,4)",
+     "index": 10,
+     "name": "FILL_RATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_purchase_orders"
+  },
+  "model.helios_analytics.fct_gl": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_GL",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "GL_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "GL_KEY"
+    },
+    "ACCOUNT_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_KEY"
+    },
+    "COST_CENTER_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "COST_CENTER_KEY"
+    },
+    "POSTING_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "POSTING_DATE"
+    },
+    "ENTRY_TYPE": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "ENTRY_TYPE"
+    },
+    "AMOUNT_USD": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "AMOUNT_USD"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_gl"
+  },
+  "model.helios_analytics.fct_budget": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_BUDGET",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PERIOD_MONTH": {
+     "type": "DATE",
+     "index": 1,
+     "name": "PERIOD_MONTH"
+    },
+    "COST_CENTER_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "COST_CENTER_KEY"
+    },
+    "ACCOUNT_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_KEY"
+    },
+    "BUDGET_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "BUDGET_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_budget"
+  },
+  "model.helios_analytics.fct_web_sessions": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_WEB_SESSIONS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SESSION_KEY": {
+     "type": "VARCHAR",
+     "index": 1,
+     "name": "SESSION_KEY"
+    },
+    "CUSTOMER_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_KEY"
+    },
+    "CAMPAIGN_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "CAMPAIGN_KEY"
+    },
+    "SESSION_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "SESSION_DATE"
+    },
+    "DEVICE": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "DEVICE"
+    },
+    "PAGE_VIEWS": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "PAGE_VIEWS"
+    },
+    "CONVERSIONS": {
+     "type": "NUMBER",
+     "index": 7,
+     "name": "CONVERSIONS"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_web_sessions"
+  },
+  "model.helios_analytics.fct_campaign_performance": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_CAMPAIGN_PERFORMANCE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CAMPAIGN_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CAMPAIGN_KEY"
+    },
+    "CAMPAIGN_SPEND": {
+     "type": "NUMBER(38,4)",
+     "index": 2,
+     "name": "CAMPAIGN_SPEND"
+    },
+    "SESSIONS": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "SESSIONS"
+    },
+    "CONVERSIONS": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "CONVERSIONS"
+    },
+    "ATTRIBUTED_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "ATTRIBUTED_REVENUE"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_campaign_performance"
+  },
+  "model.helios_analytics.fct_customer_ltv": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_CUSTOMER_LTV",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CUSTOMER_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CUSTOMER_KEY"
+    },
+    "FIRST_ORDER_DATE": {
+     "type": "DATE",
+     "index": 2,
+     "name": "FIRST_ORDER_DATE"
+    },
+    "LAST_ORDER_DATE": {
+     "type": "DATE",
+     "index": 3,
+     "name": "LAST_ORDER_DATE"
+    },
+    "LIFETIME_ORDERS": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "LIFETIME_ORDERS"
+    },
+    "LIFETIME_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "LIFETIME_REVENUE"
+    },
+    "LIFETIME_MARGIN": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "LIFETIME_MARGIN"
+    },
+    "AVG_ORDER_VALUE": {
+     "type": "NUMBER(38,4)",
+     "index": 7,
+     "name": "AVG_ORDER_VALUE"
+    },
+    "DAYS_SINCE_LAST_ORDER": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "DAYS_SINCE_LAST_ORDER"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_customer_ltv"
+  },
+  "model.helios_analytics.fct_product_performance": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_PRODUCT_PERFORMANCE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PRODUCT_KEY"
+    },
+    "UNITS_SOLD": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "UNITS_SOLD"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "NET_REVENUE"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "MARGIN_AMOUNT"
+    },
+    "MARGIN_PCT": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "MARGIN_PCT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_product_performance"
+  },
+  "model.helios_analytics.fct_store_performance": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_STORE_PERFORMANCE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "STORE_KEY"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 2,
+     "name": "NET_REVENUE"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "MARGIN_AMOUNT"
+    },
+    "ORDER_COUNT": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ORDER_COUNT"
+    },
+    "REVENUE_PER_SQ_FT": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "REVENUE_PER_SQ_FT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_store_performance"
+  },
+  "model.helios_analytics.fct_margin_bridge": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_MARGIN_BRIDGE",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ORDER_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "ORDER_DATE"
+    },
+    "GROSS_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 2,
+     "name": "GROSS_REVENUE"
+    },
+    "DISCOUNT_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 3,
+     "name": "DISCOUNT_AMOUNT"
+    },
+    "NET_REVENUE": {
+     "type": "NUMBER(38,4)",
+     "index": 4,
+     "name": "NET_REVENUE"
+    },
+    "COST_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 5,
+     "name": "COST_AMOUNT"
+    },
+    "MARGIN_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "MARGIN_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_margin_bridge"
+  },
+  "model.helios_analytics.fct_returns": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "GOLD",
+    "name": "FCT_RETURNS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "RETURN_KEY": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "RETURN_KEY"
+    },
+    "PRODUCT_KEY": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "PRODUCT_KEY"
+    },
+    "STORE_KEY": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "STORE_KEY"
+    },
+    "RETURN_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "RETURN_DATE"
+    },
+    "RETURNED_UNITS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "RETURNED_UNITS"
+    },
+    "REFUND_AMOUNT": {
+     "type": "NUMBER(38,4)",
+     "index": 6,
+     "name": "REFUND_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "model.helios_analytics.fct_returns"
+  }
+ },
+ "sources": {
+  "source.helios_analytics.raw.erp_orders": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "ERP_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ORDER_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_ID"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "STORE_ID"
+    },
+    "CHANNEL_CODE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "CHANNEL_CODE"
+    },
+    "ORDER_TS": {
+     "type": "TIMESTAMP_NTZ",
+     "index": 5,
+     "name": "ORDER_TS"
+    },
+    "STATUS": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "STATUS"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 7,
+     "name": "CURRENCY_CODE"
+    },
+    "PROMO_CODE": {
+     "type": "VARCHAR",
+     "index": 8,
+     "name": "PROMO_CODE"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.erp_orders"
+  },
+  "source.helios_analytics.raw.erp_order_lines": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "ERP_ORDER_LINES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "LINE_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "LINE_ID"
+    },
+    "ORDER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ORDER_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "QTY"
+    },
+    "UNIT_PRICE": {
+     "type": "NUMBER(12,2)",
+     "index": 5,
+     "name": "UNIT_PRICE"
+    },
+    "UNIT_COST": {
+     "type": "NUMBER(12,2)",
+     "index": 6,
+     "name": "UNIT_COST"
+    },
+    "DISCOUNT_PCT": {
+     "type": "NUMBER(5,4)",
+     "index": 7,
+     "name": "DISCOUNT_PCT"
+    },
+    "TAX_RATE": {
+     "type": "NUMBER(5,4)",
+     "index": 8,
+     "name": "TAX_RATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.erp_order_lines"
+  },
+  "source.helios_analytics.raw.crm_customers": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "CRM_CUSTOMERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CUSTOMER_ID"
+    },
+    "FULL_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "FULL_NAME"
+    },
+    "EMAIL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "EMAIL"
+    },
+    "COUNTRY_CODE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "SEGMENT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "SEGMENT"
+    },
+    "LOYALTY_TIER": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "LOYALTY_TIER"
+    },
+    "CREATED_AT": {
+     "type": "TIMESTAMP_NTZ",
+     "index": 7,
+     "name": "CREATED_AT"
+    },
+    "BIRTH_YEAR": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "BIRTH_YEAR"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.crm_customers"
+  },
+  "source.helios_analytics.raw.pim_products": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "PIM_PRODUCTS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PRODUCT_ID"
+    },
+    "SKU": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SKU"
+    },
+    "PRODUCT_NAME": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "PRODUCT_NAME"
+    },
+    "BRAND": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "BRAND"
+    },
+    "CATEGORY": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "CATEGORY"
+    },
+    "SUBCATEGORY": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "SUBCATEGORY"
+    },
+    "LIST_PRICE": {
+     "type": "NUMBER(12,2)",
+     "index": 7,
+     "name": "LIST_PRICE"
+    },
+    "LAUNCH_DATE": {
+     "type": "DATE",
+     "index": 8,
+     "name": "LAUNCH_DATE"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.pim_products"
+  },
+  "source.helios_analytics.raw.ops_stores": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "OPS_STORES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "STORE_ID"
+    },
+    "STORE_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "STORE_NAME"
+    },
+    "REGION": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "REGION"
+    },
+    "COUNTRY_CODE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "COUNTRY_CODE"
+    },
+    "STORE_FORMAT": {
+     "type": "VARCHAR",
+     "index": 5,
+     "name": "STORE_FORMAT"
+    },
+    "OPENED_ON": {
+     "type": "DATE",
+     "index": 6,
+     "name": "OPENED_ON"
+    },
+    "MANAGER_EMAIL": {
+     "type": "VARCHAR",
+     "index": 7,
+     "name": "MANAGER_EMAIL"
+    },
+    "SQ_FT": {
+     "type": "NUMBER",
+     "index": 8,
+     "name": "SQ_FT"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.ops_stores"
+  },
+  "source.helios_analytics.raw.wms_inventory": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "WMS_INVENTORY",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SNAPSHOT_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "SNAPSHOT_DATE"
+    },
+    "STORE_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "STORE_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "ON_HAND_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ON_HAND_QTY"
+    },
+    "ON_ORDER_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "ON_ORDER_QTY"
+    },
+    "SAFETY_STOCK": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "SAFETY_STOCK"
+    },
+    "UNIT_COST": {
+     "type": "NUMBER(12,2)",
+     "index": 7,
+     "name": "UNIT_COST"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.wms_inventory"
+  },
+  "source.helios_analytics.raw.scm_purchase_orders": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "SCM_PURCHASE_ORDERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "PO_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "PO_ID"
+    },
+    "SUPPLIER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "SUPPLIER_ID"
+    },
+    "PRODUCT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "PRODUCT_ID"
+    },
+    "ORDERED_QTY": {
+     "type": "NUMBER",
+     "index": 4,
+     "name": "ORDERED_QTY"
+    },
+    "RECEIVED_QTY": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "RECEIVED_QTY"
+    },
+    "PO_DATE": {
+     "type": "DATE",
+     "index": 6,
+     "name": "PO_DATE"
+    },
+    "EXPECTED_DATE": {
+     "type": "DATE",
+     "index": 7,
+     "name": "EXPECTED_DATE"
+    },
+    "RECEIVED_DATE": {
+     "type": "DATE",
+     "index": 8,
+     "name": "RECEIVED_DATE"
+    },
+    "PO_COST": {
+     "type": "NUMBER(14,2)",
+     "index": 9,
+     "name": "PO_COST"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.scm_purchase_orders"
+  },
+  "source.helios_analytics.raw.scm_suppliers": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "SCM_SUPPLIERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SUPPLIER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "SUPPLIER_ID"
+    },
+    "SUPPLIER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "SUPPLIER_NAME"
+    },
+    "COUNTRY_CODE": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "COUNTRY_CODE"
+    },
+    "RATING": {
+     "type": "NUMBER(3,1)",
+     "index": 4,
+     "name": "RATING"
+    },
+    "LEAD_TIME_DAYS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "LEAD_TIME_DAYS"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.scm_suppliers"
+  },
+  "source.helios_analytics.raw.fin_gl_entries": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "FIN_GL_ENTRIES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ENTRY_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ENTRY_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "ACCOUNT_ID"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "COST_CENTER_ID"
+    },
+    "POSTING_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "POSTING_DATE"
+    },
+    "AMOUNT": {
+     "type": "NUMBER(16,2)",
+     "index": 5,
+     "name": "AMOUNT"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 6,
+     "name": "CURRENCY_CODE"
+    },
+    "ENTRY_TYPE": {
+     "type": "VARCHAR",
+     "index": 7,
+     "name": "ENTRY_TYPE"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.fin_gl_entries"
+  },
+  "source.helios_analytics.raw.fin_accounts": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "FIN_ACCOUNTS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "ACCOUNT_ID"
+    },
+    "ACCOUNT_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "ACCOUNT_NAME"
+    },
+    "ACCOUNT_GROUP": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "ACCOUNT_GROUP"
+    },
+    "PL_LINE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "PL_LINE"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.fin_accounts"
+  },
+  "source.helios_analytics.raw.fin_budgets": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "FIN_BUDGETS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "BUDGET_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "BUDGET_ID"
+    },
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "COST_CENTER_ID"
+    },
+    "ACCOUNT_ID": {
+     "type": "NUMBER",
+     "index": 3,
+     "name": "ACCOUNT_ID"
+    },
+    "PERIOD_MONTH": {
+     "type": "DATE",
+     "index": 4,
+     "name": "PERIOD_MONTH"
+    },
+    "BUDGET_AMOUNT": {
+     "type": "NUMBER(16,2)",
+     "index": 5,
+     "name": "BUDGET_AMOUNT"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.fin_budgets"
+  },
+  "source.helios_analytics.raw.mkt_campaigns": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "MKT_CAMPAIGNS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "CAMPAIGN_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "CAMPAIGN_ID"
+    },
+    "CAMPAIGN_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CAMPAIGN_NAME"
+    },
+    "CHANNEL": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "CHANNEL"
+    },
+    "START_DATE": {
+     "type": "DATE",
+     "index": 4,
+     "name": "START_DATE"
+    },
+    "END_DATE": {
+     "type": "DATE",
+     "index": 5,
+     "name": "END_DATE"
+    },
+    "SPEND": {
+     "type": "NUMBER(14,2)",
+     "index": 6,
+     "name": "SPEND"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.mkt_campaigns"
+  },
+  "source.helios_analytics.raw.web_sessions": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "WEB_SESSIONS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "SESSION_ID": {
+     "type": "VARCHAR",
+     "index": 1,
+     "name": "SESSION_ID"
+    },
+    "CUSTOMER_ID": {
+     "type": "NUMBER",
+     "index": 2,
+     "name": "CUSTOMER_ID"
+    },
+    "SESSION_TS": {
+     "type": "TIMESTAMP_NTZ",
+     "index": 3,
+     "name": "SESSION_TS"
+    },
+    "DEVICE": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "DEVICE"
+    },
+    "PAGE_VIEWS": {
+     "type": "NUMBER",
+     "index": 5,
+     "name": "PAGE_VIEWS"
+    },
+    "CAMPAIGN_ID": {
+     "type": "NUMBER",
+     "index": 6,
+     "name": "CAMPAIGN_ID"
+    },
+    "CONVERTED": {
+     "type": "BOOLEAN",
+     "index": 7,
+     "name": "CONVERTED"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.web_sessions"
+  },
+  "source.helios_analytics.raw.hr_cost_centers": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "HR_COST_CENTERS",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "COST_CENTER_ID": {
+     "type": "NUMBER",
+     "index": 1,
+     "name": "COST_CENTER_ID"
+    },
+    "COST_CENTER_NAME": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "COST_CENTER_NAME"
+    },
+    "REGION": {
+     "type": "VARCHAR",
+     "index": 3,
+     "name": "REGION"
+    },
+    "OWNER_EMAIL": {
+     "type": "VARCHAR",
+     "index": 4,
+     "name": "OWNER_EMAIL"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.hr_cost_centers"
+  },
+  "source.helios_analytics.raw.fx_rates": {
+   "metadata": {
+    "type": "BASE TABLE",
+    "schema": "RAW",
+    "name": "FX_RATES",
+    "database": "HELIOS"
+   },
+   "columns": {
+    "RATE_DATE": {
+     "type": "DATE",
+     "index": 1,
+     "name": "RATE_DATE"
+    },
+    "CURRENCY_CODE": {
+     "type": "VARCHAR",
+     "index": 2,
+     "name": "CURRENCY_CODE"
+    },
+    "RATE_TO_USD": {
+     "type": "NUMBER(18,8)",
+     "index": 3,
+     "name": "RATE_TO_USD"
+    }
+   },
+   "stats": {},
+   "unique_id": "source.helios_analytics.raw.fx_rates"
+  }
+ },
+ "errors": null
+}

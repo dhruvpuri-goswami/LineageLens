@@ -1,0 +1,15 @@
+name: retail_analytics
+version: '1.0.0'
+profile: retail_analytics
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+models:
+  retail_analytics:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+    marts:
+      +schema: gold

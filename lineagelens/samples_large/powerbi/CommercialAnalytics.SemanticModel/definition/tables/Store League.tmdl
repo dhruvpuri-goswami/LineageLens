@@ -1,0 +1,56 @@
+/// Store ranking via native SQL
+table 'Store League'
+	lineageTag: 00005eed-0000-0000-0000-000000000097
+
+	measure 'Best Rank' = MIN('Store League'[Region Rank])
+		formatString: 0
+		lineageTag: 00005eed-0000-0000-0000-000000000098
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000099
+		summarizeBy: none
+		sourceColumn: STORE_KEY
+
+	column 'Store Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000009a
+		summarizeBy: none
+		sourceColumn: STORE_NAME
+
+	column 'Sales Region'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000009b
+		summarizeBy: none
+		sourceColumn: SALES_REGION
+
+	column 'Net Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000009c
+		summarizeBy: sum
+		sourceColumn: NET_REVENUE
+
+	column 'Revenue Per Sq Ft'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000009d
+		summarizeBy: sum
+		sourceColumn: REVENUE_PER_SQ_FT
+
+	column 'Region Rank'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000009e
+		summarizeBy: none
+		sourceColumn: REGION_RANK
+
+	partition 'Store League' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Query = Value.NativeQuery(DB, "select v.store_key, v.store_name, v.sales_region, v.net_revenue, v.revenue_per_sq_ft, v.region_rank#(lf)from HELIOS.REPORTING.VW_STORE_LEAGUE v", null, [EnableFolding=true])
+				in
+				    Query
+
+	annotation PBI_ResultType = Table

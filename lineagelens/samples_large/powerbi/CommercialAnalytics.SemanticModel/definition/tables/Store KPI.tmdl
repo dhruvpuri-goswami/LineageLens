@@ -1,0 +1,56 @@
+/// Daily KPI view
+table 'Store KPI'
+	lineageTag: 00005eed-0000-0000-0000-00000000008f
+
+	measure 'KPI Revenue' = SUM('Store KPI'[Net Revenue])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000090
+
+	measure 'KPI Margin %' = DIVIDE(SUM('Store KPI'[Margin Amount]), [KPI Revenue])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-000000000091
+
+	column 'Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000092
+		summarizeBy: none
+		sourceColumn: Order Date
+
+	column 'Sales Region'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000093
+		summarizeBy: none
+		sourceColumn: Sales Region
+
+	column 'Net Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000094
+		summarizeBy: sum
+		sourceColumn: Net Revenue
+
+	column 'Margin Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000095
+		summarizeBy: sum
+		sourceColumn: Margin Amount
+
+	column 'Order Count'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000096
+		summarizeBy: none
+		sourceColumn: Order Count
+
+	partition 'Store KPI' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="REPORTING", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="VW_SALES_KPI", Kind="View"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"ORDER_DATE", "SALES_REGION", "NET_REVENUE", "MARGIN_AMOUNT", "ORDER_COUNT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"ORDER_DATE", "Order Date"}, {"SALES_REGION", "Sales Region"}, {"NET_REVENUE", "Net Revenue"}, {"MARGIN_AMOUNT", "Margin Amount"}, {"ORDER_COUNT", "Order Count"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "ae18a8df346f79c157",
+  "position": {
+    "x": 860,
+    "y": 20,
+    "z": 2000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sales"
+                    }
+                  },
+                  "Property": "Tax Amount"
+                }
+              },
+              "queryRef": "Sales.Tax Amount",
+              "nativeQueryRef": "Tax Amount"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Web Sessions"
+                    }
+                  },
+                  "Property": "Pages per Session"
+                }
+              },
+              "queryRef": "Web Sessions.Pages per Session",
+              "nativeQueryRef": "Pages per Session"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Web Sessions"
+                    }
+                  },
+                  "Property": "Conversions"
+                }
+              },
+              "queryRef": "Web Sessions.Conversions",
+              "nativeQueryRef": "Conversions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Web Sessions"
+                    }
+                  },
+                  "Property": "Conversion Rate"
+                }
+              },
+              "queryRef": "Web Sessions.Conversion Rate",
+              "nativeQueryRef": "Conversion Rate"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tax Amount'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

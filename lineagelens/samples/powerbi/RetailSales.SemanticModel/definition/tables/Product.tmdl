@@ -1,0 +1,63 @@
+table Product
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000002001
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002101
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'Product Name'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002102
+		summarizeBy: none
+		sourceColumn: Product Name
+
+	column 'Product Category'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002103
+		summarizeBy: none
+		sourceColumn: Product Category
+
+	column 'Product Subcategory'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002104
+		summarizeBy: none
+		sourceColumn: Product Subcategory
+
+	column 'List Price'
+		dataType: decimal
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002105
+		summarizeBy: none
+		sourceColumn: List Price
+
+	column 'Price Band'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002106
+		summarizeBy: none
+		sourceColumn: Price Band
+
+	hierarchy 'Product Hierarchy'
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000002201
+
+		level Category
+			lineageTag: 1d2c3b4a-0000-4000-8000-000000002202
+			column: 'Product Category'
+
+		level Subcategory
+			lineageTag: 1d2c3b4a-0000-4000-8000-000000002203
+			column: 'Product Subcategory'
+
+	partition Product = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse),
+				    ANALYTICS_Database = Source{[Name="ANALYTICS", Kind="Database"]}[Data],
+				    GOLD_Schema = ANALYTICS_Database{[Name="GOLD", Kind="Schema"]}[Data],
+				    DIM_PRODUCT_Table = GOLD_Schema{[Name="DIM_PRODUCT", Kind="Table"]}[Data],
+				    // team naming convention: SNAKE_CASE -> Title Case
+				    #"Proper Names" = Table.TransformColumnNames(DIM_PRODUCT_Table, each Text.Proper(Text.Replace(_, "_", " ")))
+				in
+				    #"Proper Names"

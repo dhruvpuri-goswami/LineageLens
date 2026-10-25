@@ -1,0 +1,63 @@
+table Customer
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000001001
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001101
+		summarizeBy: none
+		sourceColumn: CUSTOMER_KEY
+
+	column 'Customer Name'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001102
+		summarizeBy: none
+		sourceColumn: CUSTOMER_NAME
+
+	column 'Customer Email'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001103
+		summarizeBy: none
+		sourceColumn: CUSTOMER_EMAIL
+
+	column 'Customer Segment'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001104
+		summarizeBy: none
+		sourceColumn: CUSTOMER_SEGMENT
+
+	column 'Customer Tier'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001105
+		summarizeBy: none
+		sourceColumn: CUSTOMER_TIER
+
+	column Country
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001106
+		summarizeBy: none
+		sourceColumn: COUNTRY_NAME
+
+	column 'Customer Since'
+		dataType: dateTime
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001107
+		summarizeBy: none
+		sourceColumn: CUSTOMER_SINCE
+
+	/// Left over from an old CRM feed - no longer exists in Snowflake
+	column 'Loyalty Points'
+		dataType: int64
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000001108
+		summarizeBy: sum
+		sourceColumn: LOYALTY_POINTS
+
+	partition Customer = m
+		mode: directQuery
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse),
+				    ANALYTICS_Database = Source{[Name="ANALYTICS", Kind="Database"]}[Data],
+				    GOLD_Schema = ANALYTICS_Database{[Name="GOLD", Kind="Schema"]}[Data],
+				    DIM_CUSTOMER_Table = GOLD_Schema{[Name="DIM_CUSTOMER", Kind="Table"]}[Data]
+				in
+				    DIM_CUSTOMER_Table

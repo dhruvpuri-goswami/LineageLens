@@ -1,0 +1,2992 @@
+{
+ "metadata": {
+  "dbt_schema_version": "https://schemas.getdbt.com/dbt/manifest/v12.json",
+  "dbt_version": "1.9.4",
+  "generated_at": "2026-10-24T08:00:00.000Z",
+  "invocation_id": "helios-large-sample",
+  "project_name": "helios_analytics",
+  "adapter_type": "snowflake"
+ },
+ "nodes": {
+  "model.helios_analytics.stg_erp_orders": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_erp_orders",
+   "name": "stg_erp_orders",
+   "package_name": "helios_analytics",
+   "alias": "stg_erp_orders",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_erp_orders.sql",
+   "original_file_path": "models/staging/stg_erp_orders.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_erp_orders"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged erp orders",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.erp_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    order_id,\n    customer_id,\n    store_id,\n    upper(channel_code) as channel_code,\n    order_ts::date as order_date,\n    lower(status) as order_status,\n    currency_code,\n    promo_code is not null as has_promo\nfrom {{ source('raw', 'erp_orders') }}\n",
+   "compiled_code": "select\n    order_id,\n    customer_id,\n    store_id,\n    upper(channel_code) as channel_code,\n    order_ts::date as order_date,\n    lower(status) as order_status,\n    currency_code,\n    promo_code is not null as has_promo\nfrom helios.raw.erp_orders\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_ERP_ORDERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_erp_order_lines": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_erp_order_lines",
+   "name": "stg_erp_order_lines",
+   "package_name": "helios_analytics",
+   "alias": "stg_erp_order_lines",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_erp_order_lines.sql",
+   "original_file_path": "models/staging/stg_erp_order_lines.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_erp_order_lines"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged erp order lines",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.erp_order_lines"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    line_id,\n    order_id,\n    product_id,\n    qty as quantity,\n    unit_price,\n    unit_cost,\n    coalesce(discount_pct, 0) as discount_pct,\n    tax_rate\nfrom {{ source('raw', 'erp_order_lines') }}\n",
+   "compiled_code": "select\n    line_id,\n    order_id,\n    product_id,\n    qty as quantity,\n    unit_price,\n    unit_cost,\n    coalesce(discount_pct, 0) as discount_pct,\n    tax_rate\nfrom helios.raw.erp_order_lines\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_ERP_ORDER_LINES",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_crm_customers": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_crm_customers",
+   "name": "stg_crm_customers",
+   "package_name": "helios_analytics",
+   "alias": "stg_crm_customers",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_crm_customers.sql",
+   "original_file_path": "models/staging/stg_crm_customers.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_crm_customers"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged crm customers",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.crm_customers"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    customer_id,\n    initcap(full_name) as customer_name,\n    lower(email) as email,\n    country_code,\n    segment as customer_segment,\n    coalesce(loyalty_tier, 'None') as loyalty_tier,\n    created_at,\n    birth_year\nfrom {{ source('raw', 'crm_customers') }}\n",
+   "compiled_code": "select\n    customer_id,\n    initcap(full_name) as customer_name,\n    lower(email) as email,\n    country_code,\n    segment as customer_segment,\n    coalesce(loyalty_tier, 'None') as loyalty_tier,\n    created_at,\n    birth_year\nfrom helios.raw.crm_customers\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_CRM_CUSTOMERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_pim_products": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_pim_products",
+   "name": "stg_pim_products",
+   "package_name": "helios_analytics",
+   "alias": "stg_pim_products",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_pim_products.sql",
+   "original_file_path": "models/staging/stg_pim_products.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_pim_products"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged pim products",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.pim_products"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    product_id,\n    sku,\n    product_name,\n    brand,\n    category,\n    subcategory,\n    list_price,\n    launch_date\nfrom {{ source('raw', 'pim_products') }}\n",
+   "compiled_code": "select\n    product_id,\n    sku,\n    product_name,\n    brand,\n    category,\n    subcategory,\n    list_price,\n    launch_date\nfrom helios.raw.pim_products\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_PIM_PRODUCTS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_ops_stores": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_ops_stores",
+   "name": "stg_ops_stores",
+   "package_name": "helios_analytics",
+   "alias": "stg_ops_stores",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_ops_stores.sql",
+   "original_file_path": "models/staging/stg_ops_stores.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_ops_stores"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged ops stores",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.ops_stores"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    store_id,\n    store_name,\n    region as sales_region,\n    country_code,\n    store_format,\n    opened_on,\n    lower(manager_email) as manager_email,\n    sq_ft\nfrom {{ source('raw', 'ops_stores') }}\n",
+   "compiled_code": "select\n    store_id,\n    store_name,\n    region as sales_region,\n    country_code,\n    store_format,\n    opened_on,\n    lower(manager_email) as manager_email,\n    sq_ft\nfrom helios.raw.ops_stores\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_OPS_STORES",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_wms_inventory": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_wms_inventory",
+   "name": "stg_wms_inventory",
+   "package_name": "helios_analytics",
+   "alias": "stg_wms_inventory",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_wms_inventory.sql",
+   "original_file_path": "models/staging/stg_wms_inventory.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_wms_inventory"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged wms inventory",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.wms_inventory"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    snapshot_date,\n    store_id,\n    product_id,\n    on_hand_qty,\n    on_order_qty,\n    safety_stock,\n    unit_cost\nfrom {{ source('raw', 'wms_inventory') }}\n",
+   "compiled_code": "select\n    snapshot_date,\n    store_id,\n    product_id,\n    on_hand_qty,\n    on_order_qty,\n    safety_stock,\n    unit_cost\nfrom helios.raw.wms_inventory\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_WMS_INVENTORY",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_scm_purchase_orders": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_scm_purchase_orders",
+   "name": "stg_scm_purchase_orders",
+   "package_name": "helios_analytics",
+   "alias": "stg_scm_purchase_orders",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_scm_purchase_orders.sql",
+   "original_file_path": "models/staging/stg_scm_purchase_orders.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_scm_purchase_orders"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged scm purchase orders",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.scm_purchase_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    po_id,\n    supplier_id,\n    product_id,\n    ordered_qty,\n    coalesce(received_qty, 0) as received_qty,\n    po_date,\n    expected_date,\n    received_date,\n    po_cost\nfrom {{ source('raw', 'scm_purchase_orders') }}\n",
+   "compiled_code": "select\n    po_id,\n    supplier_id,\n    product_id,\n    ordered_qty,\n    coalesce(received_qty, 0) as received_qty,\n    po_date,\n    expected_date,\n    received_date,\n    po_cost\nfrom helios.raw.scm_purchase_orders\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_SCM_PURCHASE_ORDERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_scm_suppliers": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_scm_suppliers",
+   "name": "stg_scm_suppliers",
+   "package_name": "helios_analytics",
+   "alias": "stg_scm_suppliers",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_scm_suppliers.sql",
+   "original_file_path": "models/staging/stg_scm_suppliers.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_scm_suppliers"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged scm suppliers",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.scm_suppliers"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    supplier_id,\n    supplier_name,\n    country_code,\n    rating,\n    lead_time_days\nfrom {{ source('raw', 'scm_suppliers') }}\n",
+   "compiled_code": "select\n    supplier_id,\n    supplier_name,\n    country_code,\n    rating,\n    lead_time_days\nfrom helios.raw.scm_suppliers\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_SCM_SUPPLIERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_fin_gl_entries": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_fin_gl_entries",
+   "name": "stg_fin_gl_entries",
+   "package_name": "helios_analytics",
+   "alias": "stg_fin_gl_entries",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_fin_gl_entries.sql",
+   "original_file_path": "models/staging/stg_fin_gl_entries.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_fin_gl_entries"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged fin gl entries",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.fin_gl_entries"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    entry_id,\n    account_id,\n    cost_center_id,\n    posting_date,\n    amount as amount_local,\n    currency_code,\n    entry_type\nfrom {{ source('raw', 'fin_gl_entries') }}\n",
+   "compiled_code": "select\n    entry_id,\n    account_id,\n    cost_center_id,\n    posting_date,\n    amount as amount_local,\n    currency_code,\n    entry_type\nfrom helios.raw.fin_gl_entries\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_FIN_GL_ENTRIES",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_fin_accounts": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_fin_accounts",
+   "name": "stg_fin_accounts",
+   "package_name": "helios_analytics",
+   "alias": "stg_fin_accounts",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_fin_accounts.sql",
+   "original_file_path": "models/staging/stg_fin_accounts.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_fin_accounts"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged fin accounts",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.fin_accounts"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    account_id,\n    account_name,\n    account_group,\n    pl_line\nfrom {{ source('raw', 'fin_accounts') }}\n",
+   "compiled_code": "select\n    account_id,\n    account_name,\n    account_group,\n    pl_line\nfrom helios.raw.fin_accounts\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_FIN_ACCOUNTS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_fin_budgets": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_fin_budgets",
+   "name": "stg_fin_budgets",
+   "package_name": "helios_analytics",
+   "alias": "stg_fin_budgets",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_fin_budgets.sql",
+   "original_file_path": "models/staging/stg_fin_budgets.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_fin_budgets"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged fin budgets",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.fin_budgets"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    budget_id,\n    cost_center_id,\n    account_id,\n    period_month,\n    budget_amount\nfrom {{ source('raw', 'fin_budgets') }}\n",
+   "compiled_code": "select\n    budget_id,\n    cost_center_id,\n    account_id,\n    period_month,\n    budget_amount\nfrom helios.raw.fin_budgets\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_FIN_BUDGETS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_mkt_campaigns": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_mkt_campaigns",
+   "name": "stg_mkt_campaigns",
+   "package_name": "helios_analytics",
+   "alias": "stg_mkt_campaigns",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_mkt_campaigns.sql",
+   "original_file_path": "models/staging/stg_mkt_campaigns.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_mkt_campaigns"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged mkt campaigns",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.mkt_campaigns"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    campaign_id,\n    campaign_name,\n    channel as marketing_channel,\n    start_date,\n    end_date,\n    spend\nfrom {{ source('raw', 'mkt_campaigns') }}\n",
+   "compiled_code": "select\n    campaign_id,\n    campaign_name,\n    channel as marketing_channel,\n    start_date,\n    end_date,\n    spend\nfrom helios.raw.mkt_campaigns\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_MKT_CAMPAIGNS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_web_sessions": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_web_sessions",
+   "name": "stg_web_sessions",
+   "package_name": "helios_analytics",
+   "alias": "stg_web_sessions",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_web_sessions.sql",
+   "original_file_path": "models/staging/stg_web_sessions.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_web_sessions"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged web sessions",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.web_sessions"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    session_id,\n    customer_id,\n    session_ts::date as session_date,\n    lower(device) as device,\n    page_views,\n    campaign_id,\n    converted as is_converted\nfrom {{ source('raw', 'web_sessions') }}\n",
+   "compiled_code": "select\n    session_id,\n    customer_id,\n    session_ts::date as session_date,\n    lower(device) as device,\n    page_views,\n    campaign_id,\n    converted as is_converted\nfrom helios.raw.web_sessions\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_WEB_SESSIONS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_hr_cost_centers": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_hr_cost_centers",
+   "name": "stg_hr_cost_centers",
+   "package_name": "helios_analytics",
+   "alias": "stg_hr_cost_centers",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_hr_cost_centers.sql",
+   "original_file_path": "models/staging/stg_hr_cost_centers.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_hr_cost_centers"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged hr cost centers",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.hr_cost_centers"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    cost_center_id,\n    cost_center_name,\n    region,\n    lower(owner_email) as owner_email\nfrom {{ source('raw', 'hr_cost_centers') }}\n",
+   "compiled_code": "select\n    cost_center_id,\n    cost_center_name,\n    region,\n    lower(owner_email) as owner_email\nfrom helios.raw.hr_cost_centers\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_HR_COST_CENTERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.stg_fx_rates": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.stg_fx_rates",
+   "name": "stg_fx_rates",
+   "package_name": "helios_analytics",
+   "alias": "stg_fx_rates",
+   "database": "HELIOS",
+   "schema": "STAGING",
+   "path": "staging/stg_fx_rates.sql",
+   "original_file_path": "models/staging/stg_fx_rates.sql",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "stg_fx_rates"
+   ],
+   "config": {
+    "materialized": "view",
+    "enabled": true,
+    "tags": [
+     "staging"
+    ]
+   },
+   "tags": [
+    "staging"
+   ],
+   "description": "Staged fx rates",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "source.helios_analytics.raw.fx_rates"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    rate_date,\n    currency_code,\n    rate_to_usd\nfrom {{ source('raw', 'fx_rates') }}\n",
+   "compiled_code": "select\n    rate_date,\n    currency_code,\n    rate_to_usd\nfrom helios.raw.fx_rates\n",
+   "compiled": true,
+   "relation_name": "HELIOS.STAGING.STG_FX_RATES",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_order_lines_enriched": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_order_lines_enriched",
+   "name": "int_order_lines_enriched",
+   "package_name": "helios_analytics",
+   "alias": "int_order_lines_enriched",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_order_lines_enriched.sql",
+   "original_file_path": "models/intermediate/int_order_lines_enriched.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_order_lines_enriched"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Order lines joined to headers, converted to USD",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_erp_order_lines",
+     "model.helios_analytics.stg_erp_orders",
+     "model.helios_analytics.stg_fx_rates"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    l.line_id,\n    l.order_id,\n    o.customer_id,\n    o.store_id,\n    l.product_id,\n    o.channel_code,\n    o.order_date,\n    o.order_status,\n    o.has_promo,\n    l.quantity,\n    l.quantity * l.unit_price * fx.rate_to_usd as gross_revenue,\n    l.quantity * l.unit_price * (1 - l.discount_pct) * fx.rate_to_usd as net_revenue,\n    l.quantity * l.unit_cost * fx.rate_to_usd as cost_amount,\n    l.quantity * l.unit_price * l.discount_pct * fx.rate_to_usd as discount_amount,\n    l.quantity * l.unit_price * (1 - l.discount_pct) * l.tax_rate * fx.rate_to_usd as tax_amount\nfrom {{ ref('stg_erp_order_lines') }} l\njoin {{ ref('stg_erp_orders') }} o on l.order_id = o.order_id\njoin {{ ref('stg_fx_rates') }} fx on fx.currency_code = o.currency_code and fx.rate_date = o.order_date\nwhere o.order_status <> 'cancelled'\n",
+   "compiled_code": "select\n    l.line_id,\n    l.order_id,\n    o.customer_id,\n    o.store_id,\n    l.product_id,\n    o.channel_code,\n    o.order_date,\n    o.order_status,\n    o.has_promo,\n    l.quantity,\n    l.quantity * l.unit_price * fx.rate_to_usd as gross_revenue,\n    l.quantity * l.unit_price * (1 - l.discount_pct) * fx.rate_to_usd as net_revenue,\n    l.quantity * l.unit_cost * fx.rate_to_usd as cost_amount,\n    l.quantity * l.unit_price * l.discount_pct * fx.rate_to_usd as discount_amount,\n    l.quantity * l.unit_price * (1 - l.discount_pct) * l.tax_rate * fx.rate_to_usd as tax_amount\nfrom helios.staging.stg_erp_order_lines l\njoin helios.staging.stg_erp_orders o on l.order_id = o.order_id\njoin helios.staging.stg_fx_rates fx on fx.currency_code = o.currency_code and fx.rate_date = o.order_date\nwhere o.order_status <> 'cancelled'\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_ORDER_LINES_ENRICHED",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_customer_orders": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_customer_orders",
+   "name": "int_customer_orders",
+   "package_name": "helios_analytics",
+   "alias": "int_customer_orders",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_customer_orders.sql",
+   "original_file_path": "models/intermediate/int_customer_orders.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_customer_orders"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Per-customer order history",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_order_lines_enriched"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    customer_id,\n    min(order_date) as first_order_date,\n    max(order_date) as last_order_date,\n    count(distinct order_id) as lifetime_orders,\n    sum(net_revenue) as lifetime_revenue,\n    sum(net_revenue - cost_amount) as lifetime_margin\nfrom {{ ref('int_order_lines_enriched') }}\ngroup by customer_id\n",
+   "compiled_code": "select\n    customer_id,\n    min(order_date) as first_order_date,\n    max(order_date) as last_order_date,\n    count(distinct order_id) as lifetime_orders,\n    sum(net_revenue) as lifetime_revenue,\n    sum(net_revenue - cost_amount) as lifetime_margin\nfrom helios.intermediate.int_order_lines_enriched\ngroup by customer_id\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_CUSTOMER_ORDERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_inventory_daily": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_inventory_daily",
+   "name": "int_inventory_daily",
+   "package_name": "helios_analytics",
+   "alias": "int_inventory_daily",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_inventory_daily.sql",
+   "original_file_path": "models/intermediate/int_inventory_daily.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_inventory_daily"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Daily inventory with stock value",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_wms_inventory"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    i.snapshot_date,\n    i.store_id,\n    i.product_id,\n    i.on_hand_qty,\n    i.on_order_qty,\n    i.safety_stock,\n    i.on_hand_qty * i.unit_cost as stock_value,\n    case when i.on_hand_qty < i.safety_stock then 1 else 0 end as is_below_safety\nfrom {{ ref('stg_wms_inventory') }} i\n",
+   "compiled_code": "select\n    i.snapshot_date,\n    i.store_id,\n    i.product_id,\n    i.on_hand_qty,\n    i.on_order_qty,\n    i.safety_stock,\n    i.on_hand_qty * i.unit_cost as stock_value,\n    case when i.on_hand_qty < i.safety_stock then 1 else 0 end as is_below_safety\nfrom helios.staging.stg_wms_inventory i\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_INVENTORY_DAILY",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_po_receipts": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_po_receipts",
+   "name": "int_po_receipts",
+   "package_name": "helios_analytics",
+   "alias": "int_po_receipts",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_po_receipts.sql",
+   "original_file_path": "models/intermediate/int_po_receipts.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_po_receipts"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Purchase orders with lead-time and fill-rate",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_scm_purchase_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    po.po_id,\n    po.supplier_id,\n    po.product_id,\n    po.po_date,\n    po.ordered_qty,\n    po.received_qty,\n    po.po_cost,\n    datediff('day', po.po_date, po.received_date) as actual_lead_days,\n    datediff('day', po.expected_date, po.received_date) as days_late,\n    po.received_qty / nullif(po.ordered_qty, 0) as fill_rate\nfrom {{ ref('stg_scm_purchase_orders') }} po\n",
+   "compiled_code": "select\n    po.po_id,\n    po.supplier_id,\n    po.product_id,\n    po.po_date,\n    po.ordered_qty,\n    po.received_qty,\n    po.po_cost,\n    datediff('day', po.po_date, po.received_date) as actual_lead_days,\n    datediff('day', po.expected_date, po.received_date) as days_late,\n    po.received_qty / nullif(po.ordered_qty, 0) as fill_rate\nfrom helios.staging.stg_scm_purchase_orders po\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_PO_RECEIPTS",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_gl_usd": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_gl_usd",
+   "name": "int_gl_usd",
+   "package_name": "helios_analytics",
+   "alias": "int_gl_usd",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_gl_usd.sql",
+   "original_file_path": "models/intermediate/int_gl_usd.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_gl_usd"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "GL entries converted to USD",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_fin_gl_entries",
+     "model.helios_analytics.stg_fx_rates"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    g.entry_id,\n    g.account_id,\n    g.cost_center_id,\n    g.posting_date,\n    g.entry_type,\n    g.amount_local * fx.rate_to_usd as amount_usd\nfrom {{ ref('stg_fin_gl_entries') }} g\njoin {{ ref('stg_fx_rates') }} fx on fx.currency_code = g.currency_code and fx.rate_date = g.posting_date\n",
+   "compiled_code": "select\n    g.entry_id,\n    g.account_id,\n    g.cost_center_id,\n    g.posting_date,\n    g.entry_type,\n    g.amount_local * fx.rate_to_usd as amount_usd\nfrom helios.staging.stg_fin_gl_entries g\njoin helios.staging.stg_fx_rates fx on fx.currency_code = g.currency_code and fx.rate_date = g.posting_date\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_GL_USD",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_budget_monthly": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_budget_monthly",
+   "name": "int_budget_monthly",
+   "package_name": "helios_analytics",
+   "alias": "int_budget_monthly",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_budget_monthly.sql",
+   "original_file_path": "models/intermediate/int_budget_monthly.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_budget_monthly"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Monthly budget by account and cost centre",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_fin_budgets"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    b.period_month,\n    b.cost_center_id,\n    b.account_id,\n    sum(b.budget_amount) as budget_amount\nfrom {{ ref('stg_fin_budgets') }} b\ngroup by b.period_month, b.cost_center_id, b.account_id\n",
+   "compiled_code": "select\n    b.period_month,\n    b.cost_center_id,\n    b.account_id,\n    sum(b.budget_amount) as budget_amount\nfrom helios.staging.stg_fin_budgets b\ngroup by b.period_month, b.cost_center_id, b.account_id\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_BUDGET_MONTHLY",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_sessions_attributed": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_sessions_attributed",
+   "name": "int_sessions_attributed",
+   "package_name": "helios_analytics",
+   "alias": "int_sessions_attributed",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_sessions_attributed.sql",
+   "original_file_path": "models/intermediate/int_sessions_attributed.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_sessions_attributed"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Web sessions with campaign attribution",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_web_sessions",
+     "model.helios_analytics.stg_mkt_campaigns"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.session_id,\n    s.customer_id,\n    s.session_date,\n    s.device,\n    s.page_views,\n    s.is_converted,\n    c.campaign_id,\n    c.marketing_channel\nfrom {{ ref('stg_web_sessions') }} s\nleft join {{ ref('stg_mkt_campaigns') }} c on s.campaign_id = c.campaign_id\n",
+   "compiled_code": "select\n    s.session_id,\n    s.customer_id,\n    s.session_date,\n    s.device,\n    s.page_views,\n    s.is_converted,\n    c.campaign_id,\n    c.marketing_channel\nfrom helios.staging.stg_web_sessions s\nleft join helios.staging.stg_mkt_campaigns c on s.campaign_id = c.campaign_id\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_SESSIONS_ATTRIBUTED",
+   "language": "sql"
+  },
+  "model.helios_analytics.int_product_margin": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.int_product_margin",
+   "name": "int_product_margin",
+   "package_name": "helios_analytics",
+   "alias": "int_product_margin",
+   "database": "HELIOS",
+   "schema": "INTERMEDIATE",
+   "path": "intermediate/int_product_margin.sql",
+   "original_file_path": "models/intermediate/int_product_margin.sql",
+   "fqn": [
+    "helios_analytics",
+    "intermediate",
+    "int_product_margin"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "intermediate"
+    ]
+   },
+   "tags": [
+    "intermediate"
+   ],
+   "description": "Product level revenue and margin",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_order_lines_enriched"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    product_id,\n    sum(quantity) as units_sold,\n    sum(net_revenue) as net_revenue,\n    sum(net_revenue - cost_amount) as margin_amount\nfrom {{ ref('int_order_lines_enriched') }}\ngroup by product_id\n",
+   "compiled_code": "select\n    product_id,\n    sum(quantity) as units_sold,\n    sum(net_revenue) as net_revenue,\n    sum(net_revenue - cost_amount) as margin_amount\nfrom helios.intermediate.int_order_lines_enriched\ngroup by product_id\n",
+   "compiled": true,
+   "relation_name": "HELIOS.INTERMEDIATE.INT_PRODUCT_MARGIN",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_customer": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_customer",
+   "name": "dim_customer",
+   "package_name": "helios_analytics",
+   "alias": "dim_customer",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_customer.sql",
+   "original_file_path": "models/marts/dim_customer.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_customer"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Customer dimension",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_crm_customers",
+     "model.helios_analytics.int_customer_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    c.customer_id as customer_key,\n    c.customer_name,\n    c.email as customer_email,\n    c.country_code,\n    c.customer_segment,\n    c.loyalty_tier,\n    c.created_at as customer_since,\n    year(current_date) - c.birth_year as customer_age,\n    case when co.lifetime_revenue > 5000 then 'Gold' when co.lifetime_revenue > 1000 then 'Silver' else 'Bronze' end as value_tier,\n    co.first_order_date\nfrom {{ ref('stg_crm_customers') }} c\nleft join {{ ref('int_customer_orders') }} co on c.customer_id = co.customer_id\n",
+   "compiled_code": "select\n    c.customer_id as customer_key,\n    c.customer_name,\n    c.email as customer_email,\n    c.country_code,\n    c.customer_segment,\n    c.loyalty_tier,\n    c.created_at as customer_since,\n    year(current_date) - c.birth_year as customer_age,\n    case when co.lifetime_revenue > 5000 then 'Gold' when co.lifetime_revenue > 1000 then 'Silver' else 'Bronze' end as value_tier,\n    co.first_order_date\nfrom helios.staging.stg_crm_customers c\nleft join helios.intermediate.int_customer_orders co on c.customer_id = co.customer_id\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_CUSTOMER",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_product": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_product",
+   "name": "dim_product",
+   "package_name": "helios_analytics",
+   "alias": "dim_product",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_product.sql",
+   "original_file_path": "models/marts/dim_product.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_product"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Product dimension",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_pim_products"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    p.product_id as product_key,\n    p.sku,\n    p.product_name,\n    p.brand,\n    p.category as product_category,\n    p.subcategory as product_subcategory,\n    p.list_price,\n    case when p.list_price >= 200 then 'Premium' when p.list_price >= 50 then 'Core' else 'Value' end as price_band,\n    p.launch_date\nfrom {{ ref('stg_pim_products') }} p\n",
+   "compiled_code": "select\n    p.product_id as product_key,\n    p.sku,\n    p.product_name,\n    p.brand,\n    p.category as product_category,\n    p.subcategory as product_subcategory,\n    p.list_price,\n    case when p.list_price >= 200 then 'Premium' when p.list_price >= 50 then 'Core' else 'Value' end as price_band,\n    p.launch_date\nfrom helios.staging.stg_pim_products p\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_PRODUCT",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_store": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_store",
+   "name": "dim_store",
+   "package_name": "helios_analytics",
+   "alias": "dim_store",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_store.sql",
+   "original_file_path": "models/marts/dim_store.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_store"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Store dimension",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_ops_stores"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.store_id as store_key,\n    s.store_name,\n    s.sales_region,\n    s.country_code,\n    s.store_format,\n    s.opened_on,\n    s.manager_email,\n    s.sq_ft\nfrom {{ ref('stg_ops_stores') }} s\n",
+   "compiled_code": "select\n    s.store_id as store_key,\n    s.store_name,\n    s.sales_region,\n    s.country_code,\n    s.store_format,\n    s.opened_on,\n    s.manager_email,\n    s.sq_ft\nfrom helios.staging.stg_ops_stores s\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_STORE",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_date": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_date",
+   "name": "dim_date",
+   "package_name": "helios_analytics",
+   "alias": "dim_date",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_date.sql",
+   "original_file_path": "models/marts/dim_date.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_date"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Calendar",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_fx_rates"
+    ],
+    "macros": []
+   },
+   "raw_code": "select distinct\n    f.rate_date as date_day,\n    year(f.rate_date) as calendar_year,\n    quarter(f.rate_date) as calendar_quarter,\n    month(f.rate_date) as calendar_month,\n    to_char(f.rate_date, 'MON') as month_name,\n    dayofweek(f.rate_date) as day_of_week\nfrom {{ ref('stg_fx_rates') }} f\n",
+   "compiled_code": "select distinct\n    f.rate_date as date_day,\n    year(f.rate_date) as calendar_year,\n    quarter(f.rate_date) as calendar_quarter,\n    month(f.rate_date) as calendar_month,\n    to_char(f.rate_date, 'MON') as month_name,\n    dayofweek(f.rate_date) as day_of_week\nfrom helios.staging.stg_fx_rates f\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_DATE",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_supplier": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_supplier",
+   "name": "dim_supplier",
+   "package_name": "helios_analytics",
+   "alias": "dim_supplier",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_supplier.sql",
+   "original_file_path": "models/marts/dim_supplier.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_supplier"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Supplier dimension",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_scm_suppliers"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.supplier_id as supplier_key,\n    s.supplier_name,\n    s.country_code as supplier_country,\n    s.rating as supplier_rating,\n    s.lead_time_days as contracted_lead_days\nfrom {{ ref('stg_scm_suppliers') }} s\n",
+   "compiled_code": "select\n    s.supplier_id as supplier_key,\n    s.supplier_name,\n    s.country_code as supplier_country,\n    s.rating as supplier_rating,\n    s.lead_time_days as contracted_lead_days\nfrom helios.staging.stg_scm_suppliers s\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_SUPPLIER",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_account": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_account",
+   "name": "dim_account",
+   "package_name": "helios_analytics",
+   "alias": "dim_account",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_account.sql",
+   "original_file_path": "models/marts/dim_account.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_account"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Chart of accounts",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_fin_accounts"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    a.account_id as account_key,\n    a.account_name,\n    a.account_group,\n    a.pl_line\nfrom {{ ref('stg_fin_accounts') }} a\n",
+   "compiled_code": "select\n    a.account_id as account_key,\n    a.account_name,\n    a.account_group,\n    a.pl_line\nfrom helios.staging.stg_fin_accounts a\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_ACCOUNT",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_cost_center": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_cost_center",
+   "name": "dim_cost_center",
+   "package_name": "helios_analytics",
+   "alias": "dim_cost_center",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_cost_center.sql",
+   "original_file_path": "models/marts/dim_cost_center.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_cost_center"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Cost centres",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_hr_cost_centers"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    c.cost_center_id as cost_center_key,\n    c.cost_center_name,\n    c.region as cost_center_region,\n    c.owner_email\nfrom {{ ref('stg_hr_cost_centers') }} c\n",
+   "compiled_code": "select\n    c.cost_center_id as cost_center_key,\n    c.cost_center_name,\n    c.region as cost_center_region,\n    c.owner_email\nfrom helios.staging.stg_hr_cost_centers c\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_COST_CENTER",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_campaign": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_campaign",
+   "name": "dim_campaign",
+   "package_name": "helios_analytics",
+   "alias": "dim_campaign",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_campaign.sql",
+   "original_file_path": "models/marts/dim_campaign.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_campaign"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Marketing campaigns",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_mkt_campaigns"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    c.campaign_id as campaign_key,\n    c.campaign_name,\n    c.marketing_channel,\n    c.start_date as campaign_start,\n    c.end_date as campaign_end,\n    c.spend as campaign_spend\nfrom {{ ref('stg_mkt_campaigns') }} c\n",
+   "compiled_code": "select\n    c.campaign_id as campaign_key,\n    c.campaign_name,\n    c.marketing_channel,\n    c.start_date as campaign_start,\n    c.end_date as campaign_end,\n    c.spend as campaign_spend\nfrom helios.staging.stg_mkt_campaigns c\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_CAMPAIGN",
+   "language": "sql"
+  },
+  "model.helios_analytics.dim_channel": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.dim_channel",
+   "name": "dim_channel",
+   "package_name": "helios_analytics",
+   "alias": "dim_channel",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/dim_channel.sql",
+   "original_file_path": "models/marts/dim_channel.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "dim_channel"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Sales channels",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.stg_erp_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select distinct\n    o.channel_code as channel_key,\n    case o.channel_code when 'WEB' then 'Online' when 'APP' then 'Mobile app' else 'Store' end as channel_name\nfrom {{ ref('stg_erp_orders') }} o\n",
+   "compiled_code": "select distinct\n    o.channel_code as channel_key,\n    case o.channel_code when 'WEB' then 'Online' when 'APP' then 'Mobile app' else 'Store' end as channel_name\nfrom helios.staging.stg_erp_orders o\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.DIM_CHANNEL",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_sales_lines": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_sales_lines",
+   "name": "fct_sales_lines",
+   "package_name": "helios_analytics",
+   "alias": "fct_sales_lines",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_sales_lines.sql",
+   "original_file_path": "models/marts/fct_sales_lines.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_sales_lines"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Sales at order-line grain (gold)",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_order_lines_enriched"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    l.line_id as sales_line_key,\n    l.order_id,\n    l.customer_id as customer_key,\n    l.product_id as product_key,\n    l.store_id as store_key,\n    l.channel_code as channel_key,\n    l.order_date,\n    l.quantity,\n    l.gross_revenue,\n    l.net_revenue,\n    l.cost_amount,\n    l.net_revenue - l.cost_amount as margin_amount,\n    l.discount_amount,\n    l.tax_amount,\n    case when l.discount_amount > 0.2 * l.gross_revenue then 'High' when l.discount_amount > 0 then 'Low' else 'None' end as discount_band,\n    l.has_promo as is_promo\nfrom {{ ref('int_order_lines_enriched') }} l\n",
+   "compiled_code": "select\n    l.line_id as sales_line_key,\n    l.order_id,\n    l.customer_id as customer_key,\n    l.product_id as product_key,\n    l.store_id as store_key,\n    l.channel_code as channel_key,\n    l.order_date,\n    l.quantity,\n    l.gross_revenue,\n    l.net_revenue,\n    l.cost_amount,\n    l.net_revenue - l.cost_amount as margin_amount,\n    l.discount_amount,\n    l.tax_amount,\n    case when l.discount_amount > 0.2 * l.gross_revenue then 'High' when l.discount_amount > 0 then 'Low' else 'None' end as discount_band,\n    l.has_promo as is_promo\nfrom helios.intermediate.int_order_lines_enriched l\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_SALES_LINES",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_orders": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_orders",
+   "name": "fct_orders",
+   "package_name": "helios_analytics",
+   "alias": "fct_orders",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_orders.sql",
+   "original_file_path": "models/marts/fct_orders.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_orders"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Order header facts",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_order_lines_enriched"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    l.order_id as order_key,\n    l.customer_id as customer_key,\n    l.store_id as store_key,\n    l.channel_code as channel_key,\n    l.order_date,\n    count(*) as line_count,\n    sum(l.quantity) as units,\n    sum(l.net_revenue) as order_revenue,\n    sum(l.net_revenue - l.cost_amount) as order_margin\nfrom {{ ref('int_order_lines_enriched') }} l\ngroup by l.order_id, l.customer_id, l.store_id, l.channel_code, l.order_date\n",
+   "compiled_code": "select\n    l.order_id as order_key,\n    l.customer_id as customer_key,\n    l.store_id as store_key,\n    l.channel_code as channel_key,\n    l.order_date,\n    count(*) as line_count,\n    sum(l.quantity) as units,\n    sum(l.net_revenue) as order_revenue,\n    sum(l.net_revenue - l.cost_amount) as order_margin\nfrom helios.intermediate.int_order_lines_enriched l\ngroup by l.order_id, l.customer_id, l.store_id, l.channel_code, l.order_date\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_ORDERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_daily_sales": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_daily_sales",
+   "name": "fct_daily_sales",
+   "package_name": "helios_analytics",
+   "alias": "fct_daily_sales",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_daily_sales.sql",
+   "original_file_path": "models/marts/fct_daily_sales.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_daily_sales"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Daily sales by store",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.fct_sales_lines"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.order_date,\n    s.store_key,\n    sum(s.net_revenue) as net_revenue,\n    sum(s.margin_amount) as margin_amount,\n    sum(s.quantity) as units,\n    count(distinct s.order_id) as order_count\nfrom {{ ref('fct_sales_lines') }} s\ngroup by s.order_date, s.store_key\n",
+   "compiled_code": "select\n    s.order_date,\n    s.store_key,\n    sum(s.net_revenue) as net_revenue,\n    sum(s.margin_amount) as margin_amount,\n    sum(s.quantity) as units,\n    count(distinct s.order_id) as order_count\nfrom helios.gold.fct_sales_lines s\ngroup by s.order_date, s.store_key\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_DAILY_SALES",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_inventory_snapshot": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_inventory_snapshot",
+   "name": "fct_inventory_snapshot",
+   "package_name": "helios_analytics",
+   "alias": "fct_inventory_snapshot",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_inventory_snapshot.sql",
+   "original_file_path": "models/marts/fct_inventory_snapshot.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_inventory_snapshot"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Inventory snapshot (gold)",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_inventory_daily"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    i.snapshot_date,\n    i.store_id as store_key,\n    i.product_id as product_key,\n    i.on_hand_qty,\n    i.on_order_qty,\n    i.safety_stock,\n    i.stock_value,\n    i.is_below_safety\nfrom {{ ref('int_inventory_daily') }} i\n",
+   "compiled_code": "select\n    i.snapshot_date,\n    i.store_id as store_key,\n    i.product_id as product_key,\n    i.on_hand_qty,\n    i.on_order_qty,\n    i.safety_stock,\n    i.stock_value,\n    i.is_below_safety\nfrom helios.intermediate.int_inventory_daily i\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_INVENTORY_SNAPSHOT",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_purchase_orders": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_purchase_orders",
+   "name": "fct_purchase_orders",
+   "package_name": "helios_analytics",
+   "alias": "fct_purchase_orders",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_purchase_orders.sql",
+   "original_file_path": "models/marts/fct_purchase_orders.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_purchase_orders"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Purchase order facts",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_po_receipts"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    r.po_id as po_key,\n    r.supplier_id as supplier_key,\n    r.product_id as product_key,\n    r.po_date,\n    r.ordered_qty,\n    r.received_qty,\n    r.po_cost,\n    r.actual_lead_days,\n    r.days_late,\n    r.fill_rate\nfrom {{ ref('int_po_receipts') }} r\n",
+   "compiled_code": "select\n    r.po_id as po_key,\n    r.supplier_id as supplier_key,\n    r.product_id as product_key,\n    r.po_date,\n    r.ordered_qty,\n    r.received_qty,\n    r.po_cost,\n    r.actual_lead_days,\n    r.days_late,\n    r.fill_rate\nfrom helios.intermediate.int_po_receipts r\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_PURCHASE_ORDERS",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_gl": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_gl",
+   "name": "fct_gl",
+   "package_name": "helios_analytics",
+   "alias": "fct_gl",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_gl.sql",
+   "original_file_path": "models/marts/fct_gl.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_gl"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "General ledger facts (USD)",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_gl_usd"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    g.entry_id as gl_key,\n    g.account_id as account_key,\n    g.cost_center_id as cost_center_key,\n    g.posting_date,\n    g.entry_type,\n    g.amount_usd\nfrom {{ ref('int_gl_usd') }} g\n",
+   "compiled_code": "select\n    g.entry_id as gl_key,\n    g.account_id as account_key,\n    g.cost_center_id as cost_center_key,\n    g.posting_date,\n    g.entry_type,\n    g.amount_usd\nfrom helios.intermediate.int_gl_usd g\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_GL",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_budget": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_budget",
+   "name": "fct_budget",
+   "package_name": "helios_analytics",
+   "alias": "fct_budget",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_budget.sql",
+   "original_file_path": "models/marts/fct_budget.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_budget"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Budget facts",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_budget_monthly"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    b.period_month,\n    b.cost_center_id as cost_center_key,\n    b.account_id as account_key,\n    b.budget_amount\nfrom {{ ref('int_budget_monthly') }} b\n",
+   "compiled_code": "select\n    b.period_month,\n    b.cost_center_id as cost_center_key,\n    b.account_id as account_key,\n    b.budget_amount\nfrom helios.intermediate.int_budget_monthly b\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_BUDGET",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_web_sessions": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_web_sessions",
+   "name": "fct_web_sessions",
+   "package_name": "helios_analytics",
+   "alias": "fct_web_sessions",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_web_sessions.sql",
+   "original_file_path": "models/marts/fct_web_sessions.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_web_sessions"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Web sessions (gold)",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_sessions_attributed"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.session_id as session_key,\n    s.customer_id as customer_key,\n    s.campaign_id as campaign_key,\n    s.session_date,\n    s.device,\n    s.page_views,\n    case when s.is_converted then 1 else 0 end as conversions\nfrom {{ ref('int_sessions_attributed') }} s\n",
+   "compiled_code": "select\n    s.session_id as session_key,\n    s.customer_id as customer_key,\n    s.campaign_id as campaign_key,\n    s.session_date,\n    s.device,\n    s.page_views,\n    case when s.is_converted then 1 else 0 end as conversions\nfrom helios.intermediate.int_sessions_attributed s\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_WEB_SESSIONS",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_campaign_performance": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_campaign_performance",
+   "name": "fct_campaign_performance",
+   "package_name": "helios_analytics",
+   "alias": "fct_campaign_performance",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_campaign_performance.sql",
+   "original_file_path": "models/marts/fct_campaign_performance.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_campaign_performance"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Campaign spend vs. attributed revenue",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.dim_campaign",
+     "model.helios_analytics.fct_web_sessions",
+     "model.helios_analytics.fct_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    c.campaign_key,\n    c.campaign_spend,\n    count(distinct w.session_key) as sessions,\n    sum(w.conversions) as conversions,\n    sum(o.order_revenue) as attributed_revenue\nfrom {{ ref('dim_campaign') }} c\nleft join {{ ref('fct_web_sessions') }} w on w.campaign_key = c.campaign_key\nleft join {{ ref('fct_orders') }} o on o.customer_key = w.customer_key and o.order_date = w.session_date\ngroup by c.campaign_key, c.campaign_spend\n",
+   "compiled_code": "select\n    c.campaign_key,\n    c.campaign_spend,\n    count(distinct w.session_key) as sessions,\n    sum(w.conversions) as conversions,\n    sum(o.order_revenue) as attributed_revenue\nfrom helios.gold.dim_campaign c\nleft join helios.gold.fct_web_sessions w on w.campaign_key = c.campaign_key\nleft join helios.gold.fct_orders o on o.customer_key = w.customer_key and o.order_date = w.session_date\ngroup by c.campaign_key, c.campaign_spend\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_CAMPAIGN_PERFORMANCE",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_customer_ltv": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_customer_ltv",
+   "name": "fct_customer_ltv",
+   "package_name": "helios_analytics",
+   "alias": "fct_customer_ltv",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_customer_ltv.sql",
+   "original_file_path": "models/marts/fct_customer_ltv.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_customer_ltv"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Customer lifetime value",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_customer_orders"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    co.customer_id as customer_key,\n    co.first_order_date,\n    co.last_order_date,\n    co.lifetime_orders,\n    co.lifetime_revenue,\n    co.lifetime_margin,\n    co.lifetime_revenue / nullif(co.lifetime_orders, 0) as avg_order_value,\n    datediff('day', co.last_order_date, current_date) as days_since_last_order\nfrom {{ ref('int_customer_orders') }} co\n",
+   "compiled_code": "select\n    co.customer_id as customer_key,\n    co.first_order_date,\n    co.last_order_date,\n    co.lifetime_orders,\n    co.lifetime_revenue,\n    co.lifetime_margin,\n    co.lifetime_revenue / nullif(co.lifetime_orders, 0) as avg_order_value,\n    datediff('day', co.last_order_date, current_date) as days_since_last_order\nfrom helios.intermediate.int_customer_orders co\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_CUSTOMER_LTV",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_product_performance": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_product_performance",
+   "name": "fct_product_performance",
+   "package_name": "helios_analytics",
+   "alias": "fct_product_performance",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_product_performance.sql",
+   "original_file_path": "models/marts/fct_product_performance.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_product_performance"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Product performance",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_product_margin"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    pm.product_id as product_key,\n    pm.units_sold,\n    pm.net_revenue,\n    pm.margin_amount,\n    pm.margin_amount / nullif(pm.net_revenue, 0) as margin_pct\nfrom {{ ref('int_product_margin') }} pm\n",
+   "compiled_code": "select\n    pm.product_id as product_key,\n    pm.units_sold,\n    pm.net_revenue,\n    pm.margin_amount,\n    pm.margin_amount / nullif(pm.net_revenue, 0) as margin_pct\nfrom helios.intermediate.int_product_margin pm\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_PRODUCT_PERFORMANCE",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_store_performance": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_store_performance",
+   "name": "fct_store_performance",
+   "package_name": "helios_analytics",
+   "alias": "fct_store_performance",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_store_performance.sql",
+   "original_file_path": "models/marts/fct_store_performance.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_store_performance"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Store performance",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.fct_daily_sales",
+     "model.helios_analytics.dim_store"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    d.store_key,\n    sum(d.net_revenue) as net_revenue,\n    sum(d.margin_amount) as margin_amount,\n    sum(d.order_count) as order_count,\n    sum(d.net_revenue) / nullif(max(st.sq_ft), 0) as revenue_per_sq_ft\nfrom {{ ref('fct_daily_sales') }} d\njoin {{ ref('dim_store') }} st on st.store_key = d.store_key\ngroup by d.store_key\n",
+   "compiled_code": "select\n    d.store_key,\n    sum(d.net_revenue) as net_revenue,\n    sum(d.margin_amount) as margin_amount,\n    sum(d.order_count) as order_count,\n    sum(d.net_revenue) / nullif(max(st.sq_ft), 0) as revenue_per_sq_ft\nfrom helios.gold.fct_daily_sales d\njoin helios.gold.dim_store st on st.store_key = d.store_key\ngroup by d.store_key\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_STORE_PERFORMANCE",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_margin_bridge": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_margin_bridge",
+   "name": "fct_margin_bridge",
+   "package_name": "helios_analytics",
+   "alias": "fct_margin_bridge",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_margin_bridge.sql",
+   "original_file_path": "models/marts/fct_margin_bridge.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_margin_bridge"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Revenue to margin bridge",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.fct_sales_lines"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    s.order_date,\n    sum(s.gross_revenue) as gross_revenue,\n    sum(s.discount_amount) as discount_amount,\n    sum(s.net_revenue) as net_revenue,\n    sum(s.cost_amount) as cost_amount,\n    sum(s.margin_amount) as margin_amount\nfrom {{ ref('fct_sales_lines') }} s\ngroup by s.order_date\n",
+   "compiled_code": "select\n    s.order_date,\n    sum(s.gross_revenue) as gross_revenue,\n    sum(s.discount_amount) as discount_amount,\n    sum(s.net_revenue) as net_revenue,\n    sum(s.cost_amount) as cost_amount,\n    sum(s.margin_amount) as margin_amount\nfrom helios.gold.fct_sales_lines s\ngroup by s.order_date\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_MARGIN_BRIDGE",
+   "language": "sql"
+  },
+  "model.helios_analytics.fct_returns": {
+   "resource_type": "model",
+   "unique_id": "model.helios_analytics.fct_returns",
+   "name": "fct_returns",
+   "package_name": "helios_analytics",
+   "alias": "fct_returns",
+   "database": "HELIOS",
+   "schema": "GOLD",
+   "path": "marts/fct_returns.sql",
+   "original_file_path": "models/marts/fct_returns.sql",
+   "fqn": [
+    "helios_analytics",
+    "marts",
+    "fct_returns"
+   ],
+   "config": {
+    "materialized": "table",
+    "enabled": true,
+    "tags": [
+     "marts"
+    ]
+   },
+   "tags": [
+    "marts"
+   ],
+   "description": "Returns (orders in returned status)",
+   "columns": {},
+   "depends_on": {
+    "nodes": [
+     "model.helios_analytics.int_order_lines_enriched"
+    ],
+    "macros": []
+   },
+   "raw_code": "select\n    l.line_id as return_key,\n    l.product_id as product_key,\n    l.store_id as store_key,\n    l.order_date as return_date,\n    l.quantity as returned_units,\n    l.net_revenue as refund_amount\nfrom {{ ref('int_order_lines_enriched') }} l\nwhere l.order_status = 'returned'\n",
+   "compiled_code": "select\n    l.line_id as return_key,\n    l.product_id as product_key,\n    l.store_id as store_key,\n    l.order_date as return_date,\n    l.quantity as returned_units,\n    l.net_revenue as refund_amount\nfrom helios.intermediate.int_order_lines_enriched l\nwhere l.order_status = 'returned'\n",
+   "compiled": true,
+   "relation_name": "HELIOS.GOLD.FCT_RETURNS",
+   "language": "sql"
+  }
+ },
+ "sources": {
+  "source.helios_analytics.raw.erp_orders": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.erp_orders",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "erp_orders",
+   "identifier": "ERP_ORDERS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "erp_orders"
+   ],
+   "description": "Raw erp orders (synthetic)",
+   "relation_name": "HELIOS.RAW.ERP_ORDERS",
+   "columns": {
+    "order_id": {
+     "name": "order_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "customer_id": {
+     "name": "customer_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "store_id": {
+     "name": "store_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "channel_code": {
+     "name": "channel_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "order_ts": {
+     "name": "order_ts",
+     "description": "",
+     "data_type": "TIMESTAMP_NTZ"
+    },
+    "status": {
+     "name": "status",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "currency_code": {
+     "name": "currency_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "promo_code": {
+     "name": "promo_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.erp_order_lines": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.erp_order_lines",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "erp_order_lines",
+   "identifier": "ERP_ORDER_LINES",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "erp_order_lines"
+   ],
+   "description": "Raw erp order lines (synthetic)",
+   "relation_name": "HELIOS.RAW.ERP_ORDER_LINES",
+   "columns": {
+    "line_id": {
+     "name": "line_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "order_id": {
+     "name": "order_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "product_id": {
+     "name": "product_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "qty": {
+     "name": "qty",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "unit_price": {
+     "name": "unit_price",
+     "description": "",
+     "data_type": "NUMBER(12,2)"
+    },
+    "unit_cost": {
+     "name": "unit_cost",
+     "description": "",
+     "data_type": "NUMBER(12,2)"
+    },
+    "discount_pct": {
+     "name": "discount_pct",
+     "description": "",
+     "data_type": "NUMBER(5,4)"
+    },
+    "tax_rate": {
+     "name": "tax_rate",
+     "description": "",
+     "data_type": "NUMBER(5,4)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.crm_customers": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.crm_customers",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "crm_customers",
+   "identifier": "CRM_CUSTOMERS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "crm_customers"
+   ],
+   "description": "Raw crm customers (synthetic)",
+   "relation_name": "HELIOS.RAW.CRM_CUSTOMERS",
+   "columns": {
+    "customer_id": {
+     "name": "customer_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "full_name": {
+     "name": "full_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "email": {
+     "name": "email",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "country_code": {
+     "name": "country_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "segment": {
+     "name": "segment",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "loyalty_tier": {
+     "name": "loyalty_tier",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "created_at": {
+     "name": "created_at",
+     "description": "",
+     "data_type": "TIMESTAMP_NTZ"
+    },
+    "birth_year": {
+     "name": "birth_year",
+     "description": "",
+     "data_type": "NUMBER"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.pim_products": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.pim_products",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "pim_products",
+   "identifier": "PIM_PRODUCTS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "pim_products"
+   ],
+   "description": "Raw pim products (synthetic)",
+   "relation_name": "HELIOS.RAW.PIM_PRODUCTS",
+   "columns": {
+    "product_id": {
+     "name": "product_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "sku": {
+     "name": "sku",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "product_name": {
+     "name": "product_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "brand": {
+     "name": "brand",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "category": {
+     "name": "category",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "subcategory": {
+     "name": "subcategory",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "list_price": {
+     "name": "list_price",
+     "description": "",
+     "data_type": "NUMBER(12,2)"
+    },
+    "launch_date": {
+     "name": "launch_date",
+     "description": "",
+     "data_type": "DATE"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.ops_stores": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.ops_stores",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "ops_stores",
+   "identifier": "OPS_STORES",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "ops_stores"
+   ],
+   "description": "Raw ops stores (synthetic)",
+   "relation_name": "HELIOS.RAW.OPS_STORES",
+   "columns": {
+    "store_id": {
+     "name": "store_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "store_name": {
+     "name": "store_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "region": {
+     "name": "region",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "country_code": {
+     "name": "country_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "store_format": {
+     "name": "store_format",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "opened_on": {
+     "name": "opened_on",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "manager_email": {
+     "name": "manager_email",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "sq_ft": {
+     "name": "sq_ft",
+     "description": "",
+     "data_type": "NUMBER"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.wms_inventory": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.wms_inventory",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "wms_inventory",
+   "identifier": "WMS_INVENTORY",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "wms_inventory"
+   ],
+   "description": "Raw wms inventory (synthetic)",
+   "relation_name": "HELIOS.RAW.WMS_INVENTORY",
+   "columns": {
+    "snapshot_date": {
+     "name": "snapshot_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "store_id": {
+     "name": "store_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "product_id": {
+     "name": "product_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "on_hand_qty": {
+     "name": "on_hand_qty",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "on_order_qty": {
+     "name": "on_order_qty",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "safety_stock": {
+     "name": "safety_stock",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "unit_cost": {
+     "name": "unit_cost",
+     "description": "",
+     "data_type": "NUMBER(12,2)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.scm_purchase_orders": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.scm_purchase_orders",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "scm_purchase_orders",
+   "identifier": "SCM_PURCHASE_ORDERS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "scm_purchase_orders"
+   ],
+   "description": "Raw scm purchase orders (synthetic)",
+   "relation_name": "HELIOS.RAW.SCM_PURCHASE_ORDERS",
+   "columns": {
+    "po_id": {
+     "name": "po_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "supplier_id": {
+     "name": "supplier_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "product_id": {
+     "name": "product_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "ordered_qty": {
+     "name": "ordered_qty",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "received_qty": {
+     "name": "received_qty",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "po_date": {
+     "name": "po_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "expected_date": {
+     "name": "expected_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "received_date": {
+     "name": "received_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "po_cost": {
+     "name": "po_cost",
+     "description": "",
+     "data_type": "NUMBER(14,2)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.scm_suppliers": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.scm_suppliers",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "scm_suppliers",
+   "identifier": "SCM_SUPPLIERS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "scm_suppliers"
+   ],
+   "description": "Raw scm suppliers (synthetic)",
+   "relation_name": "HELIOS.RAW.SCM_SUPPLIERS",
+   "columns": {
+    "supplier_id": {
+     "name": "supplier_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "supplier_name": {
+     "name": "supplier_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "country_code": {
+     "name": "country_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "rating": {
+     "name": "rating",
+     "description": "",
+     "data_type": "NUMBER(3,1)"
+    },
+    "lead_time_days": {
+     "name": "lead_time_days",
+     "description": "",
+     "data_type": "NUMBER"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.fin_gl_entries": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.fin_gl_entries",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "fin_gl_entries",
+   "identifier": "FIN_GL_ENTRIES",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "fin_gl_entries"
+   ],
+   "description": "Raw fin gl entries (synthetic)",
+   "relation_name": "HELIOS.RAW.FIN_GL_ENTRIES",
+   "columns": {
+    "entry_id": {
+     "name": "entry_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "account_id": {
+     "name": "account_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "cost_center_id": {
+     "name": "cost_center_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "posting_date": {
+     "name": "posting_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "amount": {
+     "name": "amount",
+     "description": "",
+     "data_type": "NUMBER(16,2)"
+    },
+    "currency_code": {
+     "name": "currency_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "entry_type": {
+     "name": "entry_type",
+     "description": "",
+     "data_type": "VARCHAR"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.fin_accounts": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.fin_accounts",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "fin_accounts",
+   "identifier": "FIN_ACCOUNTS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "fin_accounts"
+   ],
+   "description": "Raw fin accounts (synthetic)",
+   "relation_name": "HELIOS.RAW.FIN_ACCOUNTS",
+   "columns": {
+    "account_id": {
+     "name": "account_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "account_name": {
+     "name": "account_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "account_group": {
+     "name": "account_group",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "pl_line": {
+     "name": "pl_line",
+     "description": "",
+     "data_type": "VARCHAR"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.fin_budgets": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.fin_budgets",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "fin_budgets",
+   "identifier": "FIN_BUDGETS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "fin_budgets"
+   ],
+   "description": "Raw fin budgets (synthetic)",
+   "relation_name": "HELIOS.RAW.FIN_BUDGETS",
+   "columns": {
+    "budget_id": {
+     "name": "budget_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "cost_center_id": {
+     "name": "cost_center_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "account_id": {
+     "name": "account_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "period_month": {
+     "name": "period_month",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "budget_amount": {
+     "name": "budget_amount",
+     "description": "",
+     "data_type": "NUMBER(16,2)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.mkt_campaigns": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.mkt_campaigns",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "mkt_campaigns",
+   "identifier": "MKT_CAMPAIGNS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "mkt_campaigns"
+   ],
+   "description": "Raw mkt campaigns (synthetic)",
+   "relation_name": "HELIOS.RAW.MKT_CAMPAIGNS",
+   "columns": {
+    "campaign_id": {
+     "name": "campaign_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "campaign_name": {
+     "name": "campaign_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "channel": {
+     "name": "channel",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "start_date": {
+     "name": "start_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "end_date": {
+     "name": "end_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "spend": {
+     "name": "spend",
+     "description": "",
+     "data_type": "NUMBER(14,2)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.web_sessions": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.web_sessions",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "web_sessions",
+   "identifier": "WEB_SESSIONS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "web_sessions"
+   ],
+   "description": "Raw web sessions (synthetic)",
+   "relation_name": "HELIOS.RAW.WEB_SESSIONS",
+   "columns": {
+    "session_id": {
+     "name": "session_id",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "customer_id": {
+     "name": "customer_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "session_ts": {
+     "name": "session_ts",
+     "description": "",
+     "data_type": "TIMESTAMP_NTZ"
+    },
+    "device": {
+     "name": "device",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "page_views": {
+     "name": "page_views",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "campaign_id": {
+     "name": "campaign_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "converted": {
+     "name": "converted",
+     "description": "",
+     "data_type": "BOOLEAN"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.hr_cost_centers": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.hr_cost_centers",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "hr_cost_centers",
+   "identifier": "HR_COST_CENTERS",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "hr_cost_centers"
+   ],
+   "description": "Raw hr cost centers (synthetic)",
+   "relation_name": "HELIOS.RAW.HR_COST_CENTERS",
+   "columns": {
+    "cost_center_id": {
+     "name": "cost_center_id",
+     "description": "",
+     "data_type": "NUMBER"
+    },
+    "cost_center_name": {
+     "name": "cost_center_name",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "region": {
+     "name": "region",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "owner_email": {
+     "name": "owner_email",
+     "description": "",
+     "data_type": "VARCHAR"
+    }
+   },
+   "meta": {},
+   "tags": []
+  },
+  "source.helios_analytics.raw.fx_rates": {
+   "resource_type": "source",
+   "unique_id": "source.helios_analytics.raw.fx_rates",
+   "package_name": "helios_analytics",
+   "source_name": "raw",
+   "name": "fx_rates",
+   "identifier": "FX_RATES",
+   "database": "HELIOS",
+   "schema": "RAW",
+   "path": "models/staging/_sources.yml",
+   "original_file_path": "models/staging/_sources.yml",
+   "fqn": [
+    "helios_analytics",
+    "staging",
+    "raw",
+    "fx_rates"
+   ],
+   "description": "Raw fx rates (synthetic)",
+   "relation_name": "HELIOS.RAW.FX_RATES",
+   "columns": {
+    "rate_date": {
+     "name": "rate_date",
+     "description": "",
+     "data_type": "DATE"
+    },
+    "currency_code": {
+     "name": "currency_code",
+     "description": "",
+     "data_type": "VARCHAR"
+    },
+    "rate_to_usd": {
+     "name": "rate_to_usd",
+     "description": "",
+     "data_type": "NUMBER(18,8)"
+    }
+   },
+   "meta": {},
+   "tags": []
+  }
+ },
+ "macros": {},
+ "docs": {},
+ "exposures": {},
+ "metrics": {},
+ "groups": {},
+ "selectors": {},
+ "disabled": {},
+ "parent_map": {
+  "source.helios_analytics.raw.erp_orders": [],
+  "source.helios_analytics.raw.erp_order_lines": [],
+  "source.helios_analytics.raw.crm_customers": [],
+  "source.helios_analytics.raw.pim_products": [],
+  "source.helios_analytics.raw.ops_stores": [],
+  "source.helios_analytics.raw.wms_inventory": [],
+  "source.helios_analytics.raw.scm_purchase_orders": [],
+  "source.helios_analytics.raw.scm_suppliers": [],
+  "source.helios_analytics.raw.fin_gl_entries": [],
+  "source.helios_analytics.raw.fin_accounts": [],
+  "source.helios_analytics.raw.fin_budgets": [],
+  "source.helios_analytics.raw.mkt_campaigns": [],
+  "source.helios_analytics.raw.web_sessions": [],
+  "source.helios_analytics.raw.hr_cost_centers": [],
+  "source.helios_analytics.raw.fx_rates": [],
+  "model.helios_analytics.stg_erp_orders": [
+   "source.helios_analytics.raw.erp_orders"
+  ],
+  "model.helios_analytics.stg_erp_order_lines": [
+   "source.helios_analytics.raw.erp_order_lines"
+  ],
+  "model.helios_analytics.stg_crm_customers": [
+   "source.helios_analytics.raw.crm_customers"
+  ],
+  "model.helios_analytics.stg_pim_products": [
+   "source.helios_analytics.raw.pim_products"
+  ],
+  "model.helios_analytics.stg_ops_stores": [
+   "source.helios_analytics.raw.ops_stores"
+  ],
+  "model.helios_analytics.stg_wms_inventory": [
+   "source.helios_analytics.raw.wms_inventory"
+  ],
+  "model.helios_analytics.stg_scm_purchase_orders": [
+   "source.helios_analytics.raw.scm_purchase_orders"
+  ],
+  "model.helios_analytics.stg_scm_suppliers": [
+   "source.helios_analytics.raw.scm_suppliers"
+  ],
+  "model.helios_analytics.stg_fin_gl_entries": [
+   "source.helios_analytics.raw.fin_gl_entries"
+  ],
+  "model.helios_analytics.stg_fin_accounts": [
+   "source.helios_analytics.raw.fin_accounts"
+  ],
+  "model.helios_analytics.stg_fin_budgets": [
+   "source.helios_analytics.raw.fin_budgets"
+  ],
+  "model.helios_analytics.stg_mkt_campaigns": [
+   "source.helios_analytics.raw.mkt_campaigns"
+  ],
+  "model.helios_analytics.stg_web_sessions": [
+   "source.helios_analytics.raw.web_sessions"
+  ],
+  "model.helios_analytics.stg_hr_cost_centers": [
+   "source.helios_analytics.raw.hr_cost_centers"
+  ],
+  "model.helios_analytics.stg_fx_rates": [
+   "source.helios_analytics.raw.fx_rates"
+  ],
+  "model.helios_analytics.int_order_lines_enriched": [
+   "model.helios_analytics.stg_erp_order_lines",
+   "model.helios_analytics.stg_erp_orders",
+   "model.helios_analytics.stg_fx_rates"
+  ],
+  "model.helios_analytics.int_customer_orders": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ],
+  "model.helios_analytics.int_inventory_daily": [
+   "model.helios_analytics.stg_wms_inventory"
+  ],
+  "model.helios_analytics.int_po_receipts": [
+   "model.helios_analytics.stg_scm_purchase_orders"
+  ],
+  "model.helios_analytics.int_gl_usd": [
+   "model.helios_analytics.stg_fin_gl_entries",
+   "model.helios_analytics.stg_fx_rates"
+  ],
+  "model.helios_analytics.int_budget_monthly": [
+   "model.helios_analytics.stg_fin_budgets"
+  ],
+  "model.helios_analytics.int_sessions_attributed": [
+   "model.helios_analytics.stg_web_sessions",
+   "model.helios_analytics.stg_mkt_campaigns"
+  ],
+  "model.helios_analytics.int_product_margin": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ],
+  "model.helios_analytics.dim_customer": [
+   "model.helios_analytics.stg_crm_customers",
+   "model.helios_analytics.int_customer_orders"
+  ],
+  "model.helios_analytics.dim_product": [
+   "model.helios_analytics.stg_pim_products"
+  ],
+  "model.helios_analytics.dim_store": [
+   "model.helios_analytics.stg_ops_stores"
+  ],
+  "model.helios_analytics.dim_date": [
+   "model.helios_analytics.stg_fx_rates"
+  ],
+  "model.helios_analytics.dim_supplier": [
+   "model.helios_analytics.stg_scm_suppliers"
+  ],
+  "model.helios_analytics.dim_account": [
+   "model.helios_analytics.stg_fin_accounts"
+  ],
+  "model.helios_analytics.dim_cost_center": [
+   "model.helios_analytics.stg_hr_cost_centers"
+  ],
+  "model.helios_analytics.dim_campaign": [
+   "model.helios_analytics.stg_mkt_campaigns"
+  ],
+  "model.helios_analytics.dim_channel": [
+   "model.helios_analytics.stg_erp_orders"
+  ],
+  "model.helios_analytics.fct_sales_lines": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ],
+  "model.helios_analytics.fct_orders": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ],
+  "model.helios_analytics.fct_daily_sales": [
+   "model.helios_analytics.fct_sales_lines"
+  ],
+  "model.helios_analytics.fct_inventory_snapshot": [
+   "model.helios_analytics.int_inventory_daily"
+  ],
+  "model.helios_analytics.fct_purchase_orders": [
+   "model.helios_analytics.int_po_receipts"
+  ],
+  "model.helios_analytics.fct_gl": [
+   "model.helios_analytics.int_gl_usd"
+  ],
+  "model.helios_analytics.fct_budget": [
+   "model.helios_analytics.int_budget_monthly"
+  ],
+  "model.helios_analytics.fct_web_sessions": [
+   "model.helios_analytics.int_sessions_attributed"
+  ],
+  "model.helios_analytics.fct_campaign_performance": [
+   "model.helios_analytics.dim_campaign",
+   "model.helios_analytics.fct_web_sessions",
+   "model.helios_analytics.fct_orders"
+  ],
+  "model.helios_analytics.fct_customer_ltv": [
+   "model.helios_analytics.int_customer_orders"
+  ],
+  "model.helios_analytics.fct_product_performance": [
+   "model.helios_analytics.int_product_margin"
+  ],
+  "model.helios_analytics.fct_store_performance": [
+   "model.helios_analytics.fct_daily_sales",
+   "model.helios_analytics.dim_store"
+  ],
+  "model.helios_analytics.fct_margin_bridge": [
+   "model.helios_analytics.fct_sales_lines"
+  ],
+  "model.helios_analytics.fct_returns": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ]
+ },
+ "child_map": {
+  "source.helios_analytics.raw.erp_orders": [
+   "model.helios_analytics.stg_erp_orders"
+  ],
+  "source.helios_analytics.raw.erp_order_lines": [
+   "model.helios_analytics.stg_erp_order_lines"
+  ],
+  "source.helios_analytics.raw.crm_customers": [
+   "model.helios_analytics.stg_crm_customers"
+  ],
+  "source.helios_analytics.raw.pim_products": [
+   "model.helios_analytics.stg_pim_products"
+  ],
+  "source.helios_analytics.raw.ops_stores": [
+   "model.helios_analytics.stg_ops_stores"
+  ],
+  "source.helios_analytics.raw.wms_inventory": [
+   "model.helios_analytics.stg_wms_inventory"
+  ],
+  "source.helios_analytics.raw.scm_purchase_orders": [
+   "model.helios_analytics.stg_scm_purchase_orders"
+  ],
+  "source.helios_analytics.raw.scm_suppliers": [
+   "model.helios_analytics.stg_scm_suppliers"
+  ],
+  "source.helios_analytics.raw.fin_gl_entries": [
+   "model.helios_analytics.stg_fin_gl_entries"
+  ],
+  "source.helios_analytics.raw.fin_accounts": [
+   "model.helios_analytics.stg_fin_accounts"
+  ],
+  "source.helios_analytics.raw.fin_budgets": [
+   "model.helios_analytics.stg_fin_budgets"
+  ],
+  "source.helios_analytics.raw.mkt_campaigns": [
+   "model.helios_analytics.stg_mkt_campaigns"
+  ],
+  "source.helios_analytics.raw.web_sessions": [
+   "model.helios_analytics.stg_web_sessions"
+  ],
+  "source.helios_analytics.raw.hr_cost_centers": [
+   "model.helios_analytics.stg_hr_cost_centers"
+  ],
+  "source.helios_analytics.raw.fx_rates": [
+   "model.helios_analytics.stg_fx_rates"
+  ],
+  "model.helios_analytics.stg_erp_orders": [
+   "model.helios_analytics.int_order_lines_enriched",
+   "model.helios_analytics.dim_channel"
+  ],
+  "model.helios_analytics.stg_erp_order_lines": [
+   "model.helios_analytics.int_order_lines_enriched"
+  ],
+  "model.helios_analytics.stg_crm_customers": [
+   "model.helios_analytics.dim_customer"
+  ],
+  "model.helios_analytics.stg_pim_products": [
+   "model.helios_analytics.dim_product"
+  ],
+  "model.helios_analytics.stg_ops_stores": [
+   "model.helios_analytics.dim_store"
+  ],
+  "model.helios_analytics.stg_wms_inventory": [
+   "model.helios_analytics.int_inventory_daily"
+  ],
+  "model.helios_analytics.stg_scm_purchase_orders": [
+   "model.helios_analytics.int_po_receipts"
+  ],
+  "model.helios_analytics.stg_scm_suppliers": [
+   "model.helios_analytics.dim_supplier"
+  ],
+  "model.helios_analytics.stg_fin_gl_entries": [
+   "model.helios_analytics.int_gl_usd"
+  ],
+  "model.helios_analytics.stg_fin_accounts": [
+   "model.helios_analytics.dim_account"
+  ],
+  "model.helios_analytics.stg_fin_budgets": [
+   "model.helios_analytics.int_budget_monthly"
+  ],
+  "model.helios_analytics.stg_mkt_campaigns": [
+   "model.helios_analytics.int_sessions_attributed",
+   "model.helios_analytics.dim_campaign"
+  ],
+  "model.helios_analytics.stg_web_sessions": [
+   "model.helios_analytics.int_sessions_attributed"
+  ],
+  "model.helios_analytics.stg_hr_cost_centers": [
+   "model.helios_analytics.dim_cost_center"
+  ],
+  "model.helios_analytics.stg_fx_rates": [
+   "model.helios_analytics.int_order_lines_enriched",
+   "model.helios_analytics.int_gl_usd",
+   "model.helios_analytics.dim_date"
+  ],
+  "model.helios_analytics.int_order_lines_enriched": [
+   "model.helios_analytics.int_customer_orders",
+   "model.helios_analytics.int_product_margin",
+   "model.helios_analytics.fct_sales_lines",
+   "model.helios_analytics.fct_orders",
+   "model.helios_analytics.fct_returns"
+  ],
+  "model.helios_analytics.int_customer_orders": [
+   "model.helios_analytics.dim_customer",
+   "model.helios_analytics.fct_customer_ltv"
+  ],
+  "model.helios_analytics.int_inventory_daily": [
+   "model.helios_analytics.fct_inventory_snapshot"
+  ],
+  "model.helios_analytics.int_po_receipts": [
+   "model.helios_analytics.fct_purchase_orders"
+  ],
+  "model.helios_analytics.int_gl_usd": [
+   "model.helios_analytics.fct_gl"
+  ],
+  "model.helios_analytics.int_budget_monthly": [
+   "model.helios_analytics.fct_budget"
+  ],
+  "model.helios_analytics.int_sessions_attributed": [
+   "model.helios_analytics.fct_web_sessions"
+  ],
+  "model.helios_analytics.int_product_margin": [
+   "model.helios_analytics.fct_product_performance"
+  ],
+  "model.helios_analytics.dim_customer": [],
+  "model.helios_analytics.dim_product": [],
+  "model.helios_analytics.dim_store": [
+   "model.helios_analytics.fct_store_performance"
+  ],
+  "model.helios_analytics.dim_date": [],
+  "model.helios_analytics.dim_supplier": [],
+  "model.helios_analytics.dim_account": [],
+  "model.helios_analytics.dim_cost_center": [],
+  "model.helios_analytics.dim_campaign": [
+   "model.helios_analytics.fct_campaign_performance"
+  ],
+  "model.helios_analytics.dim_channel": [],
+  "model.helios_analytics.fct_sales_lines": [
+   "model.helios_analytics.fct_daily_sales",
+   "model.helios_analytics.fct_margin_bridge"
+  ],
+  "model.helios_analytics.fct_orders": [
+   "model.helios_analytics.fct_campaign_performance"
+  ],
+  "model.helios_analytics.fct_daily_sales": [
+   "model.helios_analytics.fct_store_performance"
+  ],
+  "model.helios_analytics.fct_inventory_snapshot": [],
+  "model.helios_analytics.fct_purchase_orders": [],
+  "model.helios_analytics.fct_gl": [],
+  "model.helios_analytics.fct_budget": [],
+  "model.helios_analytics.fct_web_sessions": [
+   "model.helios_analytics.fct_campaign_performance"
+  ],
+  "model.helios_analytics.fct_campaign_performance": [],
+  "model.helios_analytics.fct_customer_ltv": [],
+  "model.helios_analytics.fct_product_performance": [],
+  "model.helios_analytics.fct_store_performance": [],
+  "model.helios_analytics.fct_margin_bridge": [],
+  "model.helios_analytics.fct_returns": []
+ }
+}

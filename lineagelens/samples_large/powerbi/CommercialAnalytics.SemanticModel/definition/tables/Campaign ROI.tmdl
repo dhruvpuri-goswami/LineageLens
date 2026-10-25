@@ -1,0 +1,71 @@
+/// Campaign ROI view
+table 'Campaign ROI'
+	lineageTag: 00005eed-0000-0000-0000-000000000084
+
+	measure 'Campaign Spend' = SUM('Campaign ROI'[Campaign Spend])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000085
+
+	measure 'Attributed Revenue' = SUM('Campaign ROI'[Attributed Revenue])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000086
+
+	measure ROAS = DIVIDE([Attributed Revenue], [Campaign Spend])
+		formatString: 0.00x
+		lineageTag: 00005eed-0000-0000-0000-000000000087
+
+	measure 'Cost per Conversion' = DIVIDE([Campaign Spend], [Conversions])
+		formatString: \$#,0.00
+		lineageTag: 00005eed-0000-0000-0000-000000000088
+
+	column 'Campaign Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000089
+		summarizeBy: none
+		sourceColumn: Campaign Key
+
+	column 'Campaign Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000008a
+		summarizeBy: none
+		sourceColumn: Campaign Name
+
+	column 'Marketing Channel'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000008b
+		summarizeBy: none
+		sourceColumn: Marketing Channel
+
+	column 'Campaign Spend'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000008c
+		summarizeBy: sum
+		sourceColumn: Campaign Spend
+
+	column 'Attributed Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000008d
+		summarizeBy: sum
+		sourceColumn: Attributed Revenue
+
+	column ROAS
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000008e
+		summarizeBy: sum
+		sourceColumn: ROAS
+
+	partition 'Campaign ROI' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="REPORTING", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="VW_CAMPAIGN_ROI", Kind="View"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"CAMPAIGN_KEY", "CAMPAIGN_NAME", "MARKETING_CHANNEL", "CAMPAIGN_SPEND", "ATTRIBUTED_REVENUE", "ROAS"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"CAMPAIGN_KEY", "Campaign Key"}, {"CAMPAIGN_NAME", "Campaign Name"}, {"MARKETING_CHANNEL", "Marketing Channel"}, {"CAMPAIGN_SPEND", "Campaign Spend"}, {"ATTRIBUTED_REVENUE", "Attributed Revenue"}, {"ROAS", "ROAS"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

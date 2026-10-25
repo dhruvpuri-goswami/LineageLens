@@ -1,0 +1,25 @@
+{
+  "name": "984763e7d5d26987",
+  "displayName": "Trends",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf4",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "Calendar Quarter"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

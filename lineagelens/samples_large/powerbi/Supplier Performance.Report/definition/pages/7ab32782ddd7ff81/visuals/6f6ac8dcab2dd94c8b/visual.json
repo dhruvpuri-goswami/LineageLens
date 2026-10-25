@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "6f6ac8dcab2dd94c8b",
+  "position": {
+    "x": 440,
+    "y": 480,
+    "z": 7000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Product"
+                    }
+                  },
+                  "Property": "Launch Date"
+                }
+              },
+              "queryRef": "Product.Launch Date",
+              "nativeQueryRef": "Launch Date"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Supplier Scorecard"
+                    }
+                  },
+                  "Property": "Scorecard Days Late"
+                }
+              },
+              "queryRef": "Supplier Scorecard.Scorecard Days Late",
+              "nativeQueryRef": "Scorecard Days Late"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Scorecard Days Late by Launch Date'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

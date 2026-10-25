@@ -1,0 +1,15 @@
+relationship 00005eed-0000-0000-0000-000000000112
+	fromColumn: Inventory.'Product Key'
+	toColumn: Product.'Product Key'
+
+relationship 00005eed-0000-0000-0000-000000000113
+	fromColumn: Inventory.'Store Key'
+	toColumn: Store.'Store Key'
+
+relationship 00005eed-0000-0000-0000-000000000114
+	fromColumn: 'Purchase Orders'.'Supplier Key'
+	toColumn: Supplier.'Supplier Key'
+
+relationship 00005eed-0000-0000-0000-000000000115
+	fromColumn: Inventory.'Snapshot Date'
+	toColumn: Calendar.'Date Day'

@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    database: analytics
+    schema: raw
+    tables:
+      - name: orders
+      - name: order_items
+      - name: customers
+      - name: products
+      - name: stores

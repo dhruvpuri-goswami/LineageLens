@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "ebe2f46a33290f72c7",
+  "position": {
+    "x": 860,
+    "y": 20,
+    "z": 2000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Posting Date"
+                }
+              },
+              "queryRef": "GL.Posting Date",
+              "nativeQueryRef": "Posting Date"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cost Center"
+                    }
+                  },
+                  "Property": "Cost Centers"
+                }
+              },
+              "queryRef": "Cost Center.Cost Centers",
+              "nativeQueryRef": "Cost Centers"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cost Centers by Posting Date'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

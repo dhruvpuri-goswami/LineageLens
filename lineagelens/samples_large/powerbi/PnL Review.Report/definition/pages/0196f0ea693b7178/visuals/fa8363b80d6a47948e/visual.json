@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "fa8363b80d6a47948e",
+  "position": {
+    "x": 440,
+    "y": 480,
+    "z": 7000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cost Center"
+                    }
+                  },
+                  "Property": "Cost Center Name"
+                }
+              },
+              "queryRef": "Cost Center.Cost Center Name",
+              "nativeQueryRef": "Cost Center Name"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Actuals PY"
+                }
+              },
+              "queryRef": "GL.Actuals PY",
+              "nativeQueryRef": "Actuals PY"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Actuals PY by Cost Center Name'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "vf7",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "PnL"
+              }
+            },
+            "Property": "P&L Line"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

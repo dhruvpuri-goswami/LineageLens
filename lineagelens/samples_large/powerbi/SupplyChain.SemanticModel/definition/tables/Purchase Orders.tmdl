@@ -1,0 +1,140 @@
+table 'Purchase Orders'
+	lineageTag: 00005eed-0000-0000-0000-0000000000be
+
+	measure 'PO Spend' = SUM('Purchase Orders'[PO Cost])
+		formatString: \$#,0
+		displayFolder: Spend
+		lineageTag: 00005eed-0000-0000-0000-0000000000bf
+
+	measure 'Ordered Units' = SUM('Purchase Orders'[Ordered Qty])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-0000000000c0
+
+	measure 'Received Units' = SUM('Purchase Orders'[Received Qty])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-0000000000c1
+
+	measure 'Fill Rate' = DIVIDE([Received Units], [Ordered Units])
+		formatString: 0.0%
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c2
+
+	measure 'Avg Lead Days' = AVERAGE('Purchase Orders'[Actual Lead Days])
+		formatString: 0.0
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c3
+
+	measure 'Late POs' = CALCULATE(COUNTROWS('Purchase Orders'), 'Purchase Orders'[Days Late] > 0)
+		formatString: #,0
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c4
+
+	measure 'On Time %' = 1 - DIVIDE([Late POs], COUNTROWS('Purchase Orders'))
+		formatString: 0.0%
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c5
+
+	measure 'OTIF %' = [On Time %] * [Fill Rate]
+		formatString: 0.0%
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c6
+
+	measure 'OTIF Status' = IF([OTIF %] >= 0.95, "Good", IF([OTIF %] >= 0.85, "Watch", "Poor"))
+		formatString: 
+		displayFolder: Service
+		lineageTag: 00005eed-0000-0000-0000-0000000000c7
+
+	measure 'PO Spend PY' = CALCULATE([PO Spend], SAMEPERIODLASTYEAR('Calendar'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Spend
+		lineageTag: 00005eed-0000-0000-0000-0000000000c8
+
+	measure 'PO Spend YoY %' = DIVIDE([PO Spend] - [PO Spend PY], [PO Spend PY])
+		formatString: 0.0%
+		displayFolder: Spend
+		lineageTag: 00005eed-0000-0000-0000-0000000000c9
+
+	measure 'Inventory Turns' = DIVIDE([PO Spend], [Stock Value])
+		formatString: 0.0
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000ca
+
+	column 'PO Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000cb
+		summarizeBy: none
+		sourceColumn: PO Key
+
+	column 'Supplier Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000cc
+		summarizeBy: none
+		sourceColumn: Supplier Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000cd
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'PO Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-0000000000ce
+		summarizeBy: none
+		sourceColumn: PO Date
+
+	column 'Ordered Qty'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000cf
+		summarizeBy: none
+		sourceColumn: Ordered Qty
+
+	column 'Received Qty'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000d0
+		summarizeBy: none
+		sourceColumn: Received Qty
+
+	column 'PO Cost'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000d1
+		summarizeBy: sum
+		sourceColumn: PO Cost
+
+	column 'Actual Lead Days'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000d2
+		summarizeBy: none
+		sourceColumn: Actual Lead Days
+
+	column 'Days Late'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000d3
+		summarizeBy: none
+		sourceColumn: Days Late
+
+	column 'Fill Rate'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000d4
+		summarizeBy: sum
+		sourceColumn: Fill Rate
+
+	partition 'Purchase Orders' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_PURCHASE_ORDERS", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"PO_KEY", "SUPPLIER_KEY", "PRODUCT_KEY", "PO_DATE", "ORDERED_QTY", "RECEIVED_QTY", "PO_COST", "ACTUAL_LEAD_DAYS", "DAYS_LATE", "FILL_RATE"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"PO_KEY", "PO Key"}, {"SUPPLIER_KEY", "Supplier Key"}, {"PRODUCT_KEY", "Product Key"}, {"PO_DATE", "PO Date"}, {"ORDERED_QTY", "Ordered Qty"}, {"RECEIVED_QTY", "Received Qty"}, {"PO_COST", "PO Cost"}, {"ACTUAL_LEAD_DAYS", "Actual Lead Days"}, {"DAYS_LATE", "Days Late"}, {"FILL_RATE", "Fill Rate"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

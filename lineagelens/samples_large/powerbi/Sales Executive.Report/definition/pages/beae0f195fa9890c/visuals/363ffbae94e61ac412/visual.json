@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "363ffbae94e61ac412",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "donutChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Store"
+                    }
+                  },
+                  "Property": "Opened On"
+                }
+              },
+              "queryRef": "Store.Opened On",
+              "nativeQueryRef": "Opened On"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sales"
+                    }
+                  },
+                  "Property": "Tax Collected"
+                }
+              },
+              "queryRef": "Sales.Tax Collected",
+              "nativeQueryRef": "Tax Collected"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tax Collected by Opened On'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

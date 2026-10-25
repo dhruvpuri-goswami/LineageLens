@@ -1,0 +1,53 @@
+table Calendar
+	lineageTag: 00005eed-0000-0000-0000-000000000101
+
+	column 'Date Day'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000102
+		summarizeBy: none
+		sourceColumn: Date Day
+
+	column 'Calendar Year'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000103
+		summarizeBy: none
+		sourceColumn: Calendar Year
+
+	column 'Calendar Quarter'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000104
+		summarizeBy: none
+		sourceColumn: Calendar Quarter
+
+	column 'Calendar Month'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000105
+		summarizeBy: none
+		sourceColumn: Calendar Month
+
+	column 'Month Name'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000106
+		summarizeBy: none
+		sourceColumn: Month Name
+
+	column 'Day Of Week'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000107
+		summarizeBy: none
+		sourceColumn: Day Of Week
+
+	partition Calendar = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_DATE", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"DATE_DAY", "CALENDAR_YEAR", "CALENDAR_QUARTER", "CALENDAR_MONTH", "MONTH_NAME", "DAY_OF_WEEK"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"DATE_DAY", "Date Day"}, {"CALENDAR_YEAR", "Calendar Year"}, {"CALENDAR_QUARTER", "Calendar Quarter"}, {"CALENDAR_MONTH", "Calendar Month"}, {"MONTH_NAME", "Month Name"}, {"DAY_OF_WEEK", "Day Of Week"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

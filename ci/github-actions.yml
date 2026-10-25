@@ -1,0 +1,86 @@
+# LineageLens impact check for pull requests (GitHub Actions).
+# Copy to .github/workflows/lineagelens.yml in your dbt repository.
+#
+# What it does: compiles the dbt project for the PR's base branch and for the PR head, then runs
+# `lineagelens diff`. The diff lists every changed column and its downstream Power BI impact
+# (measures, RLS, visuals, filters). It posts the markdown report as a PR comment and fails the
+# check when something would BREAK.
+#
+# Assumptions (adapt the paths):
+#   - LineageLens is vendored at tools/lineagelens (the unzipped release) or you pip install a wheel from your own feed.
+#   - lineagelens.yml at the repo root points at the dbt project and at the PBIP files
+#     (*.SemanticModel / *.Report folders) checked into this repo or a sibling repo checkout.
+#   - dbt compile needs a Snowflake connection: profile via secrets below (metadata/compile only; no data is moved).
+#   - Nothing is sent anywhere except the PR comment back to GitHub.
+name: lineagelens-impact
+
+on:
+  pull_request:
+    paths: ["models/**", "snapshots/**", "macros/**", "dbt_project.yml", "powerbi/**", "lineagelens.yml"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  impact:
+    runs-on: ubuntu-latest
+    env:
+      DBT_PROFILES_DIR: ${{ github.workspace }}/ci
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with: { path: head }
+
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with: { ref: "${{ github.event.pull_request.base.sha }}", path: base }
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: Install dbt + LineageLens
+        run: |
+          pip install "dbt-snowflake~=1.9"
+          pip install ./head/tools/lineagelens
+
+      - name: dbt compile (base and head)
+        run: |
+          for side in base head; do
+            (cd $side && dbt deps && dbt compile --target ci && dbt docs generate --target ci --no-compile) || exit 1
+          done
+
+      - name: LineageLens diff
+        id: diff
+        working-directory: head
+        run: |
+          set +e
+          lineagelens diff ../base/target/manifest.json target/manifest.json \
+            -c lineagelens.yml --fail-on breaking -m ../lineagelens-report.md --json-out ../lineagelens-report.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lineagelens-report
+          path: |
+            lineagelens-report.md
+            lineagelens-report.json
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lineagelens
+          path: lineagelens-report.md
+
+      - name: Fail on breaking impact
+        if: steps.diff.outputs.exit_code != '0'
+        run: |
+          echo "::error::LineageLens found Power BI objects that would break. See the PR comment / artifact."
+          exit 1

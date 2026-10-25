@@ -1,0 +1,4 @@
+role 'Cost Center Owner'
+	modelPermission: read
+
+	tablePermission 'Cost Center' = 'Cost Center'[Owner Email] = USERPRINCIPALNAME()

@@ -1,0 +1,68 @@
+table Returns
+	lineageTag: 00005eed-0000-0000-0000-000000000108
+
+	measure 'Returned Units' = SUM(Returns[Returned Units])
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-000000000109
+
+	measure 'Refund Value' = SUM(Returns[Refund Amount])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-00000000010a
+
+	measure 'Return Rate' = DIVIDE([Returned Units], [On Hand Units])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-00000000010b
+
+	column 'Return Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000010c
+		summarizeBy: none
+		sourceColumn: Return Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000010d
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000010e
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Return Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000010f
+		summarizeBy: none
+		sourceColumn: Return Date
+
+	column 'Returned Units'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000110
+		summarizeBy: none
+		sourceColumn: Returned Units
+
+	column 'Refund Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000111
+		summarizeBy: sum
+		sourceColumn: Refund Amount
+
+	partition Returns = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_RETURNS", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"RETURN_KEY", "PRODUCT_KEY", "STORE_KEY", "RETURN_DATE", "RETURNED_UNITS", "REFUND_AMOUNT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"RETURN_KEY", "Return Key"}, {"PRODUCT_KEY", "Product Key"}, {"STORE_KEY", "Store Key"}, {"RETURN_DATE", "Return Date"}, {"RETURNED_UNITS", "Returned Units"}, {"REFUND_AMOUNT", "Refund Amount"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

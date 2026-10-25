@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "14e143e811990f35f1",
+  "position": {
+    "x": 440,
+    "y": 20,
+    "z": 1000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Customer"
+                    }
+                  },
+                  "Property": "Customer Since"
+                }
+              },
+              "queryRef": "Customer.Customer Since",
+              "nativeQueryRef": "Customer Since"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Web Sessions"
+                    }
+                  },
+                  "Property": "Pages per Session"
+                }
+              },
+              "queryRef": "Web Sessions.Pages per Session",
+              "nativeQueryRef": "Pages per Session"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Pages per Session by Customer Since'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

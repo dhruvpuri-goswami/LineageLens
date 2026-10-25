@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "4fd1e3206692caec72",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Inventory"
+                    }
+                  },
+                  "Property": "Below Safety Lines"
+                }
+              },
+              "queryRef": "Inventory.Below Safety Lines",
+              "nativeQueryRef": "Below Safety Lines"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Below Safety Lines'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

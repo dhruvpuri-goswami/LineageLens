@@ -1,0 +1,19 @@
+relationship 00005eed-0000-0000-0000-00000000009f
+	fromColumn: Sales.'Customer Key'
+	toColumn: Customer.'Customer Key'
+
+relationship 00005eed-0000-0000-0000-0000000000a0
+	fromColumn: Sales.'Product Key'
+	toColumn: Product.'Product Key'
+
+relationship 00005eed-0000-0000-0000-0000000000a1
+	fromColumn: Sales.'Store Key'
+	toColumn: Store.'Store Key'
+
+relationship 00005eed-0000-0000-0000-0000000000a2
+	fromColumn: Sales.'Order Date'
+	toColumn: Date.'Date Day'
+
+relationship 00005eed-0000-0000-0000-0000000000a3
+	fromColumn: Sales.'Channel Key'
+	toColumn: Channel.'Channel Key'

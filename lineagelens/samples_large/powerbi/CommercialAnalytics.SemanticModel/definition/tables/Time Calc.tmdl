@@ -1,0 +1,27 @@
+table 'Time Calc'
+	lineageTag: 00005eed-0000-0000-0000-0000000000a8
+
+	calculationGroup
+		precedence: 10
+
+		calculationItem Current = SELECTEDMEASURE()
+
+		calculationItem MTD = CALCULATE ( SELECTEDMEASURE(), DATESMTD ( 'Date'[Date Day] ) )
+
+		calculationItem YTD = CALCULATE ( SELECTEDMEASURE(), DATESYTD ( 'Date'[Date Day] ) )
+
+		calculationItem PY = CALCULATE ( SELECTEDMEASURE(), SAMEPERIODLASTYEAR ( 'Date'[Date Day] ) )
+
+	column 'Time Calc Item'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-0000000000a9
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+	column Ordinal
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000aa
+		summarizeBy: sum
+		sourceColumn: Ordinal

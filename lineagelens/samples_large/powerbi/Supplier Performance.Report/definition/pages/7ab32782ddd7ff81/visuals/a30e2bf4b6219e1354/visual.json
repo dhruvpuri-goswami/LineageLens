@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "a30e2bf4b6219e1354",
+  "position": {
+    "x": 440,
+    "y": 20,
+    "z": 1000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "waterfallChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Purchase Orders"
+                    }
+                  },
+                  "Property": "Received Qty"
+                }
+              },
+              "queryRef": "Purchase Orders.Received Qty",
+              "nativeQueryRef": "Received Qty"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Purchase Orders"
+                    }
+                  },
+                  "Property": "On Time %"
+                }
+              },
+              "queryRef": "Purchase Orders.On Time %",
+              "nativeQueryRef": "On Time %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'On Time % by Received Qty'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

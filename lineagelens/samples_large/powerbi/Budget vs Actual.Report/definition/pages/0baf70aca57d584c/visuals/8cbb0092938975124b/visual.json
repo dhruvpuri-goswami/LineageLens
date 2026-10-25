@@ -1,0 +1,106 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "8cbb0092938975124b",
+  "position": {
+    "x": 20,
+    "y": 250,
+    "z": 3000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Posting Date"
+                }
+              },
+              "queryRef": "GL.Posting Date",
+              "nativeQueryRef": "Posting Date"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cost Center"
+                    }
+                  },
+                  "Property": "Cost Centers"
+                }
+              },
+              "queryRef": "Cost Center.Cost Centers",
+              "nativeQueryRef": "Cost Centers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Actuals"
+                }
+              },
+              "queryRef": "GL.Actuals",
+              "nativeQueryRef": "Actuals"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Posting Date'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "vf3",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Budget"
+              }
+            },
+            "Property": "Budget Amount"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

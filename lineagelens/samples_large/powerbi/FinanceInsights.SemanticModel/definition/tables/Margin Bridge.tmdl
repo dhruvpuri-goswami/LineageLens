@@ -1,0 +1,77 @@
+table 'Margin Bridge'
+	lineageTag: 00005eed-0000-0000-0000-000000000153
+
+	measure 'Bridge Gross' = SUM('Margin Bridge'[Gross Revenue])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000154
+
+	measure 'Bridge Discounts' = -SUM('Margin Bridge'[Discount Amount])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000155
+
+	measure 'Bridge Net' = SUM('Margin Bridge'[Net Revenue])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000156
+
+	measure 'Bridge Cost' = -SUM('Margin Bridge'[Cost Amount])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000157
+
+	measure 'Bridge Margin' = SUM('Margin Bridge'[Margin Amount])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000158
+
+	measure 'Bridge Margin %' = DIVIDE([Bridge Margin], [Bridge Net])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-000000000159
+
+	column 'Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000015a
+		summarizeBy: none
+		sourceColumn: Order Date
+
+	column 'Gross Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000015b
+		summarizeBy: sum
+		sourceColumn: Gross Revenue
+
+	column 'Discount Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000015c
+		summarizeBy: sum
+		sourceColumn: Discount Amount
+
+	column 'Net Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000015d
+		summarizeBy: sum
+		sourceColumn: Net Revenue
+
+	column 'Cost Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000015e
+		summarizeBy: sum
+		sourceColumn: Cost Amount
+
+	column 'Margin Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000015f
+		summarizeBy: sum
+		sourceColumn: Margin Amount
+
+	partition 'Margin Bridge' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_MARGIN_BRIDGE", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"ORDER_DATE", "GROSS_REVENUE", "DISCOUNT_AMOUNT", "NET_REVENUE", "COST_AMOUNT", "MARGIN_AMOUNT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"ORDER_DATE", "Order Date"}, {"GROSS_REVENUE", "Gross Revenue"}, {"DISCOUNT_AMOUNT", "Discount Amount"}, {"NET_REVENUE", "Net Revenue"}, {"COST_AMOUNT", "Cost Amount"}, {"MARGIN_AMOUNT", "Margin Amount"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,25 @@
+{
+  "name": "00b43dbbfe8107b5",
+  "displayName": "Cost Centres",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Account"
+              }
+            },
+            "Property": "Account Group"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

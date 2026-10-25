@@ -1,0 +1,25 @@
+{
+  "name": "dd33a7c6e2458110",
+  "displayName": "Stock Position",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Product"
+              }
+            },
+            "Property": "List Price"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

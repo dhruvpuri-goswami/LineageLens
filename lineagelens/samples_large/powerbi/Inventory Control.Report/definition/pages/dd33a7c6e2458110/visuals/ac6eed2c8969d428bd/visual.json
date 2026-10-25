@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "ac6eed2c8969d428bd",
+  "position": {
+    "x": 860,
+    "y": 20,
+    "z": 2000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Product"
+                    }
+                  },
+                  "Property": "Launch Date"
+                }
+              },
+              "queryRef": "Product.Launch Date",
+              "nativeQueryRef": "Launch Date"
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Inventory"
+                    }
+                  },
+                  "Property": "Below Safety Lines"
+                }
+              },
+              "queryRef": "Inventory.Below Safety Lines",
+              "nativeQueryRef": "Below Safety Lines"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Below Safety Lines by Launch Date'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

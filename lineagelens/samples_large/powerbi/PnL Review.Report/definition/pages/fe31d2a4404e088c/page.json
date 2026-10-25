@@ -1,0 +1,25 @@
+{
+  "name": "fe31d2a4404e088c",
+  "displayName": "P&L Summary",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Account"
+              }
+            },
+            "Property": "Account Group"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

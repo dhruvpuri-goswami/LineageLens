@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Customer dimension (gold)"
+    columns:
+      - name: customer_key
+        description: "Surrogate key = CRM customer id"
+      - name: customer_tier
+        description: "Tier derived from segment"
+  - name: dim_product
+    description: "Product dimension (gold)"
+    columns:
+      - name: price_band
+        description: "Premium when list price >= 500"
+  - name: dim_store
+    description: "Store dimension (gold)"
+    columns:
+      - name: manager_email
+        description: "Used by Power BI RLS"
+  - name: fct_sales
+    description: "Sales fact at order-line grain (gold)"
+    columns:
+      - name: net_amount
+        description: "Net sales amount after discount"
+      - name: gross_amount
+        description: "Quantity x list price"

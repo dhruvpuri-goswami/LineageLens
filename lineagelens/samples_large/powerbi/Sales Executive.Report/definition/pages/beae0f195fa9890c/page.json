@@ -1,0 +1,25 @@
+{
+  "name": "beae0f195fa9890c",
+  "displayName": "Channels",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "Calendar Year"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

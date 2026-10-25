@@ -1,0 +1,4 @@
+name: helios_analytics
+version: '1.0.0'
+profile: helios_analytics
+model-paths: ["models"]

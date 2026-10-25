@@ -1,0 +1,71 @@
+table Date
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000004001
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: Short Date
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004101
+		summarizeBy: none
+		sourceColumn: date_day
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004102
+		summarizeBy: none
+		sourceColumn: year_num
+
+	column Quarter
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004103
+		summarizeBy: none
+		sourceColumn: quarter_label
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004104
+		summarizeBy: none
+		sourceColumn: month_num
+
+	column Month
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004105
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+	column 'Is Weekend'
+		dataType: boolean
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004106
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000004201
+
+		level Year
+			lineageTag: 1d2c3b4a-0000-4000-8000-000000004202
+			column: Year
+
+		level Quarter
+			lineageTag: 1d2c3b4a-0000-4000-8000-000000004203
+			column: Quarter
+
+		level Month
+			lineageTag: 1d2c3b4a-0000-4000-8000-000000004204
+			column: Month
+
+	partition Date = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse),
+				    ANALYTICS_Database = Source{[Name="ANALYTICS", Kind="Database"]}[Data],
+				    REPORTING_Schema = ANALYTICS_Database{[Name="REPORTING", Kind="Schema"]}[Data],
+				    VW_DIM_DATE_View = REPORTING_Schema{[Name="VW_DIM_DATE", Kind="View"]}[Data],
+				    #"Lower Names" = Table.TransformColumnNames(VW_DIM_DATE_View, Text.Lower)
+				in
+				    #"Lower Names"

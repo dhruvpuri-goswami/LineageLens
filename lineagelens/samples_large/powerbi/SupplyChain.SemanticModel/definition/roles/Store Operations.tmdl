@@ -1,0 +1,4 @@
+role 'Store Operations'
+	modelPermission: read
+
+	tablePermission Store = Store[Sales Region] = "AMER"

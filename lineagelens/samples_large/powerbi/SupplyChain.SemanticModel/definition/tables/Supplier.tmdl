@@ -1,0 +1,56 @@
+table Supplier
+	lineageTag: 00005eed-0000-0000-0000-0000000000d5
+
+	measure Suppliers = COUNTROWS(Supplier)
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-0000000000d6
+
+	measure 'Avg Supplier Rating' = AVERAGE(Supplier[Supplier Rating])
+		formatString: 0.0
+		lineageTag: 00005eed-0000-0000-0000-0000000000d7
+
+	column 'Supplier Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000d8
+		summarizeBy: none
+		sourceColumn: Supplier Key
+
+	column 'Supplier Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-0000000000d9
+		summarizeBy: none
+		sourceColumn: Supplier Name
+
+	column 'Supplier Country'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000da
+		summarizeBy: none
+		sourceColumn: Supplier Country
+
+	column 'Supplier Rating'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-0000000000db
+		summarizeBy: none
+		sourceColumn: Supplier Rating
+
+	column 'Contracted Lead Days'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000dc
+		summarizeBy: none
+		sourceColumn: Contracted Lead Days
+
+	partition Supplier = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_SUPPLIER", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SUPPLIER_KEY", "SUPPLIER_NAME", "SUPPLIER_COUNTRY", "SUPPLIER_RATING", "CONTRACTED_LEAD_DAYS"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SUPPLIER_KEY", "Supplier Key"}, {"SUPPLIER_NAME", "Supplier Name"}, {"SUPPLIER_COUNTRY", "Supplier Country"}, {"SUPPLIER_RATING", "Supplier Rating"}, {"CONTRACTED_LEAD_DAYS", "Contracted Lead Days"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

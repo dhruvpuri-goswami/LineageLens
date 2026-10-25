@@ -1,0 +1,56 @@
+table 'Supplier Scorecard'
+	lineageTag: 00005eed-0000-0000-0000-0000000000dd
+
+	measure 'Scorecard Fill Rate' = AVERAGE('Supplier Scorecard'[Avg Fill Rate])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-0000000000de
+
+	measure 'Scorecard Days Late' = AVERAGE('Supplier Scorecard'[Avg Days Late])
+		formatString: 0.0
+		lineageTag: 00005eed-0000-0000-0000-0000000000df
+
+	column 'Supplier Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000e0
+		summarizeBy: none
+		sourceColumn: Supplier Key
+
+	column 'Supplier Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-0000000000e1
+		summarizeBy: none
+		sourceColumn: Supplier Name
+
+	column 'Avg Fill Rate'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000e2
+		summarizeBy: sum
+		sourceColumn: Avg Fill Rate
+
+	column 'Avg Days Late'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000e3
+		summarizeBy: none
+		sourceColumn: Avg Days Late
+
+	column 'Total Spend'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000e4
+		summarizeBy: sum
+		sourceColumn: Total Spend
+
+	partition 'Supplier Scorecard' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="REPORTING", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="VW_SUPPLIER_SCORECARD", Kind="View"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SUPPLIER_KEY", "SUPPLIER_NAME", "AVG_FILL_RATE", "AVG_DAYS_LATE", "TOTAL_SPEND"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SUPPLIER_KEY", "Supplier Key"}, {"SUPPLIER_NAME", "Supplier Name"}, {"AVG_FILL_RATE", "Avg Fill Rate"}, {"AVG_DAYS_LATE", "Avg Days Late"}, {"TOTAL_SPEND", "Total Spend"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

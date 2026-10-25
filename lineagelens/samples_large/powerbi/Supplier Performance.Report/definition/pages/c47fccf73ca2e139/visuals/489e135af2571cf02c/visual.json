@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "489e135af2571cf02c",
+  "position": {
+    "x": 20,
+    "y": 250,
+    "z": 3000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Product"
+                    }
+                  },
+                  "Property": "Product Subcategory"
+                }
+              },
+              "queryRef": "Product.Product Subcategory",
+              "nativeQueryRef": "Product Subcategory"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Purchase Orders"
+                    }
+                  },
+                  "Property": "PO Spend PY"
+                }
+              },
+              "queryRef": "Purchase Orders.PO Spend PY",
+              "nativeQueryRef": "PO Spend PY"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'PO Spend PY by Product Subcategory'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

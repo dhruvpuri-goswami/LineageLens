@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "095813c248908fa805",
+  "position": {
+    "x": 20,
+    "y": 250,
+    "z": 3000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Account"
+                    }
+                  },
+                  "Property": "P&L Line"
+                }
+              },
+              "queryRef": "Account.P&L Line",
+              "nativeQueryRef": "P&L Line"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "COGS Actuals"
+                }
+              },
+              "queryRef": "GL.COGS Actuals",
+              "nativeQueryRef": "COGS Actuals"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "Actuals"
+                }
+              },
+              "queryRef": "GL.Actuals",
+              "nativeQueryRef": "Actuals"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'P&L Line'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

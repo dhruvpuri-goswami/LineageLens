@@ -1,0 +1,18 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+
+ref table Inventory
+ref table 'Purchase Orders'
+ref table Supplier
+ref table 'Supplier Scorecard'
+ref table 'Inventory Health'
+ref table Product
+ref table Store
+ref table Calendar
+ref table Returns
+
+ref role 'Store Operations'
+
+ref culture en-US

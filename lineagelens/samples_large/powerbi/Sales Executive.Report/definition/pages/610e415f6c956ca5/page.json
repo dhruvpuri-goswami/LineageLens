@@ -1,0 +1,25 @@
+{
+  "name": "610e415f6c956ca5",
+  "displayName": "Overview",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "Calendar Year"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

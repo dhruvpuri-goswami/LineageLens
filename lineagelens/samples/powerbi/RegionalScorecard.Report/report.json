@@ -1,0 +1,45 @@
+{
+  "id": 0,
+  "resourcePackages": [],
+  "config": "{\"version\": \"5.55\", \"themeCollection\": {}}",
+  "filters": "[{\"name\": \"rf1\", \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Date\"}}, \"Property\": \"Quarter\"}}, \"type\": \"Categorical\"}]",
+  "sections": [
+    {
+      "name": "ReportSection1",
+      "displayName": "Regional Scorecard",
+      "ordinal": 0,
+      "width": 1280,
+      "height": 720,
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 620,
+          "height": 340,
+          "config": "{\"name\": \"legacy01\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 620, \"height\": 340}}], \"singleVisual\": {\"visualType\": \"clusteredColumnChart\", \"projections\": {\"Values\": [{\"queryRef\": \"Sales Summary.Region\"}, {\"queryRef\": \"Sales Summary.Scorecard Net Sales\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s\", \"Entity\": \"Sales Summary\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s\"}}, \"Property\": \"Region\"}, \"Name\": \"Sales Summary.Region\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s\"}}, \"Property\": \"Scorecard Net Sales\"}, \"Name\": \"Sales Summary.Scorecard Net Sales\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Net Sales by Region'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 660,
+          "y": 20,
+          "z": 0,
+          "width": 600,
+          "height": 340,
+          "config": "{\"name\": \"legacy02\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 660, \"y\": 20, \"z\": 0, \"width\": 600, \"height\": 340}}], \"singleVisual\": {\"visualType\": \"multiRowCard\", \"projections\": {\"Values\": [{\"queryRef\": \"Sales Summary.Scorecard Net Sales\"}, {\"queryRef\": \"Sales Summary.Scorecard Orders\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"s\", \"Entity\": \"Sales Summary\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s\"}}, \"Property\": \"Scorecard Net Sales\"}, \"Name\": \"Sales Summary.Scorecard Net Sales\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s\"}}, \"Property\": \"Scorecard Orders\"}, \"Name\": \"Sales Summary.Scorecard Orders\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Scorecard'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 380,
+          "z": 0,
+          "width": 1240,
+          "height": 320,
+          "config": "{\"name\": \"legacy03\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 380, \"z\": 0, \"width\": 1240, \"height\": 320}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"Store.Store Name\"}, {\"queryRef\": \"Sales.Units Sold\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t\", \"Entity\": \"Store\", \"Type\": 0}, {\"Name\": \"s1\", \"Entity\": \"Sales\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t\"}}, \"Property\": \"Store Name\"}, \"Name\": \"Store.Store Name\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"s1\"}}, \"Property\": \"Units Sold\"}, \"Name\": \"Sales.Units Sold\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Units by Store'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"f1\", \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Store\"}}, \"Property\": \"Country Code\"}}, \"type\": \"Categorical\", \"howCreated\": 1}]"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+table Store
+	lineageTag: 00005eed-0000-0000-0000-000000000056
+
+	measure Stores = COUNTROWS(Store)
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-000000000057
+
+	measure 'Revenue per Store' = DIVIDE([Net Revenue], [Stores])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-000000000058
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000059
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Store Name'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000005a
+		summarizeBy: none
+		sourceColumn: Store Name
+
+	column 'Sales Region'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000005b
+		summarizeBy: none
+		sourceColumn: Sales Region
+
+	column 'Country Code'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000005c
+		summarizeBy: none
+		sourceColumn: Country Code
+
+	column 'Store Format'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000005d
+		summarizeBy: none
+		sourceColumn: Store Format
+
+	column 'Opened On'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000005e
+		summarizeBy: none
+		sourceColumn: Opened On
+
+	column 'Manager Email'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000005f
+		summarizeBy: none
+		sourceColumn: Manager Email
+
+	column 'Sq Ft'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000060
+		summarizeBy: sum
+		sourceColumn: Sq Ft
+
+	partition Store = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_STORE", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"STORE_KEY", "STORE_NAME", "SALES_REGION", "COUNTRY_CODE", "STORE_FORMAT", "OPENED_ON", "MANAGER_EMAIL", "SQ_FT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"STORE_KEY", "Store Key"}, {"STORE_NAME", "Store Name"}, {"SALES_REGION", "Sales Region"}, {"COUNTRY_CODE", "Country Code"}, {"STORE_FORMAT", "Store Format"}, {"OPENED_ON", "Opened On"}, {"MANAGER_EMAIL", "Manager Email"}, {"SQ_FT", "Sq Ft"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

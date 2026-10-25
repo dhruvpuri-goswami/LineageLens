@@ -1,0 +1,5 @@
+role 'EMEA Sales'
+	modelPermission: read
+
+	tablePermission Store = Store[Sales Region] = "EMEA"
+	tablePermission Customer = Customer[Country Code] IN {"GB", "DE", "FR"}

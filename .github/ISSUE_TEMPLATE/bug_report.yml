@@ -1,0 +1,31 @@
+name: Bug report
+description: Something is wrong with lineage, the UI or the CLI
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Please do not attach real company SQL, models, reports or data.** Reproduce with the bundled samples, or with a minimal anonymised example.
+  - type: input
+    id: version
+    attributes: { label: LineageLens version, placeholder: "2.0.0 (shown in the sidebar footer)" }
+    validations: { required: true }
+  - type: dropdown
+    id: os
+    attributes: { label: Operating system, options: [Windows, macOS, Linux] }
+    validations: { required: true }
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [dbt parsing, Snowflake SQL parsing, Power BI model (TMDL/BIM), Power BI report (PBIR/legacy), DAX / M, Lineage map / UI, CLI / CI, Other]
+  - type: textarea
+    id: what
+    attributes: { label: What happened, and what did you expect? }
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes: { label: Steps to reproduce (synthetic data only), render: text }
+  - type: textarea
+    id: logs
+    attributes: { label: Scan warnings or logs, render: text }

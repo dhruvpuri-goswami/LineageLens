@@ -1,0 +1,78 @@
+table 'Web Sessions'
+	lineageTag: 00005eed-0000-0000-0000-000000000078
+
+	measure Sessions = COUNTROWS('Web Sessions')
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-000000000079
+
+	measure Conversions = SUM('Web Sessions'[Conversions])
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-00000000007a
+
+	measure 'Conversion Rate' = DIVIDE([Conversions], [Sessions])
+		formatString: 0.00%
+		lineageTag: 00005eed-0000-0000-0000-00000000007b
+
+	measure 'Pages per Session' = DIVIDE(SUM('Web Sessions'[Page Views]), [Sessions])
+		formatString: 0.0
+		lineageTag: 00005eed-0000-0000-0000-00000000007c
+
+	column 'Session Key'
+		dataType: string
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000007d
+		summarizeBy: none
+		sourceColumn: Session Key
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000007e
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'Campaign Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000007f
+		summarizeBy: none
+		sourceColumn: Campaign Key
+
+	column 'Session Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000080
+		summarizeBy: none
+		sourceColumn: Session Date
+
+	column Device
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000081
+		summarizeBy: none
+		sourceColumn: Device
+
+	column 'Page Views'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000082
+		summarizeBy: none
+		sourceColumn: Page Views
+
+	column Conversions
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000083
+		summarizeBy: none
+		sourceColumn: Conversions
+
+	partition 'Web Sessions' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_WEB_SESSIONS", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SESSION_KEY", "CUSTOMER_KEY", "CAMPAIGN_KEY", "SESSION_DATE", "DEVICE", "PAGE_VIEWS", "CONVERSIONS"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SESSION_KEY", "Session Key"}, {"CUSTOMER_KEY", "Customer Key"}, {"CAMPAIGN_KEY", "Campaign Key"}, {"SESSION_DATE", "Session Date"}, {"DEVICE", "Device"}, {"PAGE_VIEWS", "Page Views"}, {"CONVERSIONS", "Conversions"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,25 @@
+{
+  "name": "e28ce48d8a310138",
+  "displayName": "Traffic",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Customer"
+              }
+            },
+            "Property": "Loyalty Tier"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

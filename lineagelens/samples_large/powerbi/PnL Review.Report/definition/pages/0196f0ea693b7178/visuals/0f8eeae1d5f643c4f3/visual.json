@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "0f8eeae1d5f643c4f3",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "z": 0,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cost Center"
+                    }
+                  },
+                  "Property": "Cost Center Name"
+                }
+              },
+              "queryRef": "Cost Center.Cost Center Name",
+              "nativeQueryRef": "Cost Center Name"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "GL"
+                    }
+                  },
+                  "Property": "COGS Actuals"
+                }
+              },
+              "queryRef": "GL.COGS Actuals",
+              "nativeQueryRef": "COGS Actuals"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'COGS Actuals by Cost Center Name'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

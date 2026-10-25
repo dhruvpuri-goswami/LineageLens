@@ -1,0 +1,4 @@
+role 'Regional Manager'
+	modelPermission: read
+
+	tablePermission Store = 'Store'[Manager Email] = USERPRINCIPALNAME()

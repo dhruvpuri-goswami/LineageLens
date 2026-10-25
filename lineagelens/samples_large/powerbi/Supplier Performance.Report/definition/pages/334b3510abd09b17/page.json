@@ -1,0 +1,25 @@
+{
+  "name": "334b3510abd09b17",
+  "displayName": "Spend",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Product"
+              }
+            },
+            "Property": "Product Category"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

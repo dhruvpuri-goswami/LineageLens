@@ -1,0 +1,11 @@
+relationship 00005eed-0000-0000-0000-000000000160
+	fromColumn: GL.'Account Key'
+	toColumn: Account.'Account Key'
+
+relationship 00005eed-0000-0000-0000-000000000161
+	fromColumn: GL.'Cost Center Key'
+	toColumn: 'Cost Center'.'Cost Center Key'
+
+relationship 00005eed-0000-0000-0000-000000000162
+	fromColumn: GL.'Posting Date'
+	toColumn: 'Fiscal Date'.'Date Day'

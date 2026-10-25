@@ -1,0 +1,25 @@
+{
+  "name": "19050baf3448afa9",
+  "displayName": "Conversion",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Customer"
+              }
+            },
+            "Property": "First Order Date"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

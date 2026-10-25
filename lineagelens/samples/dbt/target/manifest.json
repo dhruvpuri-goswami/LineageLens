@@ -1,0 +1,1018 @@
+{
+  "metadata": {
+    "dbt_schema_version": "https://schemas.getdbt.com/dbt/manifest/v12.json",
+    "dbt_version": "1.9.4",
+    "generated_at": "2026-10-20T09:12:44.512Z",
+    "invocation_id": "5d1c0f7e-sample",
+    "env": {},
+    "project_name": "retail_analytics",
+    "project_id": "sample",
+    "adapter_type": "snowflake",
+    "send_anonymous_usage_stats": false
+  },
+  "nodes": {
+    "seed.retail_analytics.country_codes": {
+      "resource_type": "seed",
+      "unique_id": "seed.retail_analytics.country_codes",
+      "name": "country_codes",
+      "package_name": "retail_analytics",
+      "alias": "country_codes",
+      "database": "ANALYTICS",
+      "schema": "SEEDS",
+      "path": "country_codes.csv",
+      "original_file_path": "seeds/country_codes.csv",
+      "fqn": [
+        "retail_analytics",
+        "country_codes"
+      ],
+      "config": {
+        "materialized": "seed",
+        "enabled": true
+      },
+      "description": "Country lookup seed",
+      "columns": {
+        "country_code": {
+          "name": "country_code",
+          "description": "ISO-2 code",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "country_name": {
+          "name": "country_name",
+          "description": "Country name",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "region_group": {
+          "name": "region_group",
+          "description": "Region group",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [],
+        "macros": []
+      },
+      "relation_name": "ANALYTICS.SEEDS.COUNTRY_CODES",
+      "raw_code": "",
+      "tags": []
+    },
+    "model.retail_analytics.stg_orders": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.stg_orders",
+      "name": "stg_orders",
+      "package_name": "retail_analytics",
+      "alias": "stg_orders",
+      "database": "ANALYTICS",
+      "schema": "STAGING",
+      "path": "staging/stg_orders.sql",
+      "original_file_path": "models/staging/stg_orders.sql",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "stg_orders"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "staging"
+        ]
+      },
+      "description": "Cleaned order headers",
+      "tags": [
+        "staging"
+      ],
+      "columns": {
+        "order_date": {
+          "name": "order_date",
+          "description": "Order date (from ORDER_TS)",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        },
+        "order_status": {
+          "name": "order_status",
+          "description": "Lower-cased status",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.orders"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    order_id,\n    customer_id,\n    store_id,\n    order_ts::date as order_date,\n    lower(status) as order_status\nfrom {{ source('raw', 'orders') }}\nwhere status <> 'TEST'\n",
+      "compiled_code": "select\n    order_id,\n    customer_id,\n    store_id,\n    order_ts::date as order_date,\n    lower(status) as order_status\nfrom analytics.raw.orders\nwhere status <> 'TEST'\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.STAGING.STG_ORDERS",
+      "language": "sql"
+    },
+    "model.retail_analytics.stg_order_items": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.stg_order_items",
+      "name": "stg_order_items",
+      "package_name": "retail_analytics",
+      "alias": "stg_order_items",
+      "database": "ANALYTICS",
+      "schema": "STAGING",
+      "path": "staging/stg_order_items.sql",
+      "original_file_path": "models/staging/stg_order_items.sql",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "stg_order_items"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "staging"
+        ]
+      },
+      "description": "Order lines with net amount",
+      "tags": [
+        "staging"
+      ],
+      "columns": {
+        "net_amount": {
+          "name": "net_amount",
+          "description": "Quantity x price after discount",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.order_items"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    *,\n    quantity * unit_price * (1 - discount_pct) as net_amount\nfrom {{ source('raw', 'order_items') }}\n",
+      "compiled_code": "select\n    *,\n    quantity * unit_price * (1 - discount_pct) as net_amount\nfrom analytics.raw.order_items\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.STAGING.STG_ORDER_ITEMS",
+      "language": "sql"
+    },
+    "model.retail_analytics.stg_customers": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.stg_customers",
+      "name": "stg_customers",
+      "package_name": "retail_analytics",
+      "alias": "stg_customers",
+      "database": "ANALYTICS",
+      "schema": "STAGING",
+      "path": "staging/stg_customers.sql",
+      "original_file_path": "models/staging/stg_customers.sql",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "stg_customers"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "staging"
+        ]
+      },
+      "description": "Cleaned customers",
+      "tags": [
+        "staging"
+      ],
+      "columns": {
+        "customer_name": {
+          "name": "customer_name",
+          "description": "First + last name",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.customers"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    customer_id,\n    first_name || ' ' || last_name as customer_name,\n    email,\n    country_code,\n    segment as customer_segment,\n    created_at\nfrom {{ source('raw', 'customers') }}\n",
+      "compiled_code": "select\n    customer_id,\n    first_name || ' ' || last_name as customer_name,\n    email,\n    country_code,\n    segment as customer_segment,\n    created_at\nfrom analytics.raw.customers\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.STAGING.STG_CUSTOMERS",
+      "language": "sql"
+    },
+    "model.retail_analytics.stg_products": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.stg_products",
+      "name": "stg_products",
+      "package_name": "retail_analytics",
+      "alias": "stg_products",
+      "database": "ANALYTICS",
+      "schema": "STAGING",
+      "path": "staging/stg_products.sql",
+      "original_file_path": "models/staging/stg_products.sql",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "stg_products"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "staging"
+        ]
+      },
+      "description": "Cleaned products",
+      "tags": [
+        "staging"
+      ],
+      "columns": {},
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.products"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    product_id,\n    product_name,\n    category as product_category,\n    subcategory as product_subcategory,\n    list_price,\n    is_active\nfrom {{ source('raw', 'products') }}\n",
+      "compiled_code": "select\n    product_id,\n    product_name,\n    category as product_category,\n    subcategory as product_subcategory,\n    list_price,\n    is_active\nfrom analytics.raw.products\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.STAGING.STG_PRODUCTS",
+      "language": "sql"
+    },
+    "model.retail_analytics.stg_stores": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.stg_stores",
+      "name": "stg_stores",
+      "package_name": "retail_analytics",
+      "alias": "stg_stores",
+      "database": "ANALYTICS",
+      "schema": "STAGING",
+      "path": "staging/stg_stores.sql",
+      "original_file_path": "models/staging/stg_stores.sql",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "stg_stores"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "staging"
+        ]
+      },
+      "description": "Cleaned stores",
+      "tags": [
+        "staging"
+      ],
+      "columns": {},
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.stores"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    store_id,\n    store_name,\n    region as sales_region,\n    country_code,\n    manager_email\nfrom {{ source('raw', 'stores') }}\n",
+      "compiled_code": "select\n    store_id,\n    store_name,\n    region as sales_region,\n    country_code,\n    manager_email\nfrom analytics.raw.stores\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.STAGING.STG_STORES",
+      "language": "sql"
+    },
+    "model.retail_analytics.int_order_lines": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.int_order_lines",
+      "name": "int_order_lines",
+      "package_name": "retail_analytics",
+      "alias": "int_order_lines",
+      "database": "ANALYTICS",
+      "schema": "INTERMEDIATE",
+      "path": "intermediate/int_order_lines.sql",
+      "original_file_path": "models/intermediate/int_order_lines.sql",
+      "fqn": [
+        "retail_analytics",
+        "intermediate",
+        "int_order_lines"
+      ],
+      "config": {
+        "materialized": "view",
+        "enabled": true,
+        "tags": [
+          "intermediate"
+        ]
+      },
+      "description": "Order lines joined to headers",
+      "tags": [
+        "intermediate"
+      ],
+      "columns": {
+        "discount_band": {
+          "name": "discount_band",
+          "description": "High (>=20%), Low, None",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "model.retail_analytics.stg_order_items",
+          "model.retail_analytics.stg_orders"
+        ],
+        "macros": []
+      },
+      "raw_code": "with items as (\n    select * from {{ ref('stg_order_items') }}\n),\norders as (\n    select * from {{ ref('stg_orders') }}\n)\nselect\n    i.order_item_id,\n    i.order_id,\n    o.customer_id,\n    o.store_id,\n    i.product_id,\n    o.order_date,\n    o.order_status,\n    i.quantity,\n    i.unit_price,\n    i.discount_pct,\n    i.net_amount,\n    case\n        when i.discount_pct >= 0.20 then 'High'\n        when i.discount_pct > 0 then 'Low'\n        else 'None'\n    end as discount_band\nfrom items i\ninner join orders o on i.order_id = o.order_id\n",
+      "compiled_code": "with items as (\n    select * from analytics.staging.stg_order_items\n),\norders as (\n    select * from analytics.staging.stg_orders\n)\nselect\n    i.order_item_id,\n    i.order_id,\n    o.customer_id,\n    o.store_id,\n    i.product_id,\n    o.order_date,\n    o.order_status,\n    i.quantity,\n    i.unit_price,\n    i.discount_pct,\n    i.net_amount,\n    case\n        when i.discount_pct >= 0.20 then 'High'\n        when i.discount_pct > 0 then 'Low'\n        else 'None'\n    end as discount_band\nfrom items i\ninner join orders o on i.order_id = o.order_id\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.INTERMEDIATE.INT_ORDER_LINES",
+      "language": "sql"
+    },
+    "model.retail_analytics.dim_customer": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.dim_customer",
+      "name": "dim_customer",
+      "package_name": "retail_analytics",
+      "alias": "dim_customer",
+      "database": "ANALYTICS",
+      "schema": "GOLD",
+      "path": "marts/dim_customer.sql",
+      "original_file_path": "models/marts/dim_customer.sql",
+      "fqn": [
+        "retail_analytics",
+        "marts",
+        "dim_customer"
+      ],
+      "config": {
+        "materialized": "table",
+        "enabled": true,
+        "tags": [
+          "marts"
+        ]
+      },
+      "description": "Customer dimension (gold)",
+      "tags": [
+        "marts"
+      ],
+      "columns": {
+        "customer_key": {
+          "name": "customer_key",
+          "description": "Surrogate key = CRM customer id",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        },
+        "customer_tier": {
+          "name": "customer_tier",
+          "description": "Tier derived from segment",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "model.retail_analytics.stg_customers",
+          "seed.retail_analytics.country_codes"
+        ],
+        "macros": []
+      },
+      "raw_code": "with customers as (\n    select * from {{ ref('stg_customers') }}\n),\ncountries as (\n    select country_code, country_name from {{ ref('country_codes') }}\n)\nselect\n    c.customer_id as customer_key,\n    c.customer_name,\n    c.email as customer_email,\n    c.customer_segment,\n    case\n        when c.customer_segment = 'Enterprise' then 'Tier 1'\n        when c.customer_segment = 'SMB' then 'Tier 2'\n        else 'Tier 3'\n    end as customer_tier,\n    co.country_name,\n    c.created_at as customer_since\nfrom customers c\nleft join countries co on c.country_code = co.country_code\nqualify row_number() over (partition by c.customer_id order by c.created_at desc) = 1\n",
+      "compiled_code": "with customers as (\n    select * from analytics.staging.stg_customers\n),\ncountries as (\n    select country_code, country_name from analytics.seeds.country_codes\n)\nselect\n    c.customer_id as customer_key,\n    c.customer_name,\n    c.email as customer_email,\n    c.customer_segment,\n    case\n        when c.customer_segment = 'Enterprise' then 'Tier 1'\n        when c.customer_segment = 'SMB' then 'Tier 2'\n        else 'Tier 3'\n    end as customer_tier,\n    co.country_name,\n    c.created_at as customer_since\nfrom customers c\nleft join countries co on c.country_code = co.country_code\nqualify row_number() over (partition by c.customer_id order by c.created_at desc) = 1\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.GOLD.DIM_CUSTOMER",
+      "language": "sql"
+    },
+    "model.retail_analytics.dim_product": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.dim_product",
+      "name": "dim_product",
+      "package_name": "retail_analytics",
+      "alias": "dim_product",
+      "database": "ANALYTICS",
+      "schema": "GOLD",
+      "path": "marts/dim_product.sql",
+      "original_file_path": "models/marts/dim_product.sql",
+      "fqn": [
+        "retail_analytics",
+        "marts",
+        "dim_product"
+      ],
+      "config": {
+        "materialized": "table",
+        "enabled": true,
+        "tags": [
+          "marts"
+        ]
+      },
+      "description": "Product dimension (gold)",
+      "tags": [
+        "marts"
+      ],
+      "columns": {
+        "price_band": {
+          "name": "price_band",
+          "description": "Premium when list price >= 500",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "model.retail_analytics.stg_products"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    product_id as product_key,\n    product_name,\n    product_category,\n    product_subcategory,\n    list_price,\n    case when list_price >= 500 then 'Premium' else 'Standard' end as price_band\nfrom {{ ref('stg_products') }}\nwhere is_active\n",
+      "compiled_code": "select\n    product_id as product_key,\n    product_name,\n    product_category,\n    product_subcategory,\n    list_price,\n    case when list_price >= 500 then 'Premium' else 'Standard' end as price_band\nfrom analytics.staging.stg_products\nwhere is_active\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.GOLD.DIM_PRODUCT",
+      "language": "sql"
+    },
+    "model.retail_analytics.dim_store": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.dim_store",
+      "name": "dim_store",
+      "package_name": "retail_analytics",
+      "alias": "dim_store",
+      "database": "ANALYTICS",
+      "schema": "GOLD",
+      "path": "marts/dim_store.sql",
+      "original_file_path": "models/marts/dim_store.sql",
+      "fqn": [
+        "retail_analytics",
+        "marts",
+        "dim_store"
+      ],
+      "config": {
+        "materialized": "table",
+        "enabled": true,
+        "tags": [
+          "marts"
+        ]
+      },
+      "description": "Store dimension (gold)",
+      "tags": [
+        "marts"
+      ],
+      "columns": {
+        "manager_email": {
+          "name": "manager_email",
+          "description": "Used by Power BI RLS",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "model.retail_analytics.stg_stores"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    store_id as store_key,\n    store_name,\n    sales_region,\n    country_code,\n    manager_email\nfrom {{ ref('stg_stores') }}\n",
+      "compiled_code": "select\n    store_id as store_key,\n    store_name,\n    sales_region,\n    country_code,\n    manager_email\nfrom analytics.staging.stg_stores\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.GOLD.DIM_STORE",
+      "language": "sql"
+    },
+    "model.retail_analytics.fct_sales": {
+      "resource_type": "model",
+      "unique_id": "model.retail_analytics.fct_sales",
+      "name": "fct_sales",
+      "package_name": "retail_analytics",
+      "alias": "fct_sales",
+      "database": "ANALYTICS",
+      "schema": "GOLD",
+      "path": "marts/fct_sales.sql",
+      "original_file_path": "models/marts/fct_sales.sql",
+      "fqn": [
+        "retail_analytics",
+        "marts",
+        "fct_sales"
+      ],
+      "config": {
+        "materialized": "incremental",
+        "enabled": true,
+        "tags": [
+          "marts"
+        ]
+      },
+      "description": "Sales fact at order-line grain (gold)",
+      "tags": [
+        "marts"
+      ],
+      "columns": {
+        "net_amount": {
+          "name": "net_amount",
+          "description": "Net sales amount after discount",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        },
+        "gross_amount": {
+          "name": "gross_amount",
+          "description": "Quantity x list price",
+          "data_type": null,
+          "meta": {},
+          "tags": []
+        }
+      },
+      "depends_on": {
+        "nodes": [
+          "model.retail_analytics.int_order_lines",
+          "model.retail_analytics.stg_products"
+        ],
+        "macros": []
+      },
+      "raw_code": "select\n    ol.order_item_id as sales_key,\n    ol.order_id,\n    ol.customer_id as customer_key,\n    ol.product_id as product_key,\n    ol.store_id as store_key,\n    ol.order_date,\n    ol.quantity,\n    ol.net_amount,\n    ol.quantity * p.list_price as gross_amount,\n    ol.discount_band,\n    ol.order_status\nfrom {{ ref('int_order_lines') }} ol\nleft join {{ ref('stg_products') }} p on ol.product_id = p.product_id\nwhere ol.order_status <> 'cancelled'\n",
+      "compiled_code": "select\n    ol.order_item_id as sales_key,\n    ol.order_id,\n    ol.customer_id as customer_key,\n    ol.product_id as product_key,\n    ol.store_id as store_key,\n    ol.order_date,\n    ol.quantity,\n    ol.net_amount,\n    ol.quantity * p.list_price as gross_amount,\n    ol.discount_band,\n    ol.order_status\nfrom analytics.intermediate.int_order_lines ol\nleft join analytics.staging.stg_products p on ol.product_id = p.product_id\nwhere ol.order_status <> 'cancelled'\n",
+      "compiled": true,
+      "relation_name": "ANALYTICS.GOLD.FCT_SALES",
+      "language": "sql"
+    },
+    "snapshot.retail_analytics.snap_customers": {
+      "resource_type": "snapshot",
+      "unique_id": "snapshot.retail_analytics.snap_customers",
+      "name": "snap_customers",
+      "package_name": "retail_analytics",
+      "alias": "snap_customers",
+      "database": "ANALYTICS",
+      "schema": "SNAPSHOTS",
+      "path": "snap_customers.sql",
+      "original_file_path": "snapshots/snap_customers.sql",
+      "fqn": [
+        "retail_analytics",
+        "snap_customers",
+        "snap_customers"
+      ],
+      "config": {
+        "materialized": "snapshot",
+        "strategy": "timestamp",
+        "unique_key": "customer_id"
+      },
+      "description": "SCD2 snapshot of customers",
+      "columns": {},
+      "depends_on": {
+        "nodes": [
+          "source.retail_analytics.raw.customers"
+        ],
+        "macros": []
+      },
+      "raw_code": "{% snapshot snap_customers %}\n{{ config(unique_key='customer_id', strategy='timestamp', updated_at='created_at') }}\nselect * from {{ source('raw', 'customers') }}\n{% endsnapshot %}\n",
+      "compiled_code": "select * from analytics.raw.customers\n",
+      "relation_name": "ANALYTICS.SNAPSHOTS.SNAP_CUSTOMERS",
+      "tags": []
+    }
+  },
+  "sources": {
+    "source.retail_analytics.raw.orders": {
+      "resource_type": "source",
+      "unique_id": "source.retail_analytics.raw.orders",
+      "package_name": "retail_analytics",
+      "source_name": "raw",
+      "name": "orders",
+      "identifier": "ORDERS",
+      "database": "ANALYTICS",
+      "schema": "RAW",
+      "path": "models/staging/_sources.yml",
+      "original_file_path": "models/staging/_sources.yml",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "raw",
+        "orders"
+      ],
+      "description": "Raw order headers from the e-commerce platform",
+      "source_description": "Raw landing zone (Fivetran)",
+      "loader": "fivetran",
+      "relation_name": "ANALYTICS.RAW.ORDERS",
+      "columns": {
+        "order_id": {
+          "name": "order_id",
+          "description": "Order identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "description": "Customer identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "store_id": {
+          "name": "store_id",
+          "description": "Fulfilling store",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "order_ts": {
+          "name": "order_ts",
+          "description": "Order timestamp",
+          "data_type": "TIMESTAMP_NTZ",
+          "meta": {},
+          "tags": []
+        },
+        "status": {
+          "name": "status",
+          "description": "Order status code",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "_loaded_at": {
+          "name": "_loaded_at",
+          "description": "Load audit timestamp",
+          "data_type": "TIMESTAMP_NTZ",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "meta": {},
+      "tags": []
+    },
+    "source.retail_analytics.raw.order_items": {
+      "resource_type": "source",
+      "unique_id": "source.retail_analytics.raw.order_items",
+      "package_name": "retail_analytics",
+      "source_name": "raw",
+      "name": "order_items",
+      "identifier": "ORDER_ITEMS",
+      "database": "ANALYTICS",
+      "schema": "RAW",
+      "path": "models/staging/_sources.yml",
+      "original_file_path": "models/staging/_sources.yml",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "raw",
+        "order_items"
+      ],
+      "description": "Order line items",
+      "source_description": "Raw landing zone (Fivetran)",
+      "loader": "fivetran",
+      "relation_name": "ANALYTICS.RAW.ORDER_ITEMS",
+      "columns": {
+        "order_item_id": {
+          "name": "order_item_id",
+          "description": "Line identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "order_id": {
+          "name": "order_id",
+          "description": "Order identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "product_id": {
+          "name": "product_id",
+          "description": "Product identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "quantity": {
+          "name": "quantity",
+          "description": "Units ordered",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "unit_price": {
+          "name": "unit_price",
+          "description": "Unit selling price",
+          "data_type": "NUMBER(12,2)",
+          "meta": {},
+          "tags": []
+        },
+        "discount_pct": {
+          "name": "discount_pct",
+          "description": "Discount fraction 0-1",
+          "data_type": "NUMBER(5,4)",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "meta": {},
+      "tags": []
+    },
+    "source.retail_analytics.raw.customers": {
+      "resource_type": "source",
+      "unique_id": "source.retail_analytics.raw.customers",
+      "package_name": "retail_analytics",
+      "source_name": "raw",
+      "name": "customers",
+      "identifier": "CUSTOMERS",
+      "database": "ANALYTICS",
+      "schema": "RAW",
+      "path": "models/staging/_sources.yml",
+      "original_file_path": "models/staging/_sources.yml",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "raw",
+        "customers"
+      ],
+      "description": "CRM customer master",
+      "source_description": "Raw landing zone (Fivetran)",
+      "loader": "fivetran",
+      "relation_name": "ANALYTICS.RAW.CUSTOMERS",
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "description": "Customer identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "first_name": {
+          "name": "first_name",
+          "description": "First name",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "last_name": {
+          "name": "last_name",
+          "description": "Last name",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "email": {
+          "name": "email",
+          "description": "Email address",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "country_code": {
+          "name": "country_code",
+          "description": "ISO country",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "segment": {
+          "name": "segment",
+          "description": "Commercial segment",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "created_at": {
+          "name": "created_at",
+          "description": "Record created",
+          "data_type": "TIMESTAMP_NTZ",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "meta": {},
+      "tags": []
+    },
+    "source.retail_analytics.raw.products": {
+      "resource_type": "source",
+      "unique_id": "source.retail_analytics.raw.products",
+      "package_name": "retail_analytics",
+      "source_name": "raw",
+      "name": "products",
+      "identifier": "PRODUCTS",
+      "database": "ANALYTICS",
+      "schema": "RAW",
+      "path": "models/staging/_sources.yml",
+      "original_file_path": "models/staging/_sources.yml",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "raw",
+        "products"
+      ],
+      "description": "Product catalogue",
+      "source_description": "Raw landing zone (Fivetran)",
+      "loader": "fivetran",
+      "relation_name": "ANALYTICS.RAW.PRODUCTS",
+      "columns": {
+        "product_id": {
+          "name": "product_id",
+          "description": "Product identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "product_name": {
+          "name": "product_name",
+          "description": "Product name",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "category": {
+          "name": "category",
+          "description": "Category",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "subcategory": {
+          "name": "subcategory",
+          "description": "Sub-category",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "list_price": {
+          "name": "list_price",
+          "description": "List price",
+          "data_type": "NUMBER(12,2)",
+          "meta": {},
+          "tags": []
+        },
+        "is_active": {
+          "name": "is_active",
+          "description": "Active flag",
+          "data_type": "BOOLEAN",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "meta": {},
+      "tags": []
+    },
+    "source.retail_analytics.raw.stores": {
+      "resource_type": "source",
+      "unique_id": "source.retail_analytics.raw.stores",
+      "package_name": "retail_analytics",
+      "source_name": "raw",
+      "name": "stores",
+      "identifier": "STORES",
+      "database": "ANALYTICS",
+      "schema": "RAW",
+      "path": "models/staging/_sources.yml",
+      "original_file_path": "models/staging/_sources.yml",
+      "fqn": [
+        "retail_analytics",
+        "staging",
+        "raw",
+        "stores"
+      ],
+      "description": "Store master",
+      "source_description": "Raw landing zone (Fivetran)",
+      "loader": "fivetran",
+      "relation_name": "ANALYTICS.RAW.STORES",
+      "columns": {
+        "store_id": {
+          "name": "store_id",
+          "description": "Store identifier",
+          "data_type": "NUMBER",
+          "meta": {},
+          "tags": []
+        },
+        "store_name": {
+          "name": "store_name",
+          "description": "Store name",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "region": {
+          "name": "region",
+          "description": "Sales region",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "country_code": {
+          "name": "country_code",
+          "description": "ISO country",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        },
+        "manager_email": {
+          "name": "manager_email",
+          "description": "Store manager e-mail (used for RLS)",
+          "data_type": "VARCHAR",
+          "meta": {},
+          "tags": []
+        }
+      },
+      "meta": {},
+      "tags": []
+    }
+  },
+  "macros": {},
+  "docs": {},
+  "exposures": {},
+  "metrics": {},
+  "groups": {},
+  "selectors": {},
+  "disabled": {},
+  "parent_map": {
+    "source.retail_analytics.raw.orders": [],
+    "source.retail_analytics.raw.order_items": [],
+    "source.retail_analytics.raw.customers": [],
+    "source.retail_analytics.raw.products": [],
+    "source.retail_analytics.raw.stores": [],
+    "seed.retail_analytics.country_codes": [],
+    "model.retail_analytics.stg_orders": [
+      "source.retail_analytics.raw.orders"
+    ],
+    "model.retail_analytics.stg_order_items": [
+      "source.retail_analytics.raw.order_items"
+    ],
+    "model.retail_analytics.stg_customers": [
+      "source.retail_analytics.raw.customers"
+    ],
+    "model.retail_analytics.stg_products": [
+      "source.retail_analytics.raw.products"
+    ],
+    "model.retail_analytics.stg_stores": [
+      "source.retail_analytics.raw.stores"
+    ],
+    "model.retail_analytics.int_order_lines": [
+      "model.retail_analytics.stg_order_items",
+      "model.retail_analytics.stg_orders"
+    ],
+    "model.retail_analytics.dim_customer": [
+      "model.retail_analytics.stg_customers",
+      "seed.retail_analytics.country_codes"
+    ],
+    "model.retail_analytics.dim_product": [
+      "model.retail_analytics.stg_products"
+    ],
+    "model.retail_analytics.dim_store": [
+      "model.retail_analytics.stg_stores"
+    ],
+    "model.retail_analytics.fct_sales": [
+      "model.retail_analytics.int_order_lines",
+      "model.retail_analytics.stg_products"
+    ],
+    "snapshot.retail_analytics.snap_customers": [
+      "source.retail_analytics.raw.customers"
+    ]
+  },
+  "child_map": {
+    "source.retail_analytics.raw.orders": [
+      "model.retail_analytics.stg_orders"
+    ],
+    "source.retail_analytics.raw.order_items": [
+      "model.retail_analytics.stg_order_items"
+    ],
+    "source.retail_analytics.raw.customers": [
+      "model.retail_analytics.stg_customers",
+      "snapshot.retail_analytics.snap_customers"
+    ],
+    "source.retail_analytics.raw.products": [
+      "model.retail_analytics.stg_products"
+    ],
+    "source.retail_analytics.raw.stores": [
+      "model.retail_analytics.stg_stores"
+    ],
+    "seed.retail_analytics.country_codes": [
+      "model.retail_analytics.dim_customer"
+    ],
+    "model.retail_analytics.stg_orders": [
+      "model.retail_analytics.int_order_lines"
+    ],
+    "model.retail_analytics.stg_order_items": [
+      "model.retail_analytics.int_order_lines"
+    ],
+    "model.retail_analytics.stg_customers": [
+      "model.retail_analytics.dim_customer"
+    ],
+    "model.retail_analytics.stg_products": [
+      "model.retail_analytics.dim_product",
+      "model.retail_analytics.fct_sales"
+    ],
+    "model.retail_analytics.stg_stores": [
+      "model.retail_analytics.dim_store"
+    ],
+    "model.retail_analytics.int_order_lines": [
+      "model.retail_analytics.fct_sales"
+    ],
+    "model.retail_analytics.dim_customer": [],
+    "model.retail_analytics.dim_product": [],
+    "model.retail_analytics.dim_store": [],
+    "model.retail_analytics.fct_sales": [],
+    "snapshot.retail_analytics.snap_customers": []
+  },
+  "group_map": {},
+  "saved_queries": {},
+  "semantic_models": {},
+  "unit_tests": {}
+}

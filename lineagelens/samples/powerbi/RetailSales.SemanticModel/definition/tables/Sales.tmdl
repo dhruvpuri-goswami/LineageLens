@@ -1,0 +1,170 @@
+/// Sales fact at order-line grain, imported from ANALYTICS.GOLD.FCT_SALES (dbt model fct_sales)
+table Sales
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000000001
+
+	/// Net sales after discount
+	measure 'Total Net Sales' = SUM(Sales[Net Amount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Sales
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000101
+
+	measure 'Total Gross Sales' = SUM('Sales'[Gross Amount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Sales
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000102
+
+	measure 'Total Discount' = [Total Gross Sales] - [Total Net Sales]
+		formatString: \$#,0.00
+		displayFolder: Sales
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000103
+
+	measure 'Discount %' =
+			// share of gross sales given away as discount
+			DIVIDE ( [Total Discount], [Total Gross Sales] )
+		formatString: 0.0%
+		displayFolder: Ratios
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000104
+
+	measure 'Order Count' = DISTINCTCOUNT(Sales[Order ID])
+		formatString: #,0
+		displayFolder: Orders
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000105
+
+	measure 'Avg Order Value' = DIVIDE([Total Net Sales], [Order Count])
+		formatString: \$#,0.00
+		displayFolder: Orders
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000106
+
+	measure 'Net Sales PY' = ```
+			VAR _sales = [Total Net Sales]
+			RETURN
+			    CALCULATE ( _sales, SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+			```
+		formatString: \$#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000107
+
+	measure 'Net Sales YoY %' =
+			VAR _cy = [Total Net Sales]
+			VAR _py = [Net Sales PY]
+			RETURN
+			    DIVIDE ( _cy - _py, _py )   /* null when no prior year */
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000108
+
+	measure 'Net Sales YTD' = TOTALYTD([Total Net Sales], 'Date'[Date])
+		formatString: \$#,0.00
+		displayFolder: Time Intelligence
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000109
+
+	measure 'Premium Sales' = CALCULATE([Total Net Sales], 'Product'[Price Band] = "Premium", KEEPFILTERS(Sales[Discount Band] <> "High"))
+		formatString: \$#,0.00
+		displayFolder: Sales
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000110
+
+	measure 'Units Sold' = SUM(Sales[Quantity])
+		formatString: #,0
+		displayFolder: Orders
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000111
+
+	column 'Sales Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000201
+		summarizeBy: none
+		sourceColumn: Sales Key
+
+	column 'Order ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000202
+		summarizeBy: none
+		sourceColumn: Order ID
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000203
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000204
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000205
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Order Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000206
+		summarizeBy: none
+		sourceColumn: Order Date
+
+	column Quantity
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000207
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+	column 'Net Amount'
+		dataType: decimal
+		formatString: \$#,0.00
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000208
+		summarizeBy: sum
+		sourceColumn: Net Amount
+
+	column 'Gross Amount'
+		dataType: decimal
+		formatString: \$#,0.00
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000209
+		summarizeBy: sum
+		sourceColumn: Gross Amount
+
+	column 'Discount Band'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000210
+		summarizeBy: none
+		sourceColumn: Discount Band
+
+	/// Calculated column: discount value per line
+	column 'Discount Amount' = Sales[Gross Amount] - Sales[Net Amount]
+		dataType: decimal
+		formatString: \$#,0.00
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000211
+		summarizeBy: sum
+
+	column 'Is Large Order' = IF ( [Quantity] >= 10, "Yes", "No" )
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000000212
+		summarizeBy: none
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    ANALYTICS_Database = Source{[Name=GoldDatabase, Kind="Database"]}[Data],
+				    GOLD_Schema = ANALYTICS_Database{[Name="GOLD", Kind="Schema"]}[Data],
+				    FCT_SALES_Table = GOLD_Schema{[Name="FCT_SALES", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(FCT_SALES_Table, {"SALES_KEY", "ORDER_ID", "CUSTOMER_KEY", "PRODUCT_KEY", "STORE_KEY", "ORDER_DATE", "QUANTITY", "NET_AMOUNT", "GROSS_AMOUNT", "DISCOUNT_BAND"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SALES_KEY", "Sales Key"}, {"ORDER_ID", "Order ID"}, {"CUSTOMER_KEY", "Customer Key"}, {"PRODUCT_KEY", "Product Key"}, {"STORE_KEY", "Store Key"}, {"ORDER_DATE", "Order Date"}, {"QUANTITY", "Quantity"}, {"NET_AMOUNT", "Net Amount"}, {"GROSS_AMOUNT", "Gross Amount"}, {"DISCOUNT_BAND", "Discount Band"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns", {{"Order Date", type date}, {"Net Amount", Currency.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table

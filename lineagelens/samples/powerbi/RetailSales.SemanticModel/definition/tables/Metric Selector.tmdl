@@ -1,0 +1,45 @@
+/// Field parameter used to switch the measure shown in visuals
+table 'Metric Selector'
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000007001
+
+	column 'Metric Selector'
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000007101
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metric Selector Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Selector Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selector Fields'
+		dataType: string
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000007102
+		summarizeBy: none
+		sourceColumn: [Value2]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+	column 'Metric Selector Order'
+		dataType: int64
+		isHidden
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000007103
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+	partition 'Metric Selector' = calculated
+		mode: import
+		source =
+				{
+				    ("Net Sales", NAMEOF('Sales'[Total Net Sales]), 0),
+				    ("Gross Sales", NAMEOF('Sales'[Total Gross Sales]), 1),
+				    ("Orders", NAMEOF('Sales'[Order Count]), 2),
+				    ("Avg Order Value", NAMEOF('Sales'[Avg Order Value]), 3)
+				}

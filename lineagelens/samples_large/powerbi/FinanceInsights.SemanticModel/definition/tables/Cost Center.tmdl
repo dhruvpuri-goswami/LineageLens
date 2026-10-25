@@ -1,0 +1,46 @@
+table 'Cost Center'
+	lineageTag: 00005eed-0000-0000-0000-00000000013e
+
+	measure 'Cost Centers' = COUNTROWS('Cost Center')
+		formatString: #,0
+		lineageTag: 00005eed-0000-0000-0000-00000000013f
+
+	column 'Cost Center Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000140
+		summarizeBy: none
+		sourceColumn: Cost Center Key
+
+	column 'Cost Center Name'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000141
+		summarizeBy: sum
+		sourceColumn: Cost Center Name
+
+	column 'Cost Center Region'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000142
+		summarizeBy: sum
+		sourceColumn: Cost Center Region
+
+	column 'Owner Email'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000143
+		summarizeBy: none
+		sourceColumn: Owner Email
+
+	partition 'Cost Center' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_COST_CENTER", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"COST_CENTER_KEY", "COST_CENTER_NAME", "COST_CENTER_REGION", "OWNER_EMAIL"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"COST_CENTER_KEY", "Cost Center Key"}, {"COST_CENTER_NAME", "Cost Center Name"}, {"COST_CENTER_REGION", "Cost Center Region"}, {"OWNER_EMAIL", "Owner Email"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

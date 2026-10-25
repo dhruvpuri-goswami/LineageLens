@@ -1,0 +1,107 @@
+table Inventory
+	lineageTag: 00005eed-0000-0000-0000-0000000000ad
+
+	measure 'On Hand Units' = SUM(Inventory[On Hand Qty])
+		formatString: #,0
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000ae
+
+	measure 'On Order Units' = SUM(Inventory[On Order Qty])
+		formatString: #,0
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000af
+
+	measure 'Stock Value' = SUM(Inventory[Stock Value])
+		formatString: \$#,0
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000b0
+
+	measure 'Stock Value PY' = CALCULATE([Stock Value], SAMEPERIODLASTYEAR('Calendar'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000b1
+
+	measure 'Stock Value Change %' = DIVIDE([Stock Value] - [Stock Value PY], [Stock Value PY])
+		formatString: 0.0%
+		displayFolder: Stock
+		lineageTag: 00005eed-0000-0000-0000-0000000000b2
+
+	measure 'Below Safety Lines' = SUM(Inventory[Is Below Safety])
+		formatString: #,0
+		displayFolder: Risk
+		lineageTag: 00005eed-0000-0000-0000-0000000000b3
+
+	measure 'Stockout Risk %' = DIVIDE([Below Safety Lines], COUNTROWS(Inventory))
+		formatString: 0.0%
+		displayFolder: Risk
+		lineageTag: 00005eed-0000-0000-0000-0000000000b4
+
+	measure 'Stock Risk Flag' = IF([Stockout Risk %] > 0.1, "At risk", "Healthy")
+		formatString: 
+		displayFolder: Risk
+		lineageTag: 00005eed-0000-0000-0000-0000000000b5
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-0000000000b6
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000b7
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000b8
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'On Hand Qty'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000b9
+		summarizeBy: none
+		sourceColumn: On Hand Qty
+
+	column 'On Order Qty'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000ba
+		summarizeBy: none
+		sourceColumn: On Order Qty
+
+	column 'Safety Stock'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000bb
+		summarizeBy: none
+		sourceColumn: Safety Stock
+
+	column 'Stock Value'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000bc
+		summarizeBy: sum
+		sourceColumn: Stock Value
+
+	column 'Is Below Safety'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000bd
+		summarizeBy: none
+		sourceColumn: Is Below Safety
+
+	partition Inventory = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_INVENTORY_SNAPSHOT", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SNAPSHOT_DATE", "STORE_KEY", "PRODUCT_KEY", "ON_HAND_QTY", "ON_ORDER_QTY", "SAFETY_STOCK", "STOCK_VALUE", "IS_BELOW_SAFETY"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SNAPSHOT_DATE", "Snapshot Date"}, {"STORE_KEY", "Store Key"}, {"PRODUCT_KEY", "Product Key"}, {"ON_HAND_QTY", "On Hand Qty"}, {"ON_ORDER_QTY", "On Order Qty"}, {"SAFETY_STOCK", "Safety Stock"}, {"STOCK_VALUE", "Stock Value"}, {"IS_BELOW_SAFETY", "Is Below Safety"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

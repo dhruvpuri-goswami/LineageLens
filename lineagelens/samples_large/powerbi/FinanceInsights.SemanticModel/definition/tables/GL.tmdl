@@ -1,0 +1,127 @@
+/// General ledger in USD
+table GL
+	lineageTag: 00005eed-0000-0000-0000-000000000118
+
+	measure Actuals = SUM(GL[Amount USD])
+		formatString: \$#,0
+		displayFolder: Actuals
+		lineageTag: 00005eed-0000-0000-0000-000000000119
+
+	measure 'Revenue Actuals' = CALCULATE([Actuals], Account[P&L Line] = "Revenue")
+		formatString: \$#,0
+		displayFolder: Actuals
+		lineageTag: 00005eed-0000-0000-0000-00000000011a
+
+	measure 'COGS Actuals' = CALCULATE([Actuals], Account[P&L Line] = "COGS")
+		formatString: \$#,0
+		displayFolder: Actuals
+		lineageTag: 00005eed-0000-0000-0000-00000000011b
+
+	measure 'Opex Actuals' = CALCULATE([Actuals], Account[Account Group] = "Opex")
+		formatString: \$#,0
+		displayFolder: Actuals
+		lineageTag: 00005eed-0000-0000-0000-00000000011c
+
+	measure 'Gross Profit' = [Revenue Actuals] - [COGS Actuals]
+		formatString: \$#,0
+		displayFolder: Profit
+		lineageTag: 00005eed-0000-0000-0000-00000000011d
+
+	measure 'Gross Profit %' = DIVIDE([Gross Profit], [Revenue Actuals])
+		formatString: 0.0%
+		displayFolder: Profit
+		lineageTag: 00005eed-0000-0000-0000-00000000011e
+
+	measure EBITDA = [Gross Profit] - [Opex Actuals]
+		formatString: \$#,0
+		displayFolder: Profit
+		lineageTag: 00005eed-0000-0000-0000-00000000011f
+
+	measure 'EBITDA %' = DIVIDE([EBITDA], [Revenue Actuals])
+		formatString: 0.0%
+		displayFolder: Profit
+		lineageTag: 00005eed-0000-0000-0000-000000000120
+
+	measure 'Actuals PY' = CALCULATE([Actuals], SAMEPERIODLASTYEAR('Fiscal Date'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000121
+
+	measure 'Actuals YoY %' = DIVIDE([Actuals] - [Actuals PY], [Actuals PY])
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000122
+
+	measure 'Actuals YTD' = TOTALYTD([Actuals], 'Fiscal Date'[Date Day])
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000123
+
+	measure 'EBITDA YTD' = TOTALYTD([EBITDA], 'Fiscal Date'[Date Day])
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000124
+
+	measure 'EBITDA PY' = CALCULATE([EBITDA], SAMEPERIODLASTYEAR('Fiscal Date'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000125
+
+	measure 'EBITDA YoY %' = DIVIDE([EBITDA] - [EBITDA PY], [EBITDA PY])
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000126
+
+	column 'Gl Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000127
+		summarizeBy: none
+		sourceColumn: Gl Key
+
+	column 'Account Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000128
+		summarizeBy: none
+		sourceColumn: Account Key
+
+	column 'Cost Center Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000129
+		summarizeBy: none
+		sourceColumn: Cost Center Key
+
+	column 'Posting Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000012a
+		summarizeBy: none
+		sourceColumn: Posting Date
+
+	column 'Entry Type'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000012b
+		summarizeBy: none
+		sourceColumn: Entry Type
+
+	column 'Amount USD'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000012c
+		summarizeBy: sum
+		sourceColumn: Amount USD
+
+	partition GL = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_GL", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"GL_KEY", "ACCOUNT_KEY", "COST_CENTER_KEY", "POSTING_DATE", "ENTRY_TYPE", "AMOUNT_USD"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"GL_KEY", "Gl Key"}, {"ACCOUNT_KEY", "Account Key"}, {"COST_CENTER_KEY", "Cost Center Key"}, {"POSTING_DATE", "Posting Date"}, {"ENTRY_TYPE", "Entry Type"}, {"AMOUNT_USD", "Amount USD"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

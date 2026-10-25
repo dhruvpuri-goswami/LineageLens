@@ -1,0 +1,259 @@
+/// Sales lines from HELIOS.GOLD.FCT_SALES_LINES
+table Sales
+	lineageTag: 00005eed-0000-0000-0000-000000000003
+
+	measure 'Net Revenue' = SUM(Sales[Net Revenue])
+		formatString: \$#,0
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-000000000004
+
+	measure 'Gross Revenue' = SUM(Sales[Gross Revenue])
+		formatString: \$#,0
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-000000000005
+
+	measure 'Total Cost' = SUM(Sales[Cost Amount])
+		formatString: \$#,0
+		displayFolder: Cost
+		lineageTag: 00005eed-0000-0000-0000-000000000006
+
+	measure Margin = [Net Revenue] - [Total Cost]
+		formatString: \$#,0
+		displayFolder: Margin
+		lineageTag: 00005eed-0000-0000-0000-000000000007
+
+	measure 'Margin %' = DIVIDE([Margin], [Net Revenue])
+		formatString: 0.0%
+		displayFolder: Margin
+		lineageTag: 00005eed-0000-0000-0000-000000000008
+
+	measure 'Discount Value' = SUM(Sales[Discount Amount])
+		formatString: \$#,0
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-000000000009
+
+	measure 'Discount %' = DIVIDE([Discount Value], [Gross Revenue])
+		formatString: 0.0%
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-00000000000a
+
+	measure Units = SUM(Sales[Quantity])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-00000000000b
+
+	measure 'Order Count' = DISTINCTCOUNT(Sales[Order ID])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-00000000000c
+
+	measure 'Avg Order Value' = DIVIDE([Net Revenue], [Order Count])
+		formatString: \$#,0.00
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-00000000000d
+
+	measure 'Avg Selling Price' = DIVIDE([Net Revenue], [Units])
+		formatString: \$#,0.00
+		displayFolder: Volume
+		lineageTag: 00005eed-0000-0000-0000-00000000000e
+
+	measure 'Promo Revenue' = CALCULATE([Net Revenue], Sales[Is Promo] = TRUE())
+		formatString: \$#,0
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-00000000000f
+
+	measure 'Promo Share' = DIVIDE([Promo Revenue], [Net Revenue])
+		formatString: 0.0%
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-000000000010
+
+	measure 'Premium Revenue' = CALCULATE([Net Revenue], 'Product'[Price Band] = "Premium")
+		formatString: \$#,0
+		displayFolder: Revenue
+		lineageTag: 00005eed-0000-0000-0000-000000000011
+
+	measure 'Tax Collected' = SUM(Sales[Tax Amount])
+		formatString: \$#,0
+		displayFolder: Cost
+		lineageTag: 00005eed-0000-0000-0000-000000000012
+
+	measure 'Net Revenue PY' = CALCULATE([Net Revenue], SAMEPERIODLASTYEAR('Date'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000013
+
+	measure 'Net Revenue YoY %' = DIVIDE([Net Revenue] - [Net Revenue PY], [Net Revenue PY])
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000014
+
+	measure 'Net Revenue YTD' = TOTALYTD([Net Revenue], 'Date'[Date Day])
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000015
+
+	measure 'Net Revenue YoY Label' = FORMAT([Net Revenue YoY %], "+0.0%;-0.0%") & " vs PY"
+		formatString: 
+		displayFolder: Labels
+		lineageTag: 00005eed-0000-0000-0000-000000000016
+
+	measure 'Margin PY' = CALCULATE([Margin], SAMEPERIODLASTYEAR('Date'[Date Day]))
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000017
+
+	measure 'Margin YoY %' = DIVIDE([Margin] - [Margin PY], [Margin PY])
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000018
+
+	measure 'Margin YTD' = TOTALYTD([Margin], 'Date'[Date Day])
+		formatString: \$#,0
+		displayFolder: Time Intelligence
+		lineageTag: 00005eed-0000-0000-0000-000000000019
+
+	measure 'Margin YoY Label' = FORMAT([Margin YoY %], "+0.0%;-0.0%") & " vs PY"
+		formatString: 
+		displayFolder: Labels
+		lineageTag: 00005eed-0000-0000-0000-00000000001a
+
+	measure 'Revenue Target' = [Net Revenue PY] * 1.08
+		formatString: \$#,0
+		displayFolder: Targets
+		lineageTag: 00005eed-0000-0000-0000-00000000001b
+
+	measure 'Revenue vs Target' = DIVIDE([Net Revenue], [Revenue Target]) - 1
+		formatString: 0.0%
+		displayFolder: Targets
+		lineageTag: 00005eed-0000-0000-0000-00000000001c
+
+	measure 'Target Status' = IF([Revenue vs Target] >= 0, "On track", "Behind")
+		formatString: 
+		displayFolder: Targets
+		lineageTag: 00005eed-0000-0000-0000-00000000001d
+
+	measure 'Target Colour' = IF([Revenue vs Target] >= 0, "#16A34A", "#DC2626")
+		formatString: 
+		displayFolder: Formatting
+		lineageTag: 00005eed-0000-0000-0000-00000000001e
+
+	column 'Sales Line Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000001f
+		summarizeBy: none
+		sourceColumn: Sales Line Key
+
+	column 'Order ID'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000020
+		summarizeBy: none
+		sourceColumn: Order ID
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000021
+		summarizeBy: none
+		sourceColumn: Customer Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000022
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000023
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Channel Key'
+		dataType: string
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000024
+		summarizeBy: none
+		sourceColumn: Channel Key
+
+	column 'Order Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000025
+		summarizeBy: none
+		sourceColumn: Order Date
+
+	column Quantity
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-000000000026
+		summarizeBy: none
+		sourceColumn: Quantity
+
+	column 'Gross Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000027
+		summarizeBy: sum
+		sourceColumn: Gross Revenue
+
+	column 'Net Revenue'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000028
+		summarizeBy: sum
+		sourceColumn: Net Revenue
+
+	column 'Cost Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000029
+		summarizeBy: sum
+		sourceColumn: Cost Amount
+
+	column 'Margin Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000002a
+		summarizeBy: sum
+		sourceColumn: Margin Amount
+
+	column 'Discount Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000002b
+		summarizeBy: sum
+		sourceColumn: Discount Amount
+
+	column 'Tax Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000002c
+		summarizeBy: sum
+		sourceColumn: Tax Amount
+
+	column 'Discount Band'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000002d
+		summarizeBy: none
+		sourceColumn: Discount Band
+
+	column 'Is Promo'
+		dataType: boolean
+		lineageTag: 00005eed-0000-0000-0000-00000000002e
+		summarizeBy: none
+		sourceColumn: Is Promo
+
+	column 'Margin Line' = Sales[Net Revenue] - Sales[Cost Amount]
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-00000000002f
+		summarizeBy: none
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_SALES_LINES", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SALES_LINE_KEY", "ORDER_ID", "CUSTOMER_KEY", "PRODUCT_KEY", "STORE_KEY", "CHANNEL_KEY", "ORDER_DATE", "QUANTITY", "GROSS_REVENUE", "NET_REVENUE", "COST_AMOUNT", "MARGIN_AMOUNT", "DISCOUNT_AMOUNT", "TAX_AMOUNT", "DISCOUNT_BAND", "IS_PROMO"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SALES_LINE_KEY", "Sales Line Key"}, {"ORDER_ID", "Order ID"}, {"CUSTOMER_KEY", "Customer Key"}, {"PRODUCT_KEY", "Product Key"}, {"STORE_KEY", "Store Key"}, {"CHANNEL_KEY", "Channel Key"}, {"ORDER_DATE", "Order Date"}, {"QUANTITY", "Quantity"}, {"GROSS_REVENUE", "Gross Revenue"}, {"NET_REVENUE", "Net Revenue"}, {"COST_AMOUNT", "Cost Amount"}, {"MARGIN_AMOUNT", "Margin Amount"}, {"DISCOUNT_AMOUNT", "Discount Amount"}, {"TAX_AMOUNT", "Tax Amount"}, {"DISCOUNT_BAND", "Discount Band"}, {"IS_PROMO", "Is Promo"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

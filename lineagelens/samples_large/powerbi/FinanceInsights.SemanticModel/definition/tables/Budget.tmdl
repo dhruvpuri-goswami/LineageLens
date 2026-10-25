@@ -1,0 +1,78 @@
+table Budget
+	lineageTag: 00005eed-0000-0000-0000-00000000012d
+
+	measure Budget = SUM(Budget[Budget Amount])
+		formatString: \$#,0
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-00000000012e
+
+	measure Variance = [Actuals] - [Budget]
+		formatString: \$#,0
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-00000000012f
+
+	measure 'Variance %' = DIVIDE([Variance], [Budget])
+		formatString: 0.0%
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-000000000130
+
+	measure 'Budget YTD' = TOTALYTD([Budget], 'Fiscal Date'[Date Day])
+		formatString: \$#,0
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-000000000131
+
+	measure 'Variance YTD' = [Actuals YTD] - [Budget YTD]
+		formatString: \$#,0
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-000000000132
+
+	measure 'Variance Flag' = IF([Variance %] > 0.05, "Over", IF([Variance %] < -0.05, "Under", "On budget"))
+		formatString: 
+		displayFolder: Budget
+		lineageTag: 00005eed-0000-0000-0000-000000000133
+
+	measure 'Variance Colour' = SWITCH([Variance Flag], "Over", "#DC2626", "Under", "#2563EB", "#16A34A")
+		formatString: 
+		displayFolder: Formatting
+		lineageTag: 00005eed-0000-0000-0000-000000000134
+
+	column 'Period Month'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-000000000135
+		summarizeBy: none
+		sourceColumn: Period Month
+
+	column 'Cost Center Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000136
+		summarizeBy: none
+		sourceColumn: Cost Center Key
+
+	column 'Account Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000137
+		summarizeBy: none
+		sourceColumn: Account Key
+
+	column 'Budget Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000138
+		summarizeBy: sum
+		sourceColumn: Budget Amount
+
+	partition Budget = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="FCT_BUDGET", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"PERIOD_MONTH", "COST_CENTER_KEY", "ACCOUNT_KEY", "BUDGET_AMOUNT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"PERIOD_MONTH", "Period Month"}, {"COST_CENTER_KEY", "Cost Center Key"}, {"ACCOUNT_KEY", "Account Key"}, {"BUDGET_AMOUNT", "Budget Amount"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

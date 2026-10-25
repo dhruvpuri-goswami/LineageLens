@@ -1,0 +1,45 @@
+/// Pre-aggregated daily sales by region (native SQL against a non-dbt view)
+table 'Sales Summary'
+	lineageTag: 1d2c3b4a-0000-4000-8000-000000005001
+
+	measure 'Scorecard Net Sales' = SUM('Sales Summary'[Total Net Amount])
+		formatString: \$#,0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005101
+
+	measure 'Scorecard Orders' = SUM('Sales Summary'[Order Count])
+		formatString: #,0
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005102
+
+	column 'Order Date'
+		dataType: dateTime
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005201
+		summarizeBy: none
+		sourceColumn: ORDER_DATE
+
+	column Region
+		dataType: string
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005202
+		summarizeBy: none
+		sourceColumn: REGION
+
+	column 'Total Net Amount'
+		dataType: decimal
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005203
+		summarizeBy: sum
+		sourceColumn: TOTAL_NET_AMOUNT
+
+	column 'Order Count'
+		dataType: int64
+		lineageTag: 1d2c3b4a-0000-4000-8000-000000005204
+		summarizeBy: sum
+		sourceColumn: ORDER_COUNT
+
+	partition 'Sales Summary' = m
+		mode: directQuery
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    ANALYTICS_Database = Source{[Name="ANALYTICS", Kind="Database"]}[Data],
+				    Query = Value.NativeQuery(ANALYTICS_Database, "select ss.order_date, ss.sales_region as region, ss.total_net_amount, ss.order_count#(lf)from REPORTING.VW_SALES_SUMMARY ss#(lf)where ss.order_date >= '2023-01-01'", null, [EnableFolding=true])
+				in
+				    Query

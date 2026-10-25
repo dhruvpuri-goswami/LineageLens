@@ -1,0 +1,55 @@
+/// P&L view (non-dbt, REPORTING schema)
+table PnL
+	lineageTag: 00005eed-0000-0000-0000-00000000014b
+
+	measure 'PnL Actual' = SUM(PnL[Actual Amount])
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-00000000014c
+
+	measure 'PnL Actual PY' = CALCULATE([PnL Actual], SAMEPERIODLASTYEAR('Fiscal Date'[Date Day]))
+		formatString: \$#,0
+		lineageTag: 00005eed-0000-0000-0000-00000000014d
+
+	measure 'PnL Growth %' = DIVIDE([PnL Actual] - [PnL Actual PY], [PnL Actual PY])
+		formatString: 0.0%
+		lineageTag: 00005eed-0000-0000-0000-00000000014e
+
+	column 'Period Month'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-00000000014f
+		summarizeBy: none
+		sourceColumn: Period Month
+
+	column 'P&L Line'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-000000000150
+		summarizeBy: none
+		sourceColumn: P&L Line
+
+	column 'Cost Center Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-000000000151
+		summarizeBy: none
+		sourceColumn: Cost Center Key
+
+	column 'Actual Amount'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-000000000152
+		summarizeBy: sum
+		sourceColumn: Actual Amount
+
+	partition PnL = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="REPORTING", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="VW_PNL", Kind="View"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"PERIOD_MONTH", "PL_LINE", "COST_CENTER_KEY", "ACTUAL_AMOUNT"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"PERIOD_MONTH", "Period Month"}, {"PL_LINE", "P&L Line"}, {"COST_CENTER_KEY", "Cost Center Key"}, {"ACTUAL_AMOUNT", "Actual Amount"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

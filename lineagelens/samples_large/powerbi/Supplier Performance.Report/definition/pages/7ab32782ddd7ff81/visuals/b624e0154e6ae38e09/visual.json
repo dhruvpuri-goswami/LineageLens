@@ -1,0 +1,88 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "b624e0154e6ae38e09",
+  "position": {
+    "x": 20,
+    "y": 480,
+    "z": 6000,
+    "width": 400,
+    "height": 210,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "multiRowCard",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Supplier Scorecard"
+                    }
+                  },
+                  "Property": "Avg Days Late"
+                }
+              },
+              "queryRef": "Supplier Scorecard.Avg Days Late",
+              "nativeQueryRef": "Avg Days Late"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Supplier"
+                    }
+                  },
+                  "Property": "Suppliers"
+                }
+              },
+              "queryRef": "Supplier.Suppliers",
+              "nativeQueryRef": "Suppliers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Supplier"
+                    }
+                  },
+                  "Property": "Avg Supplier Rating"
+                }
+              },
+              "queryRef": "Supplier.Avg Supplier Rating",
+              "nativeQueryRef": "Avg Supplier Rating"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Avg Days Late'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+role 'EMEA Only'
+	modelPermission: read
+
+	tablePermission Store = [Sales Region] = "EMEA"
+
+	tablePermission Customer = 'Customer'[Customer Tier] <> "Tier 3" && NOT ISBLANK ( Customer[Country] )

@@ -1,0 +1,5 @@
+expression SnowflakeAccount = "helios-demo.example.snowflakecomputing.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 00005eed-0000-0000-0000-000000000001
+
+expression Warehouse = "BI_WH" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 00005eed-0000-0000-0000-000000000002

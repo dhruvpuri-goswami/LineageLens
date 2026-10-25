@@ -1,0 +1,22 @@
+# Sample configuration bundled with LineageLens (synthetic "Northwind Outfitters" data).
+project_name: Northwind Outfitters (sample)
+
+dbt:
+  - project_dir: dbt
+
+snowflake:
+  view_dirs: [snowflake_views]
+  default_database: ANALYTICS
+  default_schema: REPORTING
+
+powerbi:
+  semantic_models: [powerbi/RetailSales.SemanticModel]
+  reports: [powerbi/RetailSales.Report, powerbi/RegionalScorecard.Report]
+  report_model_map: {}
+
+naming:
+  case_insensitive: true
+  strip_prefixes: []
+  strip_suffixes: []
+  enable_fuzzy: true
+  fuzzy_threshold: 90

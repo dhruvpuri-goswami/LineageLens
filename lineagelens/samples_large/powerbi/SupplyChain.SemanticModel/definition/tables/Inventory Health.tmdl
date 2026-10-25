@@ -1,0 +1,63 @@
+table 'Inventory Health'
+	lineageTag: 00005eed-0000-0000-0000-0000000000e5
+
+	measure 'Avg Cover Ratio' = AVERAGE('Inventory Health'[Cover Ratio])
+		formatString: 0.00
+		lineageTag: 00005eed-0000-0000-0000-0000000000e6
+
+	measure 'Cover Status' = IF([Avg Cover Ratio] < 1, "Under", "OK")
+		formatString: 
+		lineageTag: 00005eed-0000-0000-0000-0000000000e7
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		lineageTag: 00005eed-0000-0000-0000-0000000000e8
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+	column 'Store Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000e9
+		summarizeBy: none
+		sourceColumn: Store Key
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-0000000000ea
+		summarizeBy: none
+		sourceColumn: Product Key
+
+	column 'On Hand Qty'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-0000000000eb
+		summarizeBy: none
+		sourceColumn: On Hand Qty
+
+	column 'Stock Value'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000ec
+		summarizeBy: sum
+		sourceColumn: Stock Value
+
+	column 'Cover Ratio'
+		dataType: decimal
+		lineageTag: 00005eed-0000-0000-0000-0000000000ed
+		summarizeBy: sum
+		sourceColumn: Cover Ratio
+
+	partition 'Inventory Health' = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="REPORTING", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="VW_INVENTORY_HEALTH", Kind="View"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"SNAPSHOT_DATE", "STORE_KEY", "PRODUCT_KEY", "ON_HAND_QTY", "STOCK_VALUE", "COVER_RATIO"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"SNAPSHOT_DATE", "Snapshot Date"}, {"STORE_KEY", "Store Key"}, {"PRODUCT_KEY", "Product Key"}, {"ON_HAND_QTY", "On Hand Qty"}, {"STOCK_VALUE", "Stock Value"}, {"COVER_RATIO", "Cover Ratio"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

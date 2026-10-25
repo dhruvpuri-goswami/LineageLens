@@ -1,0 +1,25 @@
+{
+  "name": "0baf70aca57d584c",
+  "displayName": "Variance",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "pf0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Account"
+              }
+            },
+            "Property": "P&L Line"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

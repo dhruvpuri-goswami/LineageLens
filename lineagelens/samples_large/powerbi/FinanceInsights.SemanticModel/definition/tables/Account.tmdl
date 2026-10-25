@@ -1,0 +1,42 @@
+table Account
+	lineageTag: 00005eed-0000-0000-0000-000000000139
+
+	column 'Account Key'
+		dataType: int64
+		isHidden
+		lineageTag: 00005eed-0000-0000-0000-00000000013a
+		summarizeBy: none
+		sourceColumn: Account Key
+
+	column 'Account Name'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000013b
+		summarizeBy: none
+		sourceColumn: Account Name
+
+	column 'Account Group'
+		dataType: int64
+		lineageTag: 00005eed-0000-0000-0000-00000000013c
+		summarizeBy: none
+		sourceColumn: Account Group
+
+	column 'P&L Line'
+		dataType: string
+		lineageTag: 00005eed-0000-0000-0000-00000000013d
+		summarizeBy: none
+		sourceColumn: P&L Line
+
+	partition Account = m
+		mode: import
+		source =
+				let
+				    Source = Snowflake.Databases(SnowflakeAccount, Warehouse, [Implementation="2.0"]),
+				    DB = Source{[Name="HELIOS", Kind="Database"]}[Data],
+				    Sch = DB{[Name="GOLD", Kind="Schema"]}[Data],
+				    Obj = Sch{[Name="DIM_ACCOUNT", Kind="Table"]}[Data],
+				    #"Selected Columns" = Table.SelectColumns(Obj, {"ACCOUNT_KEY", "ACCOUNT_NAME", "ACCOUNT_GROUP", "PL_LINE"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Selected Columns", {{"ACCOUNT_KEY", "Account Key"}, {"ACCOUNT_NAME", "Account Name"}, {"ACCOUNT_GROUP", "Account Group"}, {"PL_LINE", "P&L Line"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table

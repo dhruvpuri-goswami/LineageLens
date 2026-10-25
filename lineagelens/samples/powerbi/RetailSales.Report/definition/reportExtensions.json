@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Sales",
+      "measures": [
+        {
+          "name": "Net Sales Label",
+          "dataType": "Text",
+          "expression": "\"Net sales: \" & FORMAT([Total Net Sales], \"$#,0\")",
+          "references": {
+            "measures": [
+              {
+                "entity": "Sales",
+                "name": "Total Net Sales"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Discount Alert Colour",
+          "dataType": "Text",
+          "expression": "IF([Discount %] > 0.15, \"#D64545\", \"#2E7D32\")"
+        }
+      ]
+    }
+  ]
+}

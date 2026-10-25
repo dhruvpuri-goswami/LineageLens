@@ -1,0 +1,28 @@
+# Python
+.venv/
+.venv*/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# Node
+node_modules/
+frontend/dist/
+
+# LineageLens local data
+*.db
+*.db-journal
+.lineagelens/
+.cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Release artefacts
+*.zip
