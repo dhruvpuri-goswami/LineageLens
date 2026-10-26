@@ -1,0 +1,45 @@
+# LineageLens - run with:  docker compose up -d   then open http://127.0.0.1:8765
+# Optional settings: copy .env.example to .env and edit.
+name: lineagelens
+
+services:
+  lineagelens:
+    build: .
+    image: lineagelens:2.1.0
+    container_name: lineagelens
+    restart: unless-stopped
+    ports:
+      # Published on the loopback interface only: not reachable from your network.
+      - "127.0.0.1:${LINEAGELENS_PUBLISH_PORT:-8765}:8765"
+    # Optional .env file: any setting in it (e.g. BUYMEACOFFEE_URL, GITHUB_REPO_URL) is passed in.
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Fixed for the container layout; not overridable from .env.
+      LINEAGELENS_HOST: 0.0.0.0
+      LINEAGELENS_PORT: "8765"
+      LINEAGELENS_HOME: /data
+      LINEAGELENS_ALLOWED_ROOTS: /inputs:/data
+      LINEAGELENS_LOG_LEVEL: ${LINEAGELENS_LOG_LEVEL:-info}
+      LINEAGELENS_LOG_FORMAT: ${LINEAGELENS_LOG_FORMAT:-json}
+      # Uses ./inputs/lineagelens.yml when present, otherwise the bundled synthetic sample.
+      LINEAGELENS_CONFIG: ${LINEAGELENS_CONFIG:-/inputs/lineagelens.yml}
+      LINEAGELENS_SAMPLE: ${LINEAGELENS_SAMPLE:-standard}
+      LINEAGELENS_MAX_BODY_MB: ${LINEAGELENS_MAX_BODY_MB:-5}
+      LINEAGELENS_ALLOW_CONFIG_WRITE: ${LINEAGELENS_ALLOW_CONFIG_WRITE:-true}
+      LINEAGELENS_ALLOWED_HOSTS: ${LINEAGELENS_ALLOWED_HOSTS:-127.0.0.1,localhost,[::1]}
+      LINEAGELENS_ENABLE_DOCS: ${LINEAGELENS_ENABLE_DOCS:-false}
+    volumes:
+      - lineagelens-data:/data
+      - ./inputs:/inputs:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  lineagelens-data:

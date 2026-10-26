@@ -1,4 +1,4 @@
-expression SnowflakeAccount = "nwo-analytics.west-europe.azure.snowflakecomputing.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression SnowflakeAccount = "nwo-analytics.example.snowflakecomputing.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: 6a1f3d4e-0d55-4a8e-9b0b-1f0c9d8e7a01
 
 expression Warehouse = "BI_REPORTING_WH" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]

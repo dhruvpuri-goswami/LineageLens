@@ -1,4 +1,9 @@
 import os
+
+# The app only answers for known Host headers; Starlette's TestClient uses "testserver".
+os.environ.setdefault("LINEAGELENS_ALLOWED_HOSTS", "127.0.0.1,localhost,testserver")
+
+import os
 import tempfile
 
 import pytest

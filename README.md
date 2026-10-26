@@ -56,11 +56,54 @@ Only **synthetic sample data** ships with the app: *Northwind Outfitters* (stand
 
 ## 1. Quickstart
 
+### Docker (recommended)
+
+You need Docker Desktop (or Docker Engine) with Compose.
+
+```bash
+docker compose up -d          # builds the image the first time (a few minutes)
+```
+
+Open **http://127.0.0.1:8765**. The synthetic sample project is loaded.
+
+* The port is published on `127.0.0.1` only, so nothing on your network can reach it.
+* To analyse your own project, put your exports in `./inputs` (mounted read-only) with a `lineagelens.yml`; see [`inputs/README.md`](inputs/README.md). Then `docker compose restart`.
+* The saved graph lives in the named volume `lineagelens-data`. `docker compose down` keeps it; `docker compose down -v` removes it.
+* Settings: `copy .env.example .env` (Windows) or `cp .env.example .env`, edit, then `docker compose up -d`.
+* Logs (JSON, one line per event): `docker compose logs -f`. Health: `docker compose ps` shows `healthy`.
+
+The container runs as a non-root user with a read-only root filesystem, no Linux capabilities and `no-new-privileges`.
+
+| Setting (env / `.env`) | Default | Meaning |
+|---|---|---|
+| `LINEAGELENS_HOST` | `127.0.0.1` (`0.0.0.0` inside Docker) | Bind address |
+| `LINEAGELENS_PORT` | `8765` | Port |
+| `LINEAGELENS_PUBLISH_PORT` | `8765` | Docker only: host port on 127.0.0.1 |
+| `LINEAGELENS_HOME` | `%LOCALAPPDATA%\LineageLens` / `~/.lineagelens` (`/data` in Docker) | Where the saved graph lives |
+| `LINEAGELENS_CONFIG` | none (`/inputs/lineagelens.yml` in Docker) | Config file; falls back to the sample when missing |
+| `LINEAGELENS_SAMPLE` | `standard` | Sample to show without a config: `standard` or `large` |
+| `LINEAGELENS_ALLOWED_ROOTS` | none (`/inputs:/data` in Docker) | Paths typed in the UI must stay inside these folders (`;`-separated) |
+| `LINEAGELENS_ALLOWED_HOSTS` | `127.0.0.1,localhost,[::1]` | Accepted `Host` headers (DNS-rebinding protection) |
+| `LINEAGELENS_ALLOW_CONFIG_WRITE` | `true` | Allow saving YAML from the Settings page |
+| `LINEAGELENS_MAX_BODY_MB` | `5` | Largest request body |
+| `LINEAGELENS_LOG_LEVEL` | `info` | `debug` … `critical` |
+| `LINEAGELENS_LOG_FORMAT` | `text` (`json` in Docker) | Log format |
+| `LINEAGELENS_ENABLE_DOCS` | `false` | Swagger UI at `/api/docs` (loads assets from a CDN, so off by default) |
+| `BUYMEACOFFEE_URL`, `GITHUB_REPO_URL` | see `lineagelens/links.py` | Sidebar links; empty hides them |
+
+Without Docker, `lineagelens serve` also reads a `.env` file in the current folder (real environment variables win).
+
+### Windows (without Docker)
+
 You need **Python 3.11+**. Nothing else is required: the web UI is pre-built.
 
-### Windows
+```powershell
+powershell -ExecutionPolicy Bypass -File setup.ps1 -Run
+```
 
-1. Unzip `lineagelens-release.zip`, for example to `C:\Tools\lineagelens`.
+`setup.ps1` creates `.venv`, installs the hash-locked dependencies from `requirements.lock` and starts the app (`-Dev` also runs the tests). Or use the double-click launcher:
+
+1. Unzip the release, for example to `C:\Tools\lineagelens`.
 2. Double-click **`start.bat`**. The first run creates `.venv` and installs the pinned dependencies (about a minute). Later runs start straight away.
 3. Your browser opens at http://localhost:8765 with the sample project loaded.
 
@@ -70,9 +113,10 @@ start.bat -c C:\analytics\lineagelens.yml   :: your own configuration
 start.bat --port 9000 --no-browser
 ```
 
-### macOS / Linux
+### macOS / Linux (without Docker)
 
 ```bash
+make install && make run           # or:
 unzip lineagelens-release.zip && cd lineagelens
 ./start.sh                         # sample project
 ./start.sh -c ~/analytics/lineagelens.yml
@@ -82,7 +126,8 @@ unzip lineagelens-release.zip && cd lineagelens
 
 ```bash
 python -m venv .venv
-.venv/bin/pip install .            # Windows: .venv\Scripts\pip install .
+.venv/bin/pip install --require-hashes -r requirements.lock   # exact, hash-checked versions
+.venv/bin/pip install --no-deps .  # Windows: .venv\Scripts\pip ...
 .venv/bin/lineagelens serve
 ```
 
@@ -199,8 +244,8 @@ snowflake:
 
 ```bash
 pip install ".[snowflake]"
-set SNOWFLAKE_ACCOUNT=xy12345.west-europe.azure   # macOS/Linux: export ...
-set SNOWFLAKE_USER=me@corp.com
+set SNOWFLAKE_ACCOUNT=your_account_locator  # macOS/Linux: export ...
+set SNOWFLAKE_USER=you@example.com
 set SNOWFLAKE_AUTHENTICATOR=externalbrowser       # SSO; or SNOWFLAKE_PASSWORD / SNOWFLAKE_PRIVATE_KEY_PATH
 set SNOWFLAKE_ROLE=ANALYST
 set SNOWFLAKE_WAREHOUSE=XS_WH
@@ -264,7 +309,10 @@ base_dir: null                         # resolve relative paths against this fol
 
 ## 7. Privacy and security
 
-* The server binds to `127.0.0.1` only. There are no analytics, no update checks and no CDN fonts or scripts; everything is bundled.
+* The server binds to `127.0.0.1` only (Docker publishes on `127.0.0.1` only). There are no analytics, no update checks and no CDN fonts or scripts; everything is bundled.
+* Security headers on every response: a strict Content-Security-Policy (`script-src 'self'`, `frame-ancestors 'none'`), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`; API responses are `no-store`.
+* Requests with an unknown `Host` header are rejected (DNS rebinding), cross-origin writes are refused, request bodies are size-limited, and file paths typed in the UI are resolved and can be restricted to `LINEAGELENS_ALLOWED_ROOTS`.
+* Errors return a short JSON message and a request id; stack traces stay in the server log. Debug mode, auto-reload and the API docs are off.
 * Your SQL, DAX and model metadata never leave the machine. The only outbound connections are the optional Snowflake / Fabric pulls above, and only when you enable them.
 * The app reads your files; it never writes to your dbt or Power BI folders.
 
@@ -292,12 +340,17 @@ LineageLens only sees what is in the artifacts you give it. Known gaps:
 
 ```bash
 python -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest                         # 48 tests: parsers, impact, diff, export, API, CLI, links
+.venv/bin/pytest                         # 61 tests: parsers, impact, diff, export, API, CLI, links, security
 cd frontend && npm ci
 npm run typecheck && npm test            # TypeScript + 12 vitest tests (graph layout)
 npm run build                            # React + TS + Vite + Tailwind, outputs to lineagelens/static
 npm run dev                              # dev server on :5173, proxies /api to :8765
+docker build -t lineagelens:dev .        # production image (also built in CI)
+make help                                # shortcuts: install, test, up, down, logs, audit
 ```
+
+Update the dependency lock after changing `pyproject.toml`:
+`uv pip compile pyproject.toml --universal --python-version 3.11 --generate-hashes --no-header -o requirements.lock`.
 
 Project layout:
 

@@ -41,3 +41,25 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose file
+        run: docker compose config --quiet
+      - name: Build image
+        run: docker build -t lineagelens:ci .
+      - name: Smoke test
+        run: |
+          docker run -d --name ll -p 127.0.0.1:8765:8765 --read-only --tmpfs /tmp --cap-drop ALL lineagelens:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/api/health; then break; fi
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8765/api/health | grep -q '"ok":true'
+          curl -fsS http://127.0.0.1:8765/ | grep -q '<div id="root">'
+          test "$(docker inspect -f '{{.Config.User}}' lineagelens:ci)" = "10001:10001"
+      - name: Logs
+        if: always()
+        run: docker logs ll || true

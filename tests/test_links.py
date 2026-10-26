@@ -16,8 +16,8 @@ def test_links_defaults_and_env(monkeypatch):
 
 def test_health_exposes_links(monkeypatch, tmp_path):
     monkeypatch.setenv("LINEAGELENS_HOME", str(tmp_path))
-    monkeypatch.setenv("GITHUB_REPO_URL", "https://github.com/acme/lineagelens")
+    monkeypatch.setenv("GITHUB_REPO_URL", "https://github.com/example/lineagelens")
     from lineagelens.server import create_app
     c = TestClient(create_app(scan_on_start=False))
     r = c.get("/api/health").json()
-    assert r["links"]["github_repo_url"] == "https://github.com/acme/lineagelens"
+    assert r["links"]["github_repo_url"] == "https://github.com/example/lineagelens"

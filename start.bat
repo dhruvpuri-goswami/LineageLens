@@ -25,7 +25,8 @@ if not exist ".venv\Scripts\python.exe" (
 if not exist ".venv\.lineagelens-installed" (
   echo Installing LineageLens ^(one-time, about a minute^) ...
   ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -q --upgrade pip
-  ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -q . || goto :fail
+  ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -q --require-hashes -r requirements.lock || goto :fail
+  ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -q --no-deps . || goto :fail
   echo installed> ".venv\.lineagelens-installed"
 )
 

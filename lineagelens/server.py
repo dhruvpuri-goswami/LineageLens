@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import threading
 import time
 import traceback
@@ -9,15 +10,22 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from fastapi import Body, FastAPI, HTTPException, Query
+from fastapi import Body, FastAPI, HTTPException, Query, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__, analysis, store
 from .builder import build
-from .config import SAMPLE_CONFIG, SAMPLES, SAMPLES_DIR, Config, load_config, sample_name
+from .config import SAMPLE_CONFIG, SAMPLES, SAMPLES_DIR, Config, load_config, sample_name, user_data_dir
 from .graph import NODE_TYPE_LABELS, LineageGraph
 from .links import get_links
+from .security import HardeningMiddleware, safe_path
+from .settings import Settings, load_settings
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+log = logging.getLogger("lineagelens")
+MAX_YAML_BYTES = 1024 * 1024
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
@@ -50,8 +58,8 @@ class State:
                 g, meta = store.load(db)
                 self._set(g, meta)
                 return
-            except Exception:  # corrupted / old schema -> rescan
-                pass
+            except Exception as e:  # corrupted / old schema -> rescan
+                log.warning("saved graph could not be loaded, re-scanning", extra={"db": str(db), "error": str(e)})
         self.run_scan()
 
     def _set(self, g: LineageGraph, meta: dict) -> None:
@@ -88,8 +96,11 @@ class State:
             with self.lock:
                 self.cfg = cfg
             self._set(res.graph, meta)
+            log.info("scan complete", extra={"objects": len(res.graph), "warnings": len(res.warnings),
+                                             "duration_s": meta["duration"]})
             progress("done", 100, f"Scan complete: {len(res.graph)} objects, {res.stats.get('edges_by_kind', {}).get('flow', 0)} lineage links")
         except Exception as e:
+            log.exception("scan failed")
             s["error"] = f"{type(e).__name__}: {e}"
             s["log"].append({"t": time.time(), "step": "error", "pct": s["pct"], "message": traceback.format_exc(limit=3)})
         finally:
@@ -121,10 +132,33 @@ def _node_or_404(g: LineageGraph, node_id: str):
     return n
 
 
-def create_app(config_path: str | Path | None = None, scan_on_start: bool = True) -> FastAPI:
-    app = FastAPI(title="LineageLens", version=__version__, docs_url="/api/docs", openapi_url="/api/openapi.json", redoc_url=None)
+def create_app(config_path: str | Path | None = None, scan_on_start: bool = True, settings: Settings | None = None) -> FastAPI:
+    settings = settings or load_settings()
+    docs = settings.enable_docs  # Swagger UI loads assets from a CDN, so it is opt-in.
+    app = FastAPI(title="LineageLens", version=__version__, debug=False,
+                  docs_url="/api/docs" if docs else None, openapi_url="/api/openapi.json" if docs else None, redoc_url=None)
+    app.add_middleware(HardeningMiddleware, settings=settings)
     state = State(config_path)
     app.state.ll = state
+    app.state.settings = settings
+    path_roots = [SAMPLES_DIR, SAMPLE_CONFIG.parent, user_data_dir()]
+
+    @app.exception_handler(StarletteHTTPException)
+    async def http_error(request: Request, exc: StarletteHTTPException):
+        return JSONResponse({"error": {400: "bad_request", 403: "forbidden", 404: "not_found", 409: "conflict",
+                                       413: "payload_too_large"}.get(exc.status_code, "error"), "detail": exc.detail},
+                            status_code=exc.status_code, headers=getattr(exc, "headers", None))
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request: Request, exc: RequestValidationError):
+        msgs = "; ".join(f"{'.'.join(str(x) for x in e.get('loc', [])[1:])}: {e.get('msg')}" for e in exc.errors())
+        return JSONResponse({"error": "invalid_request", "detail": msgs or "Invalid request"}, status_code=422)
+
+    @app.exception_handler(Exception)
+    async def unhandled(request: Request, exc: Exception):
+        log.exception("unhandled error", extra={"path": request.url.path})
+        return JSONResponse({"error": "internal_error", "detail": "Something went wrong on the server. See the server log for details."},
+                            status_code=500)
     if scan_on_start:
         state.load_or_scan()
 
@@ -226,12 +260,13 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
     @app.put("/api/config")
     def put_config(body: dict = Body(...)):
         """Switch to another config file, or save YAML to a path and switch to it."""
-        path = body.get("path")
         text = body.get("yaml")
-        if not path:
-            raise HTTPException(400, "path required")
-        p = Path(path).expanduser().resolve()
+        p = safe_path(body.get("path"), settings, extra_roots=path_roots, suffixes=(".yml", ".yaml"), what="Config path")
         if text is not None:
+            if not settings.allow_config_write:
+                raise HTTPException(403, "Saving config files is disabled (LINEAGELENS_ALLOW_CONFIG_WRITE=false).")
+            if not isinstance(text, str) or len(text.encode("utf-8")) > MAX_YAML_BYTES:
+                raise HTTPException(413, "Config YAML must be text under 1 MB.")
             try:
                 yaml.safe_load(text)
             except yaml.YAMLError as e:
@@ -243,8 +278,12 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
                 # Saving a copy of the bundled sample elsewhere: keep its relative paths pointing at the samples.
                 src = SAMPLES[state.sample_name or "standard"][0]
                 text = f"base_dir: {json.dumps(str(src.parent))}\n" + text
-            p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(text, encoding="utf-8")
+            try:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(text, encoding="utf-8")
+            except OSError as e:
+                raise HTTPException(400, f"Could not write {p}: {e.strerror or e}")
+            log.info("config saved", extra={"path": str(p)})
         if not p.exists():
             raise HTTPException(404, f"Config not found: {p}")
         try:
@@ -283,11 +322,11 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
             new = str(SAMPLES_DIR / "dbt_changed" / "target" / "manifest.json")
         if not old or not new:
             raise HTTPException(400, "old and new paths required")
-        for p in (old, new):
-            if not Path(p).expanduser().exists():
-                raise HTTPException(404, f"Not found: {p}")
+        sfx = (".json", ".db", ".yml", ".yaml", "")
+        po = safe_path(old, settings, extra_roots=path_roots, suffixes=sfx, must_exist=True, what="Old build path")
+        pn = safe_path(new, settings, extra_roots=path_roots, suffixes=sfx, must_exist=True, what="New build path")
         try:
-            res = run_diff(Path(old).expanduser(), Path(new).expanduser(), base=state.graph, base_cfg=state.cfg)
+            res = run_diff(po, pn, base=state.graph, base_cfg=state.cfg)
         except Exception as e:
             raise HTTPException(400, f"{type(e).__name__}: {e}")
         for c in res["changes"]:  # keep payload small

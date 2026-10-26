@@ -73,25 +73,50 @@ def main(ctx: typer.Context, version: bool = typer.Option(False, "--version", he
 
 @app.command()
 def serve(config: Optional[Path] = ConfigOpt, sample: Optional[str] = SampleOpt,
-          host: str = typer.Option("127.0.0.1", help="Bind address (keep 127.0.0.1 to stay local)"),
-          port: int = typer.Option(8765, help="Port"),
+          host: Optional[str] = typer.Option(None, help="Bind address [env LINEAGELENS_HOST, default 127.0.0.1]. Keep 127.0.0.1 to stay local."),
+          port: Optional[int] = typer.Option(None, help="Port [env LINEAGELENS_PORT, default 8765]"),
           no_browser: bool = typer.Option(False, "--no-browser", help="Don't open the browser"),
           rescan: bool = typer.Option(False, help="Re-scan sources on start instead of loading the saved graph")):
     """Start the web app (opens your browser)."""
-    import uvicorn
-    from .server import create_app
+    import logging
 
+    import uvicorn
+
+    from .logging_setup import setup_logging
+    from .server import create_app
+    from .settings import load_dotenv, load_settings
+
+    load_dotenv(Path.cwd() / ".env")  # optional; real environment variables take precedence
+    st = load_settings()
+    setup_logging(st.log_level, st.log_format)
+    log = logging.getLogger("lineagelens")
+    host = host or st.host
+    port = port or st.port
+    if config is None and sample is None:
+        if st.config:
+            cp = Path(st.config).expanduser()
+            if cp.is_file():
+                config = cp
+            else:
+                log.warning("LINEAGELENS_CONFIG not found, using the bundled sample instead", extra={"config": str(cp)})
+                sample = st.sample
+        else:
+            sample = st.sample
     config = _pick(config, sample)
     if rescan:
         cfg = load_config(config)
         if cfg.db_path.exists():
             cfg.db_path.unlink()
-    application = create_app(config)
-    url = f"http://{'localhost' if host in ('127.0.0.1', '0.0.0.0') else host}:{port}"
-    typer.echo(f"LineageLens {__version__} running at {url}  (Ctrl+C to stop)")
+    application = create_app(config, settings=st)
+    url = f"http://{'127.0.0.1' if host in ('127.0.0.1', '0.0.0.0', 'localhost') else host}:{port}"
+    log.info("LineageLens %s starting", __version__,
+             extra={"url": url, "host": host, "port": port, "config": str(config or "bundled sample")})
+    if st.log_format != "json":
+        typer.echo(f"LineageLens {__version__} running at {url}  (Ctrl+C to stop)")
     if not no_browser:
         threading.Timer(1.2, lambda: webbrowser.open(url)).start()
-    uvicorn.run(application, host=host, port=port, log_level="warning")
+    uvicorn.run(application, host=host, port=port, log_level=st.log_level, log_config=None, access_log=False,
+                server_header=False, reload=False, proxy_headers=False, timeout_graceful_shutdown=10)
 
 
 @app.command()

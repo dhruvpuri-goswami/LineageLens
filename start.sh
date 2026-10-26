@@ -25,7 +25,8 @@ STAMP=.venv/.lineagelens-installed
 if [ ! -f "$STAMP" ] || [ pyproject.toml -nt "$STAMP" ]; then
   echo "Installing LineageLens (one-time, about a minute) ..."
   .venv/bin/python -m pip install --disable-pip-version-check -q --upgrade pip
-  .venv/bin/python -m pip install --disable-pip-version-check -q .
+  .venv/bin/python -m pip install --disable-pip-version-check -q --require-hashes -r requirements.lock
+  .venv/bin/python -m pip install --disable-pip-version-check -q --no-deps .
   touch "$STAMP"
 fi
 

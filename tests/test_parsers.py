@@ -34,7 +34,7 @@ def test_dax_strings_are_not_refs():
 # ---------------------------------------------------------------- M
 def test_m_snowflake_navigation_with_renames():
     m = '''let
-        Source = Snowflake.Databases("acme.snowflakecomputing.com", "WH"),
+        Source = Snowflake.Databases("example.snowflakecomputing.com", "WH"),
         Db = Source{[Name="ANALYTICS",Kind="Database"]}[Data],
         Sc = Db{[Name="REPORTING",Kind="Schema"]}[Data],
         V = Sc{[Name="VW_SALES_SUMMARY",Kind="View"]}[Data],
