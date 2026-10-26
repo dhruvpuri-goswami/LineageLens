@@ -12,13 +12,13 @@ export const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttrib
       className={cn(
         'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
         {
-          default: 'bg-primary text-primary-foreground shadow-soft hover:bg-primary/90',
+          default: 'bg-primary text-primary-foreground hover:bg-primary/90',
           outline: 'border border-input bg-card hover:bg-muted',
           ghost: 'hover:bg-muted',
           secondary: 'bg-muted text-foreground hover:bg-muted/70',
           destructive: 'bg-red-600 text-white hover:bg-red-600/90',
         }[variant],
-        { sm: 'h-8 px-3 text-xs', md: 'h-9 px-4 text-sm', icon: 'h-9 w-9' }[size],
+        { sm: 'h-7 px-2.5 text-xs', md: 'h-8 px-3 text-[13px]', icon: 'h-8 w-8' }[size],
         className,
       )}
       {...props}
@@ -28,11 +28,11 @@ export const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttrib
 Button.displayName = 'Button'
 
 export function Card({ className, ...p }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('rounded-xl border bg-card text-card-foreground shadow-soft', className)} {...p} />
+  return <div className={cn('rounded-lg border bg-card text-card-foreground', className)} {...p} />
 }
 export function CardHeader({ title, description, icon, action, className }: { title: React.ReactNode; description?: React.ReactNode; icon?: React.ReactNode; action?: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('flex items-start justify-between gap-4 px-5 pt-4 pb-3', className)}>
+    <div className={cn('flex items-start justify-between gap-4 px-4 pt-3.5 pb-3', className)}>
       <div className="flex items-start gap-3 min-w-0">
         {icon && <div className="mt-0.5 text-muted-foreground [&_svg]:size-4">{icon}</div>}
         <div className="min-w-0">
@@ -46,7 +46,7 @@ export function CardHeader({ title, description, icon, action, className }: { ti
 }
 
 export function Badge({ className, ...p }: React.HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-4 whitespace-nowrap [&_svg]:size-3', className)} {...p} />
+  return <span className={cn('inline-flex items-center gap-1 rounded border px-1.5 py-px text-[11px] font-medium leading-4 whitespace-nowrap [&_svg]:size-3', className)} {...p} />
 }
 
 export function ImpactBadge({ impact, className }: { impact: Impact | null | undefined; className?: string }) {
@@ -112,15 +112,15 @@ Input.displayName = 'Input'
 
 export function Segmented<T extends string>({ value, onChange, options, className }: { value: T; onChange: (v: T) => void; options: { value: T; label: React.ReactNode; hint?: string }[]; className?: string }) {
   return (
-    <div className={cn('inline-flex rounded-lg border bg-muted/60 p-0.5', className)}>
+    <div className={cn('inline-flex rounded-md border bg-muted/60 p-0.5', className)}>
       {options.map((o) => (
         <button
           key={o.value}
           title={o.hint}
           onClick={() => onChange(o.value)}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all [&_svg]:size-3.5',
-            value === o.value ? 'bg-card text-foreground shadow-soft' : 'text-muted-foreground hover:text-foreground',
+            'inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors [&_svg]:size-3.5',
+            value === o.value ? 'bg-card text-foreground ring-1 ring-border' : 'text-muted-foreground hover:text-foreground',
           )}
         >
           {o.label}
@@ -143,7 +143,7 @@ export function Tabs<T extends string>({ value, onChange, tabs, className }: { v
           )}
         >
           {t.label}
-          {t.count !== undefined && <span className={cn('rounded-full px-1.5 text-[10px]', value === t.value ? 'bg-primary/15 text-primary' : 'bg-muted')}>{t.count}</span>}
+          {t.count !== undefined && <span className={cn('rounded px-1 text-[10px] tabular-nums', value === t.value ? 'bg-muted text-foreground' : 'bg-muted')}>{t.count}</span>}
         </button>
       ))}
     </div>
@@ -158,7 +158,7 @@ export function Stat({ label, value, icon, tone, sub, className }: { label: stri
   const toneCls = { red: 'text-red-600 dark:text-red-400', amber: 'text-amber-600 dark:text-amber-400', brand: 'text-primary', green: 'text-emerald-600 dark:text-emerald-400' }
   return (
     <Card className={cn('px-4 py-3.5', className)}>
-      <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+      <div className="flex items-center justify-between text-[12px] font-medium text-muted-foreground">
         {label}
         {icon && <span className="[&_svg]:size-4 opacity-70">{icon}</span>}
       </div>
@@ -171,7 +171,7 @@ export function Stat({ label, value, icon, tone, sub, className }: { label: stri
 export function EmptyState({ icon, title, children, className }: { icon?: React.ReactNode; title: string; children?: React.ReactNode; className?: string }) {
   return (
     <div className={cn('flex flex-col items-center justify-center px-6 py-14 text-center', className)}>
-      {icon && <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground [&_svg]:size-6">{icon}</div>}
+      {icon && <div className="mb-3 flex size-10 items-center justify-center rounded-lg border bg-muted text-muted-foreground [&_svg]:size-5">{icon}</div>}
       <div className="text-sm font-semibold">{title}</div>
       {children && <div className="mt-1 max-w-md text-sm text-muted-foreground">{children}</div>}
     </div>
@@ -182,19 +182,39 @@ export function ErrorBox({ error }: { error: string }) {
   return <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">{error}</div>
 }
 
-export function PageHeader({ title, description, actions, icon, eyebrow }: { title: string; description?: React.ReactNode; actions?: React.ReactNode; icon?: React.ReactNode; eyebrow?: string }) {
+export function PageHeader({ title, description, actions, eyebrow }: { title: string; description?: React.ReactNode; actions?: React.ReactNode; icon?: React.ReactNode; eyebrow?: string }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 animate-rise">
-      <div className="flex items-start gap-3.5">
-        {icon && <div className="mt-0.5 flex size-9 items-center justify-center rounded-lg border bg-card text-primary shadow-soft [&_svg]:size-[18px]">{icon}</div>}
-        <div>
-          {eyebrow && <div className="mb-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{eyebrow}</div>}
-          <h1 className="text-[22px] font-semibold leading-tight tracking-tight">{title}</h1>
-          {description && <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{description}</p>}
-        </div>
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b pb-4">
+      <div>
+        {eyebrow && <div className="mb-1 text-[12px] font-medium text-muted-foreground">{eyebrow}</div>}
+        <h1 className="text-xl font-semibold leading-tight tracking-[-0.01em]">{title}</h1>
+        {description && <p className="mt-1 max-w-3xl text-[13px] text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
+  )
+}
+
+/** GitHub logo (lucide no longer ships brand icons). */
+export function GithubMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" className={className} fill="currentColor" aria-hidden>
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+    </svg>
+  )
+}
+
+/** The LineageLens mark: a source node traced along one path to the object it lands on. */
+export function BrandMark({ className, mono }: { className?: string; mono?: boolean }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden>
+      <rect width="32" height="32" rx="7" className={mono ? 'fill-foreground' : undefined} fill={mono ? undefined : '#1E66F5'} />
+      <g className={mono ? 'stroke-background' : undefined} stroke={mono ? undefined : '#fff'} fill="none">
+        <circle cx="11" cy="10.5" r="3" strokeWidth="2.5" />
+        <path d="M11 14.75V21.5H18.5" strokeWidth="3" strokeLinejoin="round" />
+      </g>
+      <circle cx="21.5" cy="21.5" r="3.5" className={mono ? 'fill-background' : undefined} fill={mono ? undefined : '#fff'} />
+    </svg>
   )
 }
 

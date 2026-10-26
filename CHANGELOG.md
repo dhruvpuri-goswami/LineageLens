@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-10-26
+
+### Added
+- New brand in `docs/brand/`: an original mark (a source node traced along one orthogonal path to the node it lands on), a wordmark set in Inter SemiBold and converted to outlines, light, dark and monochrome variants, favicons (SVG, ICO, PNG 16/32/48/180/192/512) and a 1280×640 GitHub social preview. `tools/brand/build_brand.py` regenerates the SVGs.
+- `[project.urls]` in `pyproject.toml` and repository metadata in `frontend/package.json`.
+
+### Changed
+- UI restyled to a flat, neutral design: one blue accent, neutral greys, 1 px borders, 6-8 px radii, no gradients, glows or decorative shadows, denser controls and plain wording.
+- Node-type colours reduced to one hue per layer family (source, dbt, Snowflake, Power BI model, measures, RLS, report).
+- The support button is now a small "Sponsor" text link in the sidebar footer. It stays hidden until `BUYMEACOFFEE_URL` is set to a real page (a value containing `YOUR_USERNAME` counts as unset).
+- `GITHUB_REPO_URL` now defaults to https://github.com/dhruvpuri-goswami/LineageLens. README, CONTRIBUTING, SECURITY and issue-template links point to the repository.
+- README screenshots retaken.
+
 ## [2.1.0] - 2026-10-26
 
 ### Added

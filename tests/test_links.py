@@ -7,8 +7,12 @@ def test_links_defaults_and_env(monkeypatch):
     monkeypatch.delenv("BUYMEACOFFEE_URL", raising=False)
     monkeypatch.delenv("GITHUB_REPO_URL", raising=False)
     d = links.get_links()
-    assert d["buymeacoffee_url"].startswith("https://www.buymeacoffee.com/")
-    assert d["github_repo_url"].startswith("https://github.com/")
+    # Placeholder Buy Me a Coffee URL ships by default and is hidden until configured.
+    assert links.BUYMEACOFFEE_URL.startswith("https://www.buymeacoffee.com/")
+    assert d["buymeacoffee_url"] == ""
+    assert d["github_repo_url"] == "https://github.com/dhruvpuri-goswami/LineageLens"
+    monkeypatch.setenv("BUYMEACOFFEE_URL", "https://www.buymeacoffee.com/someone")
+    assert links.get_links()["buymeacoffee_url"] == "https://www.buymeacoffee.com/someone"
     monkeypatch.setenv("BUYMEACOFFEE_URL", "")
     monkeypatch.setenv("GITHUB_REPO_URL", "javascript:alert(1)")
     assert links.get_links() == {"buymeacoffee_url": "", "github_repo_url": ""}

@@ -56,7 +56,7 @@ export function NodeSearch({
 
   return (
     <div className={cn('relative', className)}>
-      <div className={cn('flex items-center gap-2 rounded-lg border border-input bg-card px-3 shadow-soft focus-within:ring-2 focus-within:ring-ring/40', size === 'lg' ? 'h-12' : 'h-9')}>
+      <div className={cn('flex items-center gap-2 rounded-md border border-input bg-card px-3 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20', size === 'lg' ? 'h-10' : 'h-8')}>
         <Search className={cn('shrink-0 text-muted-foreground', size === 'lg' ? 'size-5' : 'size-4')} />
         <input
           ref={inputRef}

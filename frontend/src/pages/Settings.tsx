@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { Coffee, Heart, Star, AlertTriangle, CheckCircle2, FileCog, FolderOpen, Info, Loader2, Lock, Play, RefreshCw, Save, Sparkles, XCircle } from 'lucide-react'
+import { Coffee, Database, AlertTriangle, CheckCircle2, FileCog, FolderOpen, Info, Loader2, Lock, Play, RefreshCw, Save, XCircle } from 'lucide-react'
 import { api, type ScanStatus } from '@/lib/api'
 import { useApp } from '@/lib/store'
 import { cn, fmtTime } from '@/lib/utils'
-import { Badge, Button, Card, CardHeader, ErrorBox, Input, PageHeader, Spinner, useAsync } from '@/components/ui'
+import { Badge, Button, Card, CardHeader, ErrorBox, GithubMark, Input, PageHeader, Spinner, useAsync } from '@/components/ui'
 
 export default function Settings() {
   const { refresh, version, health } = useApp()
@@ -59,7 +59,7 @@ export default function Settings() {
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
           <Card>
-            <CardHeader icon={<Sparkles />} title="Sample data" description="Explore LineageLens with synthetic projects. Nothing here comes from a real company." />
+            <CardHeader icon={<Database />} title="Sample data" description="Explore LineageLens with synthetic projects. Nothing here comes from a real company." />
             <div className="grid gap-3 px-5 pb-5 sm:grid-cols-2">
               {([
                 { name: 'standard', title: 'Standard', sub: 'Retail analytics', detail: '1 report · 12 visuals · ~210 objects. Quick to read.' },
@@ -80,7 +80,7 @@ export default function Settings() {
             </div>
           </Card>
           <Card>
-            <CardHeader icon={<FolderOpen />} title="Project configuration" description="lineagelens.yml — all paths are local files and folders" action={cfg.data?.is_sample && <Badge className="border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">Bundled sample (read-only)</Badge>} />
+            <CardHeader icon={<FolderOpen />} title="Project configuration" description="lineagelens.yml — all paths are local files and folders" action={cfg.data?.is_sample && <Badge className="text-muted-foreground">Bundled sample (read-only)</Badge>} />
             <div className="space-y-3 px-5 pb-5">
               {cfg.error && <ErrorBox error={cfg.error} />}
               <label className="block space-y-1">
@@ -108,7 +108,7 @@ export default function Settings() {
             <div className="space-y-3 px-5 pb-5">
               <div>
                 <div className="mb-1 flex justify-between text-xs"><span className="font-medium">{status?.step || 'Idle'}</span><span className="tabular-nums text-muted-foreground">{Math.round((status?.pct ?? 0) * (status?.pct && status.pct <= 1 ? 100 : 1))}%</span></div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted"><div className={cn('h-full rounded-full transition-all', status?.error ? 'bg-red-500' : 'bg-gradient-to-r from-indigo-500 to-cyan-400')} style={{ width: `${(status?.pct ?? 0) <= 1 ? (status?.pct ?? 0) * 100 : status?.pct}%` }} /></div>
+                <div className="h-2 overflow-hidden rounded-full bg-muted"><div className={cn('h-full rounded-full transition-all', status?.error ? 'bg-red-500' : 'bg-primary')} style={{ width: `${(status?.pct ?? 0) <= 1 ? (status?.pct ?? 0) * 100 : status?.pct}%` }} /></div>
                 <div className="mt-1.5 text-xs text-muted-foreground">{status?.message}</div>
               </div>
               <div className="max-h-56 overflow-y-auto rounded-md bg-muted/40 p-2 font-mono text-[11px] leading-relaxed scrollbar-thin">
@@ -134,7 +134,7 @@ export default function Settings() {
             <CardHeader icon={<AlertTriangle />} title="Warnings" description={`${warnings.length} from the last scan`} />
             <div className="max-h-72 space-y-1.5 overflow-y-auto px-5 pb-5 scrollbar-thin">
               {sum.loading && <Spinner />}
-              {warnings.length === 0 && !sum.loading && <div className="text-sm text-muted-foreground">No warnings 🎉</div>}
+              {warnings.length === 0 && !sum.loading && <div className="text-sm text-muted-foreground">No warnings.</div>}
               {warnings.map((w, i) => (
                 <div key={i} className="flex gap-2 text-xs">
                   {w.level === 'info' ? <Info className="mt-0.5 size-3.5 shrink-0 text-sky-500" /> : <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-amber-500" />}
@@ -144,19 +144,19 @@ export default function Settings() {
             </div>
           </Card>
           <Card className="p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold"><Heart className="size-4 text-rose-500" /> About</div>
+            <div className="flex items-center gap-2 text-sm font-semibold"><Info className="size-4 text-muted-foreground" /> About</div>
             <p className="mt-2 text-xs text-muted-foreground">LineageLens v{health?.version} · MIT licensed open source.</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {health?.links?.buymeacoffee_url && <a href={health.links.buymeacoffee_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-md bg-amber-400 px-3 text-xs font-medium text-amber-950 hover:bg-amber-300"><Coffee className="size-3.5" />Buy me a coffee</a>}
-              {health?.links?.github_repo_url && <a href={health.links.github_repo_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium hover:bg-muted"><Star className="size-3.5" />Star on GitHub</a>}
+              {health?.links?.buymeacoffee_url && <a href={health.links.buymeacoffee_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"><Coffee className="size-3.5" />Sponsor</a>}
+              {health?.links?.github_repo_url && <a href={health.links.github_repo_url} target="_blank" rel="noopener noreferrer" className="inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium hover:bg-muted"><GithubMark className="size-3.5" />GitHub repository</a>}
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">Links are set in <span className="font-mono">lineagelens/links.py</span> or the <span className="font-mono">BUYMEACOFFEE_URL</span> / <span className="font-mono">GITHUB_REPO_URL</span> environment variables. Plain links, no tracking.</p>
           </Card>
           <Card className="p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold"><Lock className="size-4 text-emerald-600" /> Privacy</div>
+            <div className="flex items-center gap-2 text-sm font-semibold"><Lock className="size-4 text-muted-foreground" /> Privacy</div>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
               <li>Runs entirely on this machine (server bound to 127.0.0.1).</li>
-              <li>No telemetry, no AI/LLM, no cloud calls — lineage comes from deterministic SQL, DAX and M parsing.</li>
+              <li>No telemetry and no cloud calls. Lineage comes from deterministic SQL, DAX and M parsing.</li>
               <li>Optional Snowflake / Power BI connections are only used if you enable them in the config.</li>
               <li>Scan results are stored locally in SQLite under your user profile.</li>
             </ul>

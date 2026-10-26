@@ -1,16 +1,16 @@
 <div align="center">
 
-# LineageLens
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo-dark.svg">
+  <img src="docs/brand/logo-light.svg" alt="LineageLens" height="44">
+</picture>
 
 **Column-level impact analysis from dbt and Snowflake to the exact Power BI visual.**
-*"I'm about to change this column. What breaks?"*
 
-[![CI](https://img.shields.io/badge/CI-pytest%20%7C%20vitest%20%7C%20build-4f46e5)](.github/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
-![Offline](https://img.shields.io/badge/runs-100%25%20local-0ea5e9)
-![No AI](https://img.shields.io/badge/AI%2FLLM-none-64748b)
-![No telemetry](https://img.shields.io/badge/telemetry-none-64748b)
+[![CI](https://github.com/dhruvpuri-goswami/LineageLens/actions/workflows/ci.yml/badge.svg)](https://github.com/dhruvpuri-goswami/LineageLens/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/dhruvpuri-goswami/LineageLens?color=52525b)](LICENSE)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-52525b)
+![Runs locally](https://img.shields.io/badge/runs-locally-52525b)
 
 ![LineageLens dashboard](docs/screenshots/01-dashboard-light.png)
 
@@ -61,6 +61,8 @@ Only **synthetic sample data** ships with the app: *Northwind Outfitters* (stand
 You need Docker Desktop (or Docker Engine) with Compose.
 
 ```bash
+git clone https://github.com/dhruvpuri-goswami/LineageLens.git
+cd LineageLens
 docker compose up -d          # builds the image the first time (a few minutes)
 ```
 
@@ -89,7 +91,7 @@ The container runs as a non-root user with a read-only root filesystem, no Linux
 | `LINEAGELENS_LOG_LEVEL` | `info` | `debug` … `critical` |
 | `LINEAGELENS_LOG_FORMAT` | `text` (`json` in Docker) | Log format |
 | `LINEAGELENS_ENABLE_DOCS` | `false` | Swagger UI at `/api/docs` (loads assets from a CDN, so off by default) |
-| `BUYMEACOFFEE_URL`, `GITHUB_REPO_URL` | see `lineagelens/links.py` | Sidebar links; empty hides them |
+| `BUYMEACOFFEE_URL`, `GITHUB_REPO_URL` | see `lineagelens/links.py` | Sidebar links; empty (or the `YOUR_USERNAME` placeholder) hides them |
 
 Without Docker, `lineagelens serve` also reads a `.env` file in the current folder (real environment variables win).
 
@@ -98,12 +100,14 @@ Without Docker, `lineagelens serve` also reads a `.env` file in the current fold
 You need **Python 3.11+**. Nothing else is required: the web UI is pre-built.
 
 ```powershell
+git clone https://github.com/dhruvpuri-goswami/LineageLens.git
+cd LineageLens
 powershell -ExecutionPolicy Bypass -File setup.ps1 -Run
 ```
 
 `setup.ps1` creates `.venv`, installs the hash-locked dependencies from `requirements.lock` and starts the app (`-Dev` also runs the tests). Or use the double-click launcher:
 
-1. Unzip the release, for example to `C:\Tools\lineagelens`.
+1. Clone the repository or download the ZIP from GitHub (*Code → Download ZIP*), for example to `C:\Tools\LineageLens`.
 2. Double-click **`start.bat`**. The first run creates `.venv` and installs the pinned dependencies (about a minute). Later runs start straight away.
 3. Your browser opens at http://localhost:8765 with the sample project loaded.
 
@@ -116,8 +120,8 @@ start.bat --port 9000 --no-browser
 ### macOS / Linux (without Docker)
 
 ```bash
+git clone https://github.com/dhruvpuri-goswami/LineageLens.git && cd LineageLens
 make install && make run           # or:
-unzip lineagelens-release.zip && cd lineagelens
 ./start.sh                         # sample project
 ./start.sh -c ~/analytics/lineagelens.yml
 ```
@@ -369,23 +373,25 @@ tools/                  generators for the synthetic samples
 
 ## 10. Support the project
 
-If LineageLens saves you a broken dashboard, you can support it:
-
-- **Buy me a coffee**: the button in the sidebar footer.
-- **Star on GitHub**: the link in the sidebar and header.
+- **GitHub**: issues, discussions and stars at [github.com/dhruvpuri-goswami/LineageLens](https://github.com/dhruvpuri-goswami/LineageLens).
+- **Sponsor**: a small link in the sidebar footer, shown once a Buy Me a Coffee page is configured.
 
 Both are plain links: no scripts, no tracking. Set them in **one place**, `lineagelens/links.py`:
 
 ```python
-BUYMEACOFFEE_URL = "https://www.buymeacoffee.com/YOUR_USERNAME"
-GITHUB_REPO_URL = "https://github.com/YOUR_USERNAME/lineagelens"
+BUYMEACOFFEE_URL = "https://www.buymeacoffee.com/YOUR_USERNAME"   # hidden until YOUR_USERNAME is replaced
+GITHUB_REPO_URL = "https://github.com/dhruvpuri-goswami/LineageLens"
 ```
 
-You can also override them with the `BUYMEACOFFEE_URL` and `GITHUB_REPO_URL` environment variables. An empty value hides the button, and only `http(s)` URLs are accepted.
+You can also override them with the `BUYMEACOFFEE_URL` and `GITHUB_REPO_URL` environment variables. An empty value, or one that still contains `YOUR_USERNAME`, hides the link. Only `http(s)` URLs are accepted.
+
+### Brand assets
+
+The logo, favicons and the GitHub social preview are in [`docs/brand/`](docs/brand/README.md).
 
 ## 11. Contributing and license
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+Contributions are welcome: [open an issue](https://github.com/dhruvpuri-goswami/LineageLens/issues) or a pull request. See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 Please **never attach real company SQL, models or data** to issues. Use the synthetic samples, or a minimal anonymised reproduction.
 

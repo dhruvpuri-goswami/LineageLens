@@ -20,14 +20,14 @@ type ViewMode = 'graph' | 'overview' | 'table'
 function palette(dark: boolean) {
   return dark
     ? {
-        bg: '#0b0e17', laneA: 'rgba(148,163,184,0.045)', laneB: 'rgba(148,163,184,0.0)', laneLine: 'rgba(148,163,184,0.10)',
-        card: '#131826', cardHover: '#182033', border: '#262d40', text: '#e6e9f2', muted: '#8b93a7', container: 'rgba(148,163,184,0.06)',
-        containerBorder: '#283049', primary: '#818cf8', breaks: '#f87171', may: '#fbbf24', neutral: '#64748b', stack: '#1b2132', header: '#a5adc2',
+        bg: '#0d0d0f', laneA: 'rgba(161,161,170,0.035)', laneB: 'rgba(161,161,170,0.0)', laneLine: 'rgba(161,161,170,0.10)',
+        card: '#151517', cardHover: '#1b1b1e', border: '#2a2a2e', text: '#ededed', muted: '#a1a1aa', container: 'rgba(161,161,170,0.05)',
+        containerBorder: '#2a2a2e', primary: '#5c8df6', breaks: '#f87171', may: '#fbbf24', neutral: '#52525b', stack: '#1b1b1e', header: '#a1a1aa',
       }
     : {
-        bg: '#f7f8fb', laneA: 'rgba(15,23,42,0.028)', laneB: 'rgba(15,23,42,0.0)', laneLine: 'rgba(15,23,42,0.06)',
-        card: '#ffffff', cardHover: '#f8fafc', border: '#e3e6ee', text: '#0f172a', muted: '#667085', container: 'rgba(241,244,250,0.85)',
-        containerBorder: '#dfe3ec', primary: '#5b5bd6', breaks: '#ef4444', may: '#f59e0b', neutral: '#94a3b8', stack: '#eef0f5', header: '#475467',
+        bg: '#fafafa', laneA: 'rgba(24,24,27,0.022)', laneB: 'rgba(24,24,27,0.0)', laneLine: 'rgba(24,24,27,0.07)',
+        card: '#ffffff', cardHover: '#f7f7f8', border: '#e4e4e7', text: '#18181b', muted: '#6b6b74', container: 'rgba(244,244,245,0.8)',
+        containerBorder: '#e4e4e7', primary: '#1e66f5', breaks: '#dc2626', may: '#d97706', neutral: '#a1a1aa', stack: '#f4f4f5', header: '#52525b',
       }
 }
 type Pal = ReturnType<typeof palette>
@@ -76,14 +76,14 @@ function NodeBox({ it, p, state, onClick, onDouble, onEnter, onLeave, onToggle }
       <title>{`${it.label}\n${it.sub}${agg ? '\nDouble-click to expand' : '\nDouble-click for details'}`}</title>
       {agg && (
         <>
-          <rect x={6} y={-6} width={NODE_W - 12} height={NODE_H} rx={9} fill={p.stack} stroke={p.border} />
-          <rect x={3} y={-3} width={NODE_W - 6} height={NODE_H} rx={9} fill={p.stack} stroke={p.border} />
+          <rect x={6} y={-6} width={NODE_W - 12} height={NODE_H} rx={6} fill={p.stack} stroke={p.border} />
+          <rect x={3} y={-3} width={NODE_W - 6} height={NODE_H} rx={6} fill={p.stack} stroke={p.border} />
         </>
       )}
-      {ring && <rect x={-3} y={-3} width={NODE_W + 6} height={NODE_H + 6} rx={11} fill="none" stroke={ring} strokeOpacity={state.selected || state.match ? 0.9 : 0.55} strokeWidth={state.selected || state.match ? 2 : 1.5} />}
-      <rect width={NODE_W} height={NODE_H} rx={9} fill={state.hot ? p.cardHover : p.card} stroke={p.border} />
+      {ring && <rect x={-3} y={-3} width={NODE_W + 6} height={NODE_H + 6} rx={8} fill="none" stroke={ring} strokeOpacity={state.selected || state.match ? 0.9 : 0.55} strokeWidth={state.selected || state.match ? 2 : 1.5} />}
+      <rect width={NODE_W} height={NODE_H} rx={6} fill={state.hot ? p.cardHover : p.card} stroke={p.border} />
       <rect x={0.5} y={9} width={3} height={NODE_H - 18} rx={1.5} fill={hex} />
-      <rect x={11} y={11} width={24} height={24} rx={6} fill={hex} fillOpacity={0.13} />
+      <rect x={11} y={11} width={24} height={24} rx={4} fill={hex} fillOpacity={0.12} />
       <Icon x={16} y={16} width={14} height={14} color={hex} strokeWidth={2.1} />
       <text x={44} y={19.5} fontSize={12.5} fontWeight={600} fill={p.text}>{fit(it.label, textW, 12.5, 600)}</text>
       <text x={44} y={35} fontSize={11} fill={p.muted}>{fit(it.sub, textW + (agg ? 0 : 6), 11)}</text>
@@ -93,7 +93,7 @@ function NodeBox({ it, p, state, onClick, onDouble, onEnter, onLeave, onToggle }
           onClick={(e) => { e.stopPropagation(); onToggle?.() }}
           style={{ cursor: 'pointer' }}
         >
-          <rect x={NODE_W - 42} y={12} width={32} height={22} rx={11} fill={hex} fillOpacity={0.12} />
+          <rect x={NODE_W - 42} y={12} width={32} height={22} rx={4} fill={hex} fillOpacity={0.12} />
           <text x={NODE_W - 31} y={27} fontSize={11} fontWeight={700} fill={hex} textAnchor="middle">{it.count > 99 ? '99+' : it.count}</text>
           <ChevronRight x={NODE_W - 23} y={16} width={12} height={14} color={hex} strokeWidth={2.4} />
         </g>
@@ -106,10 +106,10 @@ function ContainerBox({ c, p, dim, onToggle }: { c: Container; p: Pal; dim: bool
   const hex = meta(c.type).hex
   return (
     <g transform={`translate(${c.x},${c.y})`} opacity={dim ? 0.35 : 1} style={{ transition: 'opacity .15s' }}>
-      <rect width={c.w} height={c.h} rx={12} fill={p.container} stroke={p.containerBorder} />
+      <rect width={c.w} height={c.h} rx={8} fill={p.container} stroke={p.containerBorder} />
       <g style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onToggle() }}>
         <title>{`${c.label}\n${c.sub}\nClick to collapse`}</title>
-        <rect width={c.w} height={28} rx={12} fill="transparent" />
+        <rect width={c.w} height={28} rx={8} fill="transparent" />
         <ChevronDown x={9} y={8} width={13} height={13} color={p.muted} strokeWidth={2.2} />
         <circle cx={28} cy={14.5} r={3} fill={hex} />
         <text x={36} y={18.5} fontSize={11.5} fontWeight={600} fill={p.header}>{fit(c.label, c.w - 92, 11.5, 600)}</text>
@@ -227,8 +227,8 @@ function Chip({ on, onClick, children, color }: { on: boolean; onClick: () => vo
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[11.5px] font-medium transition-colors',
-        on ? 'border-transparent bg-card text-foreground shadow-soft ring-1 ring-border' : 'border-dashed text-muted-foreground/70 line-through decoration-muted-foreground/40 hover:text-foreground',
+        'inline-flex h-7 items-center gap-1.5 rounded-md border px-2 text-[11.5px] font-medium transition-colors',
+        on ? 'bg-card text-foreground' : 'border-dashed text-muted-foreground/70 line-through decoration-muted-foreground/40 hover:text-foreground',
       )}
     >
       {color && <span className="size-2 rounded-full" style={{ background: color }} />}
@@ -681,7 +681,7 @@ function Minimap({ view, p, vw, onJump }: { view: View; p: Pal; vw: { x: number;
     onJump((e.clientX - r.left) / s, (e.clientY - r.top) / s)
   }
   return (
-    <div className="absolute bottom-3 right-3 overflow-hidden rounded-lg border bg-card/90 shadow-soft backdrop-blur" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+    <div className="absolute bottom-3 right-3 overflow-hidden rounded-lg border bg-card" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
       <svg width={view.width * s} height={view.height * s} onPointerDown={jump} onPointerMove={(e) => e.buttons === 1 && jump(e)} style={{ cursor: 'crosshair', display: 'block' }}>
         {view.lanes.map((l, i) => <rect key={l.lane} x={l.x * s} y={0} width={l.w * s} height={view.height * s} fill={i % 2 ? 'transparent' : p.laneA} />)}
         {view.containers.map((c) => <rect key={c.key} x={c.x * s} y={c.y * s} width={c.w * s} height={c.h * s} fill={p.container} stroke={p.containerBorder} strokeWidth={0.5} rx={2} />)}
@@ -701,7 +701,7 @@ function Inspector({ it, nodeMap, view, mode, onClose, onOpen, onIsolate, onExpa
   const reasons = [...new Set(incoming.flatMap((e) => e.reasons))].slice(0, 3)
   const typeLabel = it.kind === 'report' ? 'Report (collapsed)' : it.kind === 'page' ? 'Page (collapsed)' : it.kind === 'group' ? 'Group (collapsed)' : meta(it.type).label
   return (
-    <div className="absolute right-3 top-11 w-80 rounded-xl border bg-popover shadow-xl animate-fade-in" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+    <div className="absolute right-3 top-11 w-80 rounded-lg border bg-popover shadow-xl animate-fade-in" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
       <div className="flex items-start gap-3 border-b p-3">
         <div className="min-w-0 flex-1">
           <div className="text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">{typeLabel}</div>
@@ -797,7 +797,7 @@ export function GraphLegend({ mode }: { mode: Mode }) {
           <span className="inline-flex items-center gap-1.5" title="The object still works, but its numbers may differ (filters, joins, aggregations)"><span className="h-0 w-4 border-t-2 border-dashed border-amber-500" />may change</span>
         </>
       ) : (
-        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-4 rounded bg-indigo-500" />feeds into</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-4 rounded bg-primary" />feeds into</span>
       )}
       <span className="inline-flex items-center gap-1.5"><span className="relative inline-block h-3 w-4"><span className="absolute inset-0 translate-x-0.5 -translate-y-0.5 rounded-sm border bg-muted" /><span className="absolute inset-0 rounded-sm border bg-card" /></span>collapsed group</span>
     </div>

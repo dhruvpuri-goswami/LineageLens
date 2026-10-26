@@ -94,7 +94,7 @@ export default function ImpactExplorer() {
           </EmptyState>
           <div className="-mt-6 flex flex-wrap justify-center gap-2 px-6 pb-10">
             {suggestions.map((n) => (
-              <button key={n.id} onClick={() => update([n.id])} className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2 text-left shadow-soft hover:border-primary/40 hover:bg-accent">
+              <button key={n.id} onClick={() => update([n.id])} className="flex items-center gap-2 rounded-md border bg-card px-3 py-2 text-left hover:border-primary/40 hover:bg-accent">
                 <TypeIcon type={n.type} className="size-6" />
                 <div><div className="font-mono text-[12.5px] font-medium">{n.display}</div><div className="text-[11px] text-muted-foreground">{n.visuals} visuals downstream</div></div>
               </button>

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { AlertOctagon, CheckCircle2, ClipboardCopy, FlaskConical, GitCompareArrows, Play, Plus, Sparkles, X } from 'lucide-react'
+import { AlertOctagon, CheckCircle2, ClipboardCopy, FlaskConical, GitCompareArrows, Play, Plus, X } from 'lucide-react'
 import { api, type ChangeType, type DiffResult, type ImpactEntry, type ImpactResult, type Impact } from '@/lib/api'
 import { useApp } from '@/lib/store'
 import { cn } from '@/lib/utils'
@@ -89,7 +89,7 @@ function WhatIf() {
         <Card>
           <EmptyState icon={<FlaskConical />} title="No changes planned yet">
             Add every column your refactor touches, pick drop, rename, type or logic change for each, then press <b>Simulate</b> to see the combined impact on measures, RLS and visuals.
-            <div className="mt-4"><Button variant="outline" onClick={loadExample}><Sparkles /> Try an example refactor</Button></div>
+            <div className="mt-4"><Button variant="outline" onClick={loadExample}><FlaskConical /> Try an example refactor</Button></div>
           </EmptyState>
         </Card>
       )}
@@ -153,13 +153,13 @@ function DiffPanel() {
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button onClick={() => run({ old: oldP || undefined, new: newP })} disabled={!newP || loading}>{loading ? <Spinner /> : <GitCompareArrows />} Compare</Button>
-          <Button variant="outline" onClick={() => run({ sample: true })} disabled={loading}><Sparkles /> Run sample diff</Button>
+          <Button variant="outline" onClick={() => run({ sample: true })} disabled={loading}><Play /> Run sample diff</Button>
         </div>
       </Card>
       {err && <ErrorBox error={err} />}
       {res && (
         <>
-          <div className={cn('flex items-center gap-3 rounded-xl border px-5 py-4', res.breaking ? 'border-red-500/30 bg-red-500/[0.07]' : 'border-emerald-500/30 bg-emerald-500/[0.07]')}>
+          <div className={cn('flex items-center gap-3 rounded-lg border px-4 py-3', res.breaking ? 'border-red-500/30 bg-red-500/[0.07]' : 'border-emerald-500/30 bg-emerald-500/[0.07]')}>
             {res.breaking ? <AlertOctagon className="size-6 text-red-600" /> : <CheckCircle2 className="size-6 text-emerald-600" />}
             <div>
               <div className="font-semibold">{res.breaking ? 'Breaking changes detected' : 'No breaking changes'}</div>

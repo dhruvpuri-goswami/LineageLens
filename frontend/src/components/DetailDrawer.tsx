@@ -63,7 +63,7 @@ export function DetailDrawer() {
   const lang = d?.code_lang === 'm' ? 'm' : d?.code_lang === 'dax' ? 'dax' : d?.code_lang === 'json' ? 'json' : 'sql'
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px] animate-fade-in" onClick={() => openNode(null)} />
+      <div className="fixed inset-0 z-40 bg-black/20 animate-fade-in" onClick={() => openNode(null)} />
       <aside className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[600px] flex-col border-l bg-background shadow-2xl animate-slide-in">
         <div className="flex items-start gap-3 border-b px-5 py-4">
           {d ? <TypeIcon type={d.type} className="size-9 [&_svg]:size-4" /> : <Spinner />}

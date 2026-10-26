@@ -9,6 +9,8 @@ Thanks for helping! LineageLens is a small, local-first tool, and its guiding ru
 ## Development setup
 
 ```bash
+git clone https://github.com/dhruvpuri-goswami/LineageLens.git
+cd LineageLens
 python -m venv .venv
 .venv/bin/pip install -e ".[dev]"        # Windows: .venv\Scripts\pip install -e ".[dev]"
 .venv/bin/pytest
@@ -22,11 +24,13 @@ npm run build      # writes the production UI to lineagelens/static
 
 Run the backend while you develop the UI: `.venv/bin/lineagelens serve --no-browser` (add `--sample large` for the big sample).
 
-## Pull requests
+## Issues and pull requests
+
+- Report bugs and request features in [GitHub Issues](https://github.com/dhruvpuri-goswami/LineageLens/issues). Use the templates.
 
 - Keep each PR focused, and add or adjust tests (pytest for parsers and the API, vitest for the graph layout).
 - Run `pytest`, `npm run typecheck`, `npm test` and `npm run build` before you push. CI runs the same checks.
-- For UI changes, include a screenshot in light **and** dark mode.
+- For UI changes, include a screenshot in light **and** dark mode. Follow the existing design tokens in `frontend/src/index.css` (one accent colour, neutral greys, 1 px borders, 6-8 px radii).
 - Add a line to `CHANGELOG.md` under *Unreleased*.
 
 ## Adding a parser rule

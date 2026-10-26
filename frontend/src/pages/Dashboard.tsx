@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  AlertTriangle, ArrowRight, BarChart3, Boxes, ChevronDown, Clock, Database, FileBarChart2, FileDown, Flame, HeartPulse,
-  Info, Radar, RefreshCw, ScanLine, ShieldCheck, Sigma, Snowflake, Sparkles, Table2, Trash2, X,
+  AlertTriangle, ArrowRight, BarChart3, Boxes, ChevronDown, Clock, Database, FileBarChart2, FileDown, CheckCircle2,
+  Info, Radar, RefreshCw, ScanLine, ShieldCheck, Sigma, Snowflake, Table2, Trash2, X,
 } from 'lucide-react'
 import { api, type Summary } from '@/lib/api'
 import { useApp } from '@/lib/store'
@@ -34,7 +34,7 @@ export default function Dashboard() {
     )
   }
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Hero s={s} />
       <Guide isSample={s.is_sample} />
       <Insights s={s} />
@@ -52,24 +52,22 @@ function Hero({ s }: { s: Summary }) {
   const recent = getRecent().map((id) => byId.get(id)).filter(Boolean).slice(0, 4) as NonNullable<ReturnType<typeof byId.get>>[]
   const suggested = s.top_columns.filter((t) => !recent.some((r) => r.id === t.id)).slice(0, recent.length ? 3 : 5)
   return (
-    <section className="relative overflow-visible rounded-2xl border bg-card bg-hero shadow-soft animate-rise">
-      <div className="hairline-top absolute inset-x-10 top-0 h-px" />
-      <div className="relative grid gap-6 px-8 py-8 lg:grid-cols-[1fr_auto]">
+    <section className="rounded-lg border bg-card">
+      <div className="grid gap-6 px-6 py-6 lg:grid-cols-[1fr_auto]">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background/60 px-2.5 py-0.5"><Radar className="size-3.5 text-primary" /> Impact check</span>
             <span>{s.project_name}</span>
-            {s.is_sample && <Badge className="border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">Synthetic sample{s.sample_name === 'large' ? ' · large' : ''}</Badge>}
+            {s.is_sample && <Badge className="text-muted-foreground">Synthetic sample{s.sample_name === 'large' ? ' · large' : ''}</Badge>}
           </div>
-          <h1 className="mt-3 text-[28px] font-semibold leading-tight tracking-tight">Which column are you changing?</h1>
-          <p className="mt-1.5 text-[14.5px] text-muted-foreground">
+          <h1 className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.015em]">Which column are you changing?</h1>
+          <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
             Pick a dbt, Snowflake or Power BI column. LineageLens shows every measure, RLS role, report and visual that
             <Tip text={GLOSSARY.breaks}><span className="mx-1 cursor-help font-medium text-red-600 underline decoration-dotted underline-offset-2 dark:text-red-400">breaks</span></Tip>
             or
             <Tip text={GLOSSARY.may}><span className="mx-1 cursor-help font-medium text-amber-600 underline decoration-dotted underline-offset-2 dark:text-amber-400">may change</span></Tip>
             before you ship.
           </p>
-          <NodeSearch size="lg" className="mt-5 max-w-xl" placeholder="Search a column, e.g. fct_sales.NET_AMOUNT" onSelect={(n) => go(n.id)} />
+          <NodeSearch size="lg" className="mt-4 max-w-xl" placeholder="Search a column, e.g. fct_sales.NET_AMOUNT" onSelect={(n) => go(n.id)} />
           <div className="mt-4 space-y-2">
             {recent.length > 0 && (
               <ChipRow icon={<Clock />} label="Recent">
@@ -77,7 +75,7 @@ function Hero({ s }: { s: Summary }) {
               </ChipRow>
             )}
             {suggested.length > 0 && (
-              <ChipRow icon={<Sparkles />} label={recent.length ? 'Suggested' : 'Try'}>
+              <ChipRow icon={<BarChart3 />} label="Most used">
                 {suggested.map((t) => <ColumnChip key={t.id} type={t.type} label={t.display} meta={`${t.visuals} visuals`} onClick={() => go(t.id)} />)}
               </ChipRow>
             )}
@@ -105,8 +103,8 @@ function ChipRow({ icon, label, children }: { icon: React.ReactNode; label: stri
 
 function ColumnChip({ type, label, meta, onClick }: { type: string; label: string; meta?: string; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="group inline-flex items-center gap-1.5 rounded-full border bg-background/70 py-0.5 pl-0.5 pr-2.5 text-[12px] transition-all hover:-translate-y-px hover:border-primary/40 hover:shadow-soft">
-      <TypeIcon type={type} className="size-5 rounded-full [&_svg]:size-3" />
+    <button onClick={onClick} className="inline-flex items-center gap-1.5 rounded-md border bg-background py-0.5 pl-0.5 pr-2 text-[12px] transition-colors hover:border-foreground/25 hover:bg-muted">
+      <TypeIcon type={type} className="size-5 rounded [&_svg]:size-3" />
       <span className="font-mono">{label}</span>
       {meta && <span className="text-muted-foreground">· {meta}</span>}
     </button>
@@ -120,7 +118,7 @@ function Guide({ isSample }: { isSample: boolean }) {
   if (hidden) return null
   const dismiss = () => { try { localStorage.setItem(GUIDE_KEY, '1') } catch { /* ignore */ } setHidden(true) }
   return (
-    <Card className="relative px-6 py-5 animate-rise">
+    <Card className="relative px-5 py-4">
       <button onClick={dismiss} title="Hide this guide" className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"><X className="size-4" /></button>
       <div className="mb-4 flex flex-wrap items-baseline gap-x-3">
         <h2 className="text-sm font-semibold">How it works</h2>
@@ -135,14 +133,14 @@ function HowItWorks({ compact }: { compact?: boolean }) {
   const nav = useNavigate()
   const steps = [
     { icon: FileDown, title: 'Export your files', body: <>Run <code className="rounded bg-muted px-1 font-mono text-[11.5px]">dbt docs generate</code> for <span className="font-mono">manifest.json</span> + <span className="font-mono">catalog.json</span>, and save Power BI reports as <b>PBIP</b> (TMDL + PBIR).</>, cta: null },
-    { icon: ScanLine, title: 'Scan', body: <>Add the folders in Settings and press <b>Scan</b>. Parsing is deterministic: SQL, DAX and M, no AI.</>, cta: { label: 'Open settings', to: '/settings' } },
+    { icon: ScanLine, title: 'Scan', body: <>Add the folders in Settings and press <b>Scan</b>. SQL, DAX and M are parsed with fixed rules, so results are repeatable.</>, cta: { label: 'Open settings', to: '/settings' } },
     { icon: Radar, title: 'Ask impact', body: <>Search the column you plan to change and see what <b>breaks</b> or <b>may change</b>, down to each visual.</>, cta: { label: 'Try an example', to: '/impact' } },
   ]
   return (
     <ol className={cn('grid gap-3', compact ? 'sm:grid-cols-3' : 'md:grid-cols-3')}>
       {steps.map((st, i) => (
-        <li key={st.title} className="relative flex gap-3 rounded-lg border bg-muted/30 p-3.5">
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[12px] font-semibold text-primary">{i + 1}</span>
+        <li key={st.title} className="relative flex gap-3 rounded-md border p-3">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded border bg-muted font-mono text-[11px] font-medium text-muted-foreground">{i + 1}</span>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 text-[13px] font-semibold"><st.icon className="size-3.5 text-muted-foreground" />{st.title}</div>
             <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{st.body}</p>
@@ -160,18 +158,18 @@ function InsightCard({ icon, tone, title, value, valueSub, why, children, to, ct
   icon: React.ReactNode; tone: string; title: string; value: React.ReactNode; valueSub?: React.ReactNode; why: string; children?: React.ReactNode; to: string; cta: string
 }) {
   return (
-    <Card className="group flex flex-col p-5 transition-all hover:-translate-y-0.5 hover:shadow-pop animate-rise">
+    <Card className="group flex flex-col p-4">
       <div className="flex items-center gap-2.5">
-        <span className={cn('flex size-8 items-center justify-center rounded-lg [&_svg]:size-4', tone)}>{icon}</span>
+        <span className={cn('text-muted-foreground [&_svg]:size-4', tone)}>{icon}</span>
         <h3 className="text-[13px] font-semibold">{title}</h3>
       </div>
-      <div className="mt-4 flex items-baseline gap-2">
-        <span className="text-[28px] font-semibold leading-none tabular-nums tracking-tight">{value}</span>
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="text-2xl font-semibold leading-none tabular-nums tracking-tight">{value}</span>
         {valueSub && <span className="text-xs text-muted-foreground">{valueSub}</span>}
       </div>
-      <p className="mt-2 text-[12.5px] leading-snug text-muted-foreground"><span className="font-medium text-foreground/80">Why it matters: </span>{why}</p>
+      <p className="mt-2 text-[12.5px] leading-snug text-muted-foreground">{why}</p>
       {children && <div className="mt-3 flex-1">{children}</div>}
-      <Link to={to} className="mt-4 inline-flex items-center gap-1 self-start text-[12.5px] font-medium text-primary hover:underline">{cta}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" /></Link>
+      <Link to={to} className="mt-4 inline-flex items-center gap-1 self-start text-[12.5px] font-medium text-primary hover:underline">{cta}<ArrowRight className="size-3.5" /></Link>
     </Card>
   )
 }
@@ -189,12 +187,12 @@ function Insights({ s }: { s: Summary }) {
   const maxV = Math.max(1, ...top.map((t) => t.visuals))
   return (
     <section>
-      <div className="mb-3 flex items-baseline justify-between">
+      <div className="mb-2 flex items-baseline justify-between">
         <h2 className="text-sm font-semibold">Insights</h2>
         <span className="text-xs text-muted-foreground">From the last scan</span>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <InsightCard icon={<Flame />} tone="bg-red-500/10 text-red-600 dark:text-red-400" title="Riskiest columns to change"
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <InsightCard icon={<AlertTriangle />} tone="" title="Most depended-on columns"
           value={top[0]?.visuals ?? 0} valueSub={top[0] ? `visuals depend on ${top[0].display.split('.').pop()}` : 'no usage found'}
           why="Changing these breaks the most report visuals. Check them before any rename or drop."
           to={top[0] ? `/impact?id=${encodeURIComponent(top[0].id)}` : '/catalog?kind=warehouse'} cta={top[0] ? 'See what breaks' : 'Open catalog'}>
@@ -202,13 +200,13 @@ function Insights({ s }: { s: Summary }) {
             {top.map((t) => (
               <button key={t.id} onClick={() => nav(`/impact?id=${encodeURIComponent(t.id)}`)} className="block w-full rounded-md px-1.5 py-1 text-left hover:bg-muted/70">
                 <div className="flex items-center justify-between gap-2 text-[12px]"><span className="truncate font-mono">{t.display}</span><span className="shrink-0 tabular-nums text-muted-foreground">{t.visuals}</span></div>
-                <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-gradient-to-r from-red-500 to-orange-400" style={{ width: `${(t.visuals / maxV) * 100}%` }} /></div>
+                <div className="mt-1 h-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-red-500/80" style={{ width: `${(t.visuals / maxV) * 100}%` }} /></div>
               </button>
             ))}
           </div>
         </InsightCard>
 
-        <InsightCard icon={<HeartPulse />} tone="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" title="Lineage health"
+        <InsightCard icon={<CheckCircle2 />} tone="" title="Lineage coverage"
           value={`${covPct}%`} valueSub="of Power BI columns traced to the warehouse"
           why="Untraced columns are blind spots: impact analysis cannot see past them."
           to={cov.unmatched ? '/catalog?kind=pbi' : '/settings'} cta={review ? `Review ${plural(review, 'item')}` : 'View scan warnings'}>
@@ -223,7 +221,7 @@ function Insights({ s }: { s: Summary }) {
           ))}
         </InsightCard>
 
-        <InsightCard icon={<Trash2 />} tone="bg-sky-500/10 text-sky-600 dark:text-sky-400" title="Clean-up candidates"
+        <InsightCard icon={<Trash2 />} tone="" title="Clean-up candidates"
           value={unused} valueSub="objects not used by any visual or RLS role"
           why="Unused columns and measures add cost and confusion. Review them for removal."
           to={s.unused_gold_columns.length ? '/catalog?unused=gold' : '/catalog?unused=pbi'} cta="Review candidates">
@@ -233,7 +231,7 @@ function Insights({ s }: { s: Summary }) {
           </ul>
         </InsightCard>
 
-        <InsightCard icon={<FileBarChart2 />} tone="bg-indigo-500/10 text-indigo-600 dark:text-indigo-300" title="Reports scanned"
+        <InsightCard icon={<FileBarChart2 />} tone="" title="Reports scanned"
           value={s.reports.length} valueSub={`${plural(c.page ?? 0, 'page')} · ${plural(c.visual ?? 0, 'visual')}`}
           why="Impact is only as complete as the reports you scan. Add every PBIP that uses this model."
           to="/catalog?kind=visuals" cta="Browse reports">
@@ -269,17 +267,17 @@ function ScanDetails({ s }: { s: Summary }) {
   ]
   return (
     <Card>
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between px-5 py-3.5 text-left" aria-expanded={open}>
+      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between px-4 py-3 text-left" aria-expanded={open}>
         <span className="flex items-center gap-2 text-[13px] font-semibold"><Info className="size-4 text-muted-foreground" />Scan details
           <span className="font-normal text-muted-foreground">{s.edges.toLocaleString()} links · {warn.length ? plural(warn.length, 'warning') : 'no warnings'}</span>
         </span>
         <ChevronDown className={cn('size-4 text-muted-foreground transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className="space-y-5 border-t px-5 py-5 animate-fade-in">
+        <div className="space-y-5 border-t px-4 py-4 animate-fade-in">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {stats.map(([label, v, icon, sub]) => (
-              <div key={label} className="rounded-lg border bg-muted/20 px-3.5 py-3">
+              <div key={label} className="rounded-md border px-3 py-2.5">
                 <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground"><span>{label}</span><span className="[&_svg]:size-3.5">{icon}</span></div>
                 <div className="mt-1 text-xl font-semibold tabular-nums">{v.toLocaleString()}</div>
                 <div className="text-[11px] text-muted-foreground">{sub}</div>

@@ -147,7 +147,7 @@ export function ImpactBody({ r }: { r: ImpactResult }) {
 export function StartChip({ e, onRemove }: { e: ImpactEntry; onRemove?: () => void }) {
   const m = meta(e.type)
   return (
-    <span className="inline-flex items-center gap-2 rounded-lg border bg-card py-1 pl-1 pr-2 shadow-soft">
+    <span className="inline-flex items-center gap-2 rounded-md border bg-card py-1 pl-1 pr-2">
       <TypeIcon type={e.type} className="size-6" />
       <span className="text-left leading-tight">
         <span className="block font-mono text-[12.5px] font-semibold">{e.display}</span>

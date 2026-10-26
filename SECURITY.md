@@ -16,7 +16,7 @@
 
 ## Reporting a vulnerability
 
-Please **do not open a public issue**. Use GitHub's private vulnerability reporting ("Report a vulnerability" in the repository's *Security* tab), or contact the maintainer, Dhruvpuri Goswami, privately. Include:
+Please **do not open a public issue**. Use GitHub's private vulnerability reporting: [Report a vulnerability](https://github.com/dhruvpuri-goswami/LineageLens/security/advisories/new) (the repository's *Security* tab), or contact the maintainer, Dhruvpuri Goswami, privately. Include:
 
 - the version (`lineagelens --version` or the sidebar footer),
 - the steps to reproduce, using synthetic data only,

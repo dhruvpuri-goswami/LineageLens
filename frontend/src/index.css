@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    /* Design tokens: neutral slate surfaces + one indigo accent. Spacing follows Tailwind's 4px scale. */
-    --background: 220 20% 98.4%;
-    --foreground: 222 28% 11%;
+    /* Design tokens: neutral greys + one blue accent. 4/8 px spacing, 1 px borders, 6-8 px radii. */
+    --background: 0 0% 98.4%;
+    --foreground: 240 6% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222 28% 11%;
+    --card-foreground: 240 6% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 28% 11%;
-    --primary: 243 75% 58%;
+    --popover-foreground: 240 6% 10%;
+    --primary: 220 91% 54%;
     --primary-foreground: 0 0% 100%;
-    --muted: 220 18% 95.5%;
-    --muted-foreground: 220 9% 43%;
-    --accent: 238 70% 96.5%;
-    --accent-foreground: 243 58% 42%;
-    --border: 220 14% 90.5%;
-    --input: 220 14% 87%;
-    --ring: 243 75% 58%;
-    --sidebar: 220 22% 97%;
-    --flow-bg: 220 20% 98.4%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 42%;
+    --accent: 220 90% 96%;
+    --accent-foreground: 220 80% 40%;
+    --border: 240 6% 90%;
+    --input: 240 5% 84%;
+    --ring: 220 91% 54%;
+    --sidebar: 0 0% 97.3%;
+    --flow-bg: 0 0% 98.4%;
   }
   .dark {
-    --background: 228 14% 6.5%;
-    --foreground: 220 14% 92%;
-    --card: 228 12% 9%;
-    --card-foreground: 220 14% 92%;
-    --popover: 228 12% 10.5%;
-    --popover-foreground: 220 14% 92%;
-    --primary: 240 85% 72%;
-    --primary-foreground: 230 30% 8%;
-    --muted: 228 10% 13%;
-    --muted-foreground: 225 8% 62%;
-    --accent: 238 32% 17%;
-    --accent-foreground: 239 90% 84%;
-    --border: 228 9% 16%;
-    --input: 228 9% 21%;
-    --ring: 240 85% 72%;
-    --sidebar: 228 14% 5.2%;
-    --flow-bg: 228 14% 6.5%;
+    --background: 240 6% 5.5%;
+    --foreground: 0 0% 93%;
+    --card: 240 5% 8.2%;
+    --card-foreground: 0 0% 93%;
+    --popover: 240 5% 10%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 220 89% 66%;
+    --primary-foreground: 240 10% 6%;
+    --muted: 240 4% 13%;
+    --muted-foreground: 240 5% 64%;
+    --accent: 220 40% 15%;
+    --accent-foreground: 220 90% 80%;
+    --border: 240 4% 16%;
+    --input: 240 4% 22%;
+    --ring: 220 89% 66%;
+    --sidebar: 240 6% 4.5%;
+    --flow-bg: 240 6% 5.5%;
     color-scheme: dark;
   }
   * { @apply border-border; }
@@ -51,36 +51,26 @@
 
 @layer components {
   .scrollbar-thin { scrollbar-width: thin; scrollbar-color: hsl(var(--border)) transparent; }
-  .hairline-top { background-image: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent); }
-  .bg-hero {
-    background-image:
-      radial-gradient(60% 120% at 100% 0%, hsl(var(--primary) / 0.10), transparent 60%),
-      radial-gradient(50% 100% at 0% 100%, hsl(190 90% 50% / 0.07), transparent 60%);
-  }
-  .grid-dots {
-    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.18) 1px, transparent 1px);
-    background-size: 18px 18px;
-  }
 }
 
 /* Prism code highlighting (light / dark) */
 .code-block { @apply font-mono text-[12.5px] leading-relaxed; }
 .token.comment, .token.prolog { color: #6b7280; font-style: italic; }
-.token.keyword { color: #7c3aed; font-weight: 600; }
-.token.function { color: #2563eb; }
+.token.keyword { color: #1d4ed8; font-weight: 600; }
+.token.function { color: #0e7490; }
 .token.string { color: #059669; }
 .token.number, .token.boolean { color: #d97706; }
 .token.operator, .token.punctuation { color: #64748b; }
-.token.column { color: #db2777; }
+.token.column { color: #b45309; }
 .token.table, .token.column, .token { display: inline; }
-.token.table { color: #0891b2; font-weight: 600; }
+.token.table { color: #0f766e; font-weight: 600; }
 .token.variable { color: #ea580c; }
-.dark .token.keyword { color: #c4b5fd; }
-.dark .token.function { color: #93c5fd; }
+.dark .token.keyword { color: #93b4fb; }
+.dark .token.function { color: #67e8f9; }
 .dark .token.string { color: #6ee7b7; }
 .dark .token.number, .dark .token.boolean { color: #fcd34d; }
 .dark .token.operator, .dark .token.punctuation { color: #94a3b8; }
-.dark .token.column { color: #f9a8d4; }
-.dark .token.table { color: #67e8f9; }
+.dark .token.column { color: #fcd34d; }
+.dark .token.table { color: #5eead4; }
 .dark .token.variable { color: #fdba74; }
-.code-hit { background: hsl(48 96% 53% / .35); border-radius: 3px; box-shadow: 0 0 0 1px hsl(48 96% 53% / .6); }
+.code-hit { background: hsl(48 96% 53% / .30); border-radius: 2px; outline: 1px solid hsl(45 90% 45% / .55); }
