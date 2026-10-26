@@ -15,7 +15,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from . import __version__, analysis, store
+from . import __version__, analysis, store, uploads
 from .builder import build
 from .config import SAMPLE_CONFIG, SAMPLES, SAMPLES_DIR, Config, load_config, sample_name, user_data_dir
 from .graph import NODE_TYPE_LABELS, LineageGraph
@@ -49,6 +49,17 @@ class State:
     @property
     def sample_name(self) -> str | None:
         return sample_name(self.config_path)
+
+    @property
+    def is_upload(self) -> bool:
+        return uploads.is_workspace_config(self.config_path)
+
+    def switch(self, path: Path | None) -> None:
+        """Make *path* (None = standard sample) the active config. Uploaded workspaces stay active only while used."""
+        cfg = load_config(path)
+        with self.lock:
+            self.config_path, self.cfg = (Path(path).resolve() if path else None), cfg
+        uploads.set_active(self.is_upload)
 
     # -------------------------------------------------- graph lifecycle
     def load_or_scan(self) -> None:
@@ -119,7 +130,8 @@ class State:
             if self._summary is None:
                 self._summary = analysis.summary(self.graph, self.meta.get("warnings", []), self.counts)
             return {**self._summary, "meta": {k: v for k, v in self.meta.items() if k != "warnings"},
-                    "project_name": self.cfg.project_name, "is_sample": self.is_sample, "sample_name": self.sample_name}
+                    "project_name": self.cfg.project_name, "is_sample": self.is_sample, "sample_name": self.sample_name,
+                    "is_upload": self.is_upload}
 
 
 def _node_or_404(g: LineageGraph, node_id: str):
@@ -132,13 +144,17 @@ def _node_or_404(g: LineageGraph, node_id: str):
     return n
 
 
-def create_app(config_path: str | Path | None = None, scan_on_start: bool = True, settings: Settings | None = None) -> FastAPI:
+def create_app(config_path: str | Path | None = None, scan_on_start: bool = True, settings: Settings | None = None,
+               default_config: str | Path | None = None) -> FastAPI:
+    """Build the app. *default_config* is where "Remove my data" returns to (defaults to *config_path*)."""
     settings = settings or load_settings()
     docs = settings.enable_docs  # Swagger UI loads assets from a CDN, so it is opt-in.
     app = FastAPI(title="LineageLens", version=__version__, debug=False,
                   docs_url="/api/docs" if docs else None, openapi_url="/api/openapi.json" if docs else None, redoc_url=None)
     app.add_middleware(HardeningMiddleware, settings=settings)
     state = State(config_path)
+    state.default_config_path = Path(default_config).resolve() if default_config else (
+        None if state.is_upload else state.config_path)
     app.state.ll = state
     app.state.settings = settings
     path_roots = [SAMPLES_DIR, SAMPLE_CONFIG.parent, user_data_dir()]
@@ -253,7 +269,7 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
     def get_config():
         path = state.config_path or SAMPLE_CONFIG
         text = Path(path).read_text(encoding="utf-8") if Path(path).exists() else ""
-        return {"path": str(path), "is_sample": state.is_sample, "sample_name": state.sample_name, "yaml": text,
+        return {"path": str(path), "is_sample": state.is_sample, "sample_name": state.sample_name, "is_upload": state.is_upload, "yaml": text,
                 "config": state.cfg.to_public_dict(), "samples_dir": str(SAMPLES_DIR),
                 "samples": [{"name": k, "description": d, "path": str(c)} for k, (c, d) in SAMPLES.items()]}
 
@@ -292,6 +308,7 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
             raise HTTPException(400, f"Config error: {e}")
         with state.lock:
             state.config_path, state.cfg = p, cfg
+        uploads.set_active(state.is_upload)
         return {"ok": True, "config": cfg.to_public_dict()}
 
     @app.post("/api/config/sample")
@@ -299,11 +316,84 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
         name = (body or {}).get("name") or "standard"
         if name not in SAMPLES:
             raise HTTPException(400, f"Unknown sample '{name}'. Choose one of: {', '.join(SAMPLES)}")
-        path = None if name == "standard" else SAMPLES[name][0].resolve()
-        with state.lock:
-            state.config_path, state.cfg = path, load_config(path)
+        if state.scan["running"]:
+            raise HTTPException(409, "A scan is already running.")
+        state.switch(None if name == "standard" else SAMPLES[name][0].resolve())
         state.start_scan()
         return {"ok": True}
+
+    # -------------------------------------------------- in-app uploads ("Load your data")
+    def _upload_allowed() -> None:
+        if not settings.allow_upload:
+            raise HTTPException(403, "Uploads are disabled (LINEAGELENS_ALLOW_UPLOAD=false).")
+
+    def _upload_state() -> dict:
+        return {"allowed": settings.allow_upload, "max_upload_mb": settings.max_upload_mb,
+                "max_unzipped_mb": settings.max_unzipped_mb, "max_zip_files": settings.max_zip_files,
+                "pbip_extensions": sorted(uploads.PBIP_EXTS | uploads.PBIP_NAMES),
+                "staging": uploads.staging_state() if settings.allow_upload else {k: [] for k in uploads.SLOTS},
+                "workspace": uploads.workspace_info(), "is_upload": state.is_upload}
+
+    @app.get("/api/upload")
+    def upload_state():
+        return _upload_state()
+
+    @app.post("/api/upload/files/{slot}")
+    async def upload_files(slot: str, request: Request):
+        _upload_allowed()
+        if state.scan["running"]:
+            raise HTTPException(409, "A scan is running. Wait for it to finish, then upload.")
+        res = await uploads.receive(request, slot, settings)
+        return {**res, "state": _upload_state()}
+
+    @app.delete("/api/upload/files/{slot}")
+    def upload_clear(slot: str):
+        _upload_allowed()
+        uploads.clear_slot(slot)
+        return {"ok": True, "state": _upload_state()}
+
+    @app.post("/api/upload/scan")
+    def upload_scan(body: dict = Body(...)):
+        _upload_allowed()
+        if state.scan["running"]:
+            raise HTTPException(409, "A scan is already running.")
+        cfg_path = uploads.commit(body)
+        try:
+            state.switch(cfg_path)
+        except Exception as e:
+            raise HTTPException(400, f"Config error: {e}")
+        state.start_scan()
+        return {"ok": True, "config_path": str(cfg_path), "state": _upload_state()}
+
+    @app.post("/api/upload/activate")
+    def upload_activate():
+        _upload_allowed()
+        cfg_path = uploads.workspace_config()
+        if not cfg_path:
+            raise HTTPException(404, "No uploaded data yet.")
+        if state.scan["running"]:
+            raise HTTPException(409, "A scan is already running.")
+        state.switch(cfg_path)
+        if state.cfg.db_path.exists():
+            state.load_or_scan()
+        else:
+            state.start_scan()
+        return {"ok": True, "state": _upload_state()}
+
+    @app.delete("/api/upload/workspace")
+    def upload_remove():
+        """Delete the uploaded files and go back to the default config (inputs or the sample)."""
+        if state.scan["running"]:
+            raise HTTPException(409, "A scan is running. Wait for it to finish first.")
+        was_upload = state.is_upload
+        uploads.remove_workspace()
+        if was_upload:
+            back = state.default_config_path
+            if back is not None and not Path(back).exists():
+                back = None
+            state.switch(back)
+            state.start_scan()
+        return {"ok": True, "rescanning": was_upload, "state": _upload_state()}
 
     @app.get("/api/export")
     def export_impact(id: list[str] = Query(...), change: str = "drop", format: str = "html"):

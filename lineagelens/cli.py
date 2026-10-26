@@ -92,6 +92,7 @@ def serve(config: Optional[Path] = ConfigOpt, sample: Optional[str] = SampleOpt,
     log = logging.getLogger("lineagelens")
     host = host or st.host
     port = port or st.port
+    explicit = config is not None or sample is not None
     if config is None and sample is None:
         if st.config:
             cp = Path(st.config).expanduser()
@@ -103,11 +104,19 @@ def serve(config: Optional[Path] = ConfigOpt, sample: Optional[str] = SampleOpt,
         else:
             sample = st.sample
     config = _pick(config, sample)
+    default_config = config
+    # Precedence: --config/--sample > data uploaded in the app ("Load your data") > LINEAGELENS_CONFIG > sample.
+    if not explicit and st.allow_upload:
+        from . import uploads
+        up = uploads.active_config()
+        if up is not None:
+            log.info("using data uploaded in the app", extra={"config": str(up)})
+            config = up
     if rescan:
         cfg = load_config(config)
         if cfg.db_path.exists():
             cfg.db_path.unlink()
-    application = create_app(config, settings=st)
+    application = create_app(config, settings=st, default_config=default_config)
     url = f"http://{'127.0.0.1' if host in ('127.0.0.1', '0.0.0.0', 'localhost') else host}:{port}"
     log.info("LineageLens %s starting", __version__,
              extra={"url": url, "host": host, "port": port, "config": str(config or "bundled sample")})

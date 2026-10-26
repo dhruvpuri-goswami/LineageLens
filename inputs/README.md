@@ -1,5 +1,10 @@
 # inputs/
 
+> **Easier option:** open **Load your data** in the app and upload the same files from
+> your browser. No config file is needed, and uploads are stored in the data volume
+> (`/data/workspace/`), not here. Uploaded data takes precedence over this folder until
+> you click **Remove my data**.
+
 Docker Compose mounts this folder **read-only** at `/inputs` in the container.
 Put your own exported files here. Nothing in this folder is committed (see `.gitignore`)
 and nothing leaves your computer.

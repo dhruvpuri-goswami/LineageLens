@@ -4,7 +4,7 @@ import { Search, CornerDownLeft } from 'lucide-react'
 import { useApp } from '@/lib/store'
 import type { NodeLite } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { TypeIcon, Kbd } from './ui'
+import { TypeIcon, Kbd, isMac } from './ui'
 import { meta } from '@/lib/types'
 
 export function NodeSearch({
@@ -23,6 +23,7 @@ export function NodeSearch({
   const [open, setOpen] = React.useState(false)
   const [active, setActive] = React.useState(0)
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const mod = React.useMemo(() => (isMac() ? '⌘' : 'Ctrl'), [])
   const pool = React.useMemo(() => nodes.filter((n) => n.type !== 'semantic_model' && (!types || types.includes(n.type))), [nodes, types])
   const fuse = React.useMemo(
     () => new Fuse(pool, { keys: [{ name: 'display', weight: 2 }, { name: 'name', weight: 3 }, 'parent', 'relation', 'id'], threshold: 0.38, ignoreLocation: true }),
@@ -37,7 +38,7 @@ export function NodeSearch({
   React.useEffect(() => {
     if (!shortcut) return
     const h = (e: KeyboardEvent) => {
-      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement))) {
+      if ((e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement))) {
         e.preventDefault()
         inputRef.current?.focus()
         setOpen(true)
@@ -56,10 +57,24 @@ export function NodeSearch({
 
   return (
     <div className={cn('relative', className)}>
-      <div className={cn('flex items-center gap-2 rounded-md border border-input bg-card px-3 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20', size === 'lg' ? 'h-10' : 'h-8')}>
-        <Search className={cn('shrink-0 text-muted-foreground', size === 'lg' ? 'size-5' : 'size-4')} />
+      <div
+        onMouseDown={(e) => { if (e.target !== inputRef.current) { e.preventDefault(); inputRef.current?.focus(); setOpen(true) } }}
+        className={cn(
+          'relative flex cursor-text items-center rounded-md border border-input bg-card shadow-sm transition-[border-color,box-shadow]',
+          'hover:border-muted-foreground/30 focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/20 focus-within:hover:border-primary',
+          size === 'lg' ? 'h-10' : 'h-9',
+        )}
+      >
+        <Search aria-hidden className={cn('pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground', size === 'lg' ? 'size-[18px]' : 'size-4')} />
         <input
           ref={inputRef}
+          type="search"
+          role="combobox"
+          aria-expanded={open && results.length > 0}
+          aria-label={placeholder}
+          aria-keyshortcuts={shortcut ? (mod === '⌘' ? 'Meta+K' : 'Control+K') : undefined}
+          autoComplete="off"
+          spellCheck={false}
           autoFocus={autoFocus}
           value={q}
           placeholder={placeholder}
@@ -68,6 +83,7 @@ export function NodeSearch({
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
+          onClick={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           onKeyDown={(e) => {
             if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(a + 1, results.length - 1)) }
@@ -75,9 +91,18 @@ export function NodeSearch({
             else if (e.key === 'Enter' && results[active]) choose(results[active])
             else if (e.key === 'Escape') { setOpen(false); inputRef.current?.blur() }
           }}
-          className={cn('h-full w-full bg-transparent outline-none placeholder:text-muted-foreground', size === 'lg' ? 'text-base' : 'text-sm')}
+          className={cn(
+            'h-full w-full min-w-0 truncate rounded-md bg-transparent pl-9 outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden',
+            size === 'lg' ? 'pl-10 text-base' : 'text-sm',
+            shortcut ? 'pr-3 md:pr-[76px]' : 'pr-3',
+          )}
         />
-        {shortcut && !q && <Kbd>Ctrl K</Kbd>}
+        {shortcut && !q && (
+          <span aria-hidden data-testid="search-shortcut" className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-1 whitespace-nowrap md:flex">
+            <Kbd>{mod}</Kbd>
+            <Kbd>K</Kbd>
+          </span>
+        )}
       </div>
       {open && results.length > 0 && (
         <div className="absolute z-50 mt-1.5 max-h-[420px] w-full min-w-[420px] overflow-auto rounded-lg border bg-popover p-1 shadow-xl scrollbar-thin animate-fade-in">

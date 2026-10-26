@@ -53,12 +53,24 @@ class Settings:
     enable_docs: bool = False          # /api/docs pulls Swagger UI from a CDN, so it is off by default
     max_body_mb: int = 5               # largest accepted request body
     allow_config_write: bool = True    # allow "Save" of YAML from the UI
+    allow_upload: bool = True          # allow "Load your data" uploads from the UI
+    max_upload_mb: int = 500           # largest accepted upload request (file uploads only)
+    max_unzipped_mb: int = 2000        # largest total size a zipped PBIP project may expand to
+    max_zip_files: int = 20000         # most entries allowed in an uploaded zip
     allowed_roots: list[Path] = field(default_factory=list)  # empty = no restriction (desktop)
     allowed_hosts: list[str] = field(default_factory=lambda: ["127.0.0.1", "localhost", "[::1]"])
 
     @property
     def max_body_bytes(self) -> int:
         return self.max_body_mb * 1024 * 1024
+
+    @property
+    def max_upload_bytes(self) -> int:
+        return self.max_upload_mb * 1024 * 1024
+
+    @property
+    def max_unzipped_bytes(self) -> int:
+        return self.max_unzipped_mb * 1024 * 1024
 
 
 def load_dotenv(path: str | Path = ".env") -> int:
@@ -98,6 +110,10 @@ def load_settings() -> Settings:
         enable_docs=_bool("LINEAGELENS_ENABLE_DOCS", False),
         max_body_mb=_int("LINEAGELENS_MAX_BODY_MB", 5, 1, 512),
         allow_config_write=_bool("LINEAGELENS_ALLOW_CONFIG_WRITE", True),
+        allow_upload=_bool("LINEAGELENS_ALLOW_UPLOAD", True),
+        max_upload_mb=_int("LINEAGELENS_MAX_UPLOAD_MB", 500, 1, 102400),
+        max_unzipped_mb=_int("LINEAGELENS_MAX_UNZIPPED_MB", 2000, 1, 409600),
+        max_zip_files=_int("LINEAGELENS_MAX_ZIP_FILES", 20000, 1, 1000000),
         allowed_roots=_paths("LINEAGELENS_ALLOWED_ROOTS"),
         allowed_hosts=_list("LINEAGELENS_ALLOWED_HOSTS", ["127.0.0.1", "localhost", "[::1]"]),
     )

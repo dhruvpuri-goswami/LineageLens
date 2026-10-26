@@ -1,5 +1,5 @@
 import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, ChevronsUpDown, Coffee, GitCompareArrows, LayoutDashboard, Library, Moon, Radar, Route as RouteIcon, Settings as SettingsIcon, Sun } from 'lucide-react'
+import { ChevronRight, ChevronsUpDown, Coffee, HardDriveUpload, GitCompareArrows, LayoutDashboard, Library, Moon, Radar, Route as RouteIcon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { api } from './lib/api'
 import { fmtTime } from './lib/utils'
 import { cn } from './lib/utils'
@@ -13,6 +13,7 @@ import Upstream from './pages/Upstream'
 import Simulator from './pages/Simulator'
 import Catalog from './pages/Catalog'
 import Settings from './pages/Settings'
+import LoadData from './pages/LoadData'
 
 const NAV_SECTIONS = [
   {
@@ -25,7 +26,13 @@ const NAV_SECTIONS = [
     ],
   },
   { label: 'Explore', items: [{ to: '/catalog', label: 'Catalog', icon: Library, hint: 'Every scanned object with usage counts' }] },
-  { label: 'Setup', items: [{ to: '/settings', label: 'Settings & Scan', icon: SettingsIcon, hint: 'Point at your files and run a scan' }] },
+  {
+    label: 'Setup',
+    items: [
+      { to: '/load', label: 'Load your data', icon: HardDriveUpload, hint: 'Upload your dbt, Snowflake and Power BI files' },
+      { to: '/settings', label: 'Settings & Scan', icon: SettingsIcon, hint: 'Config file, samples and scan log' },
+    ],
+  },
 ]
 const ALL_NAV = NAV_SECTIONS.flatMap((s) => s.items)
 
@@ -81,7 +88,7 @@ export default function App() {
               <span className="flex size-6 items-center justify-center rounded border bg-muted text-[11px] font-semibold text-muted-foreground">{(sum.data.project_name || 'P').slice(0, 1).toUpperCase()}</span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[12.5px] font-semibold">{sum.data.project_name}</span>
-                <span className="block truncate text-[11px] text-muted-foreground">{sum.data.is_sample ? `Synthetic sample${sum.data.sample_name === 'large' ? ' · large' : ''}` : `Scanned ${fmtTime(sum.data.meta.scanned_at)}`}</span>
+                <span className="block truncate text-[11px] text-muted-foreground">{sum.data.is_sample ? `Synthetic sample${sum.data.sample_name === 'large' ? ' · large' : ''}` : sum.data.is_upload ? `Uploaded data · ${fmtTime(sum.data.meta.scanned_at)}` : `Scanned ${fmtTime(sum.data.meta.scanned_at)}`}</span>
               </span>
               <ChevronsUpDown className="size-3.5 text-muted-foreground" />
             </button>
@@ -117,7 +124,7 @@ export default function App() {
           </div>
         </div>
         <div className="flex h-11 items-center justify-between border-t px-4">
-          <span className="font-mono text-[11px] text-muted-foreground">v{health?.version ?? '2.2.0'}</span>
+          <span className="font-mono text-[11px] text-muted-foreground">v{health?.version ?? '2.3.0'}</span>
           <Button variant="ghost" size="icon" onClick={toggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} className="size-7">
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>
@@ -130,7 +137,7 @@ export default function App() {
             <ChevronRight className="size-3.5 text-muted-foreground/60" />
             <span className="font-medium">{current.label}</span>
           </div>
-          <NodeSearch shortcut className="mx-auto w-full max-w-lg" onSelect={(n) => nav(`/impact?id=${encodeURIComponent(n.id)}`)} placeholder="Jump to any column, measure or visual…" />
+          <NodeSearch shortcut className="mx-auto w-full max-w-lg" onSelect={(n) => nav(`/impact?id=${encodeURIComponent(n.id)}`)} placeholder="Search columns, measures, visuals" />
           <div className="flex items-center gap-1">
             {gh && (
               <a href={gh} target="_blank" rel="noopener noreferrer" title="GitHub repository" className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground">
@@ -148,6 +155,7 @@ export default function App() {
               <Route path="/upstream" element={<Upstream />} />
               <Route path="/simulator" element={<Simulator />} />
               <Route path="/catalog" element={<Catalog />} />
+              <Route path="/load" element={<LoadData />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<Dashboard />} />
             </Routes>

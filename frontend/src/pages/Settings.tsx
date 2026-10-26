@@ -1,12 +1,14 @@
 import * as React from 'react'
-import { Coffee, Database, AlertTriangle, CheckCircle2, FileCog, FolderOpen, Info, Loader2, Lock, Play, RefreshCw, Save, XCircle } from 'lucide-react'
+import { Coffee, Database, AlertTriangle, CheckCircle2, FileCog, FolderOpen, HardDriveUpload, Info, Loader2, Lock, Play, RefreshCw, Save, XCircle } from 'lucide-react'
 import { api, type ScanStatus } from '@/lib/api'
+import { useNavigate } from 'react-router-dom'
 import { useApp } from '@/lib/store'
 import { cn, fmtTime } from '@/lib/utils'
 import { Badge, Button, Card, CardHeader, ErrorBox, GithubMark, Input, PageHeader, Spinner, useAsync } from '@/components/ui'
 
 export default function Settings() {
   const { refresh, version, health } = useApp()
+  const nav = useNavigate()
   const cfg = useAsync(() => api.config(), [version])
   const sum = useAsync(() => api.summary(), [version])
   const [path, setPath] = React.useState('')
@@ -58,6 +60,14 @@ export default function Settings() {
       <PageHeader icon={<FileCog />} title="Settings & Scan" description="Point LineageLens at your dbt project, Snowflake view SQL and Power BI (PBIP) files, then scan. Everything stays on this machine." />
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
+          <Card className="flex flex-wrap items-center gap-4 p-4">
+            <div className="flex size-9 items-center justify-center rounded-md border bg-muted text-muted-foreground"><HardDriveUpload className="size-4" /></div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold">Use your own files</div>
+              <p className="mt-0.5 text-xs text-muted-foreground">Upload dbt manifest and catalog, Snowflake view SQL and a Power BI project from the browser. No config file needed.</p>
+            </div>
+            <Button onClick={() => nav('/load')}><HardDriveUpload /> Load your data</Button>
+          </Card>
           <Card>
             <CardHeader icon={<Database />} title="Sample data" description="Explore LineageLens with synthetic projects. Nothing here comes from a real company." />
             <div className="grid gap-3 px-5 pb-5 sm:grid-cols-2">

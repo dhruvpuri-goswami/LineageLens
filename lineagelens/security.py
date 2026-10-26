@@ -26,6 +26,7 @@ SECURITY_HEADERS = [
     (b"cross-origin-opener-policy", b"same-origin"),
     (b"cross-origin-resource-policy", b"same-origin"),
 ]
+UPLOAD_PREFIX = "/api/upload/"
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 
 
@@ -85,12 +86,22 @@ class HardeningMiddleware:
         elif method in UNSAFE_METHODS and origin == "null":
             done(403)
             return await self._reject(send, 403, "Cross-origin request blocked.")
-        # Body size limit.
-        limit = self.settings.max_body_bytes
+        # Uploads must carry a custom header: a plain cross-site <form> cannot add one, and fetch() needs a
+        # CORS preflight that this server never approves.
+        is_upload = path.startswith(UPLOAD_PREFIX)
+        if is_upload and method in UNSAFE_METHODS and headers.get("x-requested-with", "").lower() != "lineagelens":
+            done(403)
+            return await self._reject(send, 403, "Upload requests need the X-Requested-With: LineageLens header.")
+        # Body size limit: file uploads get their own (larger) limit, everything else stays small.
+        upload_body = is_upload and method == "POST" and path.startswith(UPLOAD_PREFIX + "files/")
+        limit = self.settings.max_upload_bytes if upload_body else self.settings.max_body_bytes
+        limit_mb = self.settings.max_upload_mb if upload_body else self.settings.max_body_mb
+        too_big = (f"Upload larger than {limit_mb} MB (LINEAGELENS_MAX_UPLOAD_MB)." if upload_body
+                   else f"Request body larger than {limit_mb} MB.")
         cl = headers.get("content-length")
         if cl and cl.isdigit() and int(cl) > limit:
             done(413)
-            return await self._reject(send, 413, f"Request body larger than {self.settings.max_body_mb} MB.")
+            return await self._reject(send, 413, too_big)
         received = 0
 
         async def limited_receive():
@@ -99,7 +110,7 @@ class HardeningMiddleware:
             if msg["type"] == "http.request":
                 received += len(msg.get("body", b""))
                 if received > limit:
-                    raise HTTPException(413, f"Request body larger than {self.settings.max_body_mb} MB.")
+                    raise HTTPException(413, too_big)
             return msg
 
         async def send_wrapper(message):

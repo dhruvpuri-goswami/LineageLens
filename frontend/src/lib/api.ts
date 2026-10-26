@@ -149,6 +149,7 @@ export interface Summary {
   warnings: Warning[]
   meta: { scanned_at?: number; duration?: number; project_name?: string; config_path?: string; stats?: any; sources?: any }
   project_name: string
+  is_upload?: boolean
   is_sample: boolean
   sample_name?: string | null
 }
@@ -230,6 +231,41 @@ export interface ConfigInfo {
   samples?: { name: string; description: string; path: string }[]
 }
 
+export type UploadSlot = 'manifest' | 'catalog' | 'sql' | 'powerbi' | 'pbix'
+export interface UploadResult {
+  name: string
+  size: number
+  status: 'ok' | 'warning' | 'error'
+  detected: string
+  message: string
+  files?: number
+  models?: string[]
+  reports?: string[]
+}
+export interface UploadWorkspace {
+  project: string
+  project_name?: string
+  created?: number
+  default_database?: string
+  default_schema?: string
+  path: string
+  config_path: string
+  active: boolean
+  bytes: number
+}
+export interface UploadState {
+  allowed: boolean
+  max_upload_mb: number
+  max_unzipped_mb: number
+  max_zip_files: number
+  pbip_extensions: string[]
+  staging: Record<UploadSlot, UploadResult[]>
+  workspace: UploadWorkspace | null
+  is_upload: boolean
+}
+export interface UploadResponse { slot: UploadSlot; results: UploadResult[]; skipped: number; state: UploadState }
+export interface UploadItem { file: File; path: string }
+
 export interface DiffChange {
   id: string
   display: string
@@ -272,6 +308,34 @@ async function req<T>(url: string, init?: RequestInit): Promise<T> {
   return r.json() as Promise<T>
 }
 
+/** Upload endpoints need this header (blocks cross-site form posts; see security.py). */
+const UPLOAD_HEADERS = { 'X-Requested-With': 'LineageLens' }
+const ureq = <T,>(url: string, init: RequestInit = {}) =>
+  req<T>(url, { ...init, headers: { 'Content-Type': 'application/json', ...UPLOAD_HEADERS, ...(init.headers || {}) } })
+
+/** Upload files with progress (XHR: fetch has no upload progress). Relative paths are kept for folders. */
+export function uploadFiles(slot: UploadSlot, items: UploadItem[], onProgress?: (fraction: number) => void): Promise<UploadResponse> {
+  return new Promise((resolve, reject) => {
+    const fd = new FormData()
+    for (const it of items) {
+      fd.append('path', it.path)
+      fd.append('file', it.file, it.path)
+    }
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `/api/upload/files/${slot}`)
+    Object.entries(UPLOAD_HEADERS).forEach(([k, v]) => xhr.setRequestHeader(k, v))
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total) }
+    xhr.onload = () => {
+      let body: any = null
+      try { body = JSON.parse(xhr.responseText) } catch { /* ignore */ }
+      if (xhr.status >= 200 && xhr.status < 300 && body) resolve(body as UploadResponse)
+      else reject(new Error(body?.detail ? String(body.detail) : `${xhr.status} ${xhr.statusText || 'Upload failed'}`))
+    }
+    xhr.onerror = () => reject(new Error('Upload failed: the server could not be reached.'))
+    xhr.send(fd)
+  })
+}
+
 const qs = (ids: string[], extra: Record<string, string> = {}) => {
   const p = new URLSearchParams()
   ids.forEach((i) => p.append('id', i))
@@ -296,5 +360,11 @@ export const api = {
   saveConfig: (path: string, yaml?: string) => req<{ ok: boolean }>('/api/config', { method: 'PUT', body: JSON.stringify({ path, yaml }) }),
   useSample: (name: 'standard' | 'large' = 'standard') => req<{ ok: boolean }>('/api/config/sample', { method: 'POST', body: JSON.stringify({ name }) }),
   diff: (body: { old?: string; new?: string; sample?: boolean }) => req<DiffResult>('/api/diff', { method: 'POST', body: JSON.stringify(body) }),
+  uploadState: () => req<UploadState>('/api/upload'),
+  clearUpload: (slot: UploadSlot) => ureq<{ ok: boolean; state: UploadState }>(`/api/upload/files/${slot}`, { method: 'DELETE' }),
+  scanUpload: (body: { project_name: string; default_database: string; default_schema: string }) =>
+    ureq<{ ok: boolean; state: UploadState }>('/api/upload/scan', { method: 'POST', body: JSON.stringify(body) }),
+  activateUpload: () => ureq<{ ok: boolean; state: UploadState }>('/api/upload/activate', { method: 'POST' }),
+  removeUpload: () => ureq<{ ok: boolean; rescanning: boolean; state: UploadState }>('/api/upload/workspace', { method: 'DELETE' }),
   exportUrl: (ids: string[], change: ChangeType, format: string) => `/api/export?${qs(ids, { change, format })}`,
 }

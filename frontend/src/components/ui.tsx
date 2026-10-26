@@ -250,8 +250,19 @@ export const GLOSSARY = {
   calcgroup: 'Calculation groups and field parameters let one measure or column be swapped dynamically in visuals.',
 }
 
-export function Kbd({ children }: { children: React.ReactNode }) {
-  return <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">{children}</kbd>
+export function Kbd({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <kbd className={cn('inline-flex h-5 min-w-5 items-center justify-center whitespace-nowrap rounded-[4px] border border-border bg-muted px-1.5 font-sans text-[11px] font-medium leading-none text-muted-foreground', className)}>
+      {children}
+    </kbd>
+  )
+}
+
+/** True on macOS / iOS, where the shortcut modifier is the command key. */
+export function isMac(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const p = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform || navigator.platform || navigator.userAgent
+  return /mac|iphone|ipad|ipod/i.test(p)
 }
 
 export function useAsync<T>(fn: () => Promise<T>, deps: React.DependencyList) {

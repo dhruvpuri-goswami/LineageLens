@@ -5,7 +5,7 @@ name: lineagelens
 services:
   lineagelens:
     build: .
-    image: lineagelens:2.2.0
+    image: lineagelens:2.3.0
     container_name: lineagelens
     restart: unless-stopped
     ports:
@@ -28,6 +28,11 @@ services:
       LINEAGELENS_SAMPLE: ${LINEAGELENS_SAMPLE:-standard}
       LINEAGELENS_MAX_BODY_MB: ${LINEAGELENS_MAX_BODY_MB:-5}
       LINEAGELENS_ALLOW_CONFIG_WRITE: ${LINEAGELENS_ALLOW_CONFIG_WRITE:-true}
+      # "Load your data" uploads are stored in the /data volume (never in /inputs).
+      LINEAGELENS_ALLOW_UPLOAD: ${LINEAGELENS_ALLOW_UPLOAD:-true}
+      LINEAGELENS_MAX_UPLOAD_MB: ${LINEAGELENS_MAX_UPLOAD_MB:-500}
+      LINEAGELENS_MAX_UNZIPPED_MB: ${LINEAGELENS_MAX_UNZIPPED_MB:-2000}
+      LINEAGELENS_MAX_ZIP_FILES: ${LINEAGELENS_MAX_ZIP_FILES:-20000}
       LINEAGELENS_ALLOWED_HOSTS: ${LINEAGELENS_ALLOWED_HOSTS:-127.0.0.1,localhost,[::1]}
       LINEAGELENS_ENABLE_DOCS: ${LINEAGELENS_ENABLE_DOCS:-false}
     volumes:

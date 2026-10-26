@@ -4,6 +4,27 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-26
+
+### Added
+- **Load your data** page (sidebar, dashboard and Settings): separate drop zones for dbt `manifest.json` (required for dbt), `catalog.json` (recommended), Snowflake view `.sql` files, a Power BI PBIP folder or `.zip`, and `.pbix` files (layout only). Each file is validated on arrival (type, size, dbt schema, `CREATE VIEW`, PBIP contents) and shown as OK, Warning or Error. Project name, default database and default schema fields, a Scan button with progress, **Use my data** and **Remove my data** with confirmation.
+- Upload API (`/api/upload`, `/api/upload/files/{slot}`, `/api/upload/scan`, `/api/upload/activate`, `/api/upload/workspace`). Files are streamed to `LINEAGELENS_HOME/workspace/<project>/` (never `/inputs`), a `lineagelens.yml` is generated for them, and the uploaded project stays active after a restart.
+- Settings `LINEAGELENS_ALLOW_UPLOAD` (default `true`), `LINEAGELENS_MAX_UPLOAD_MB` (500), `LINEAGELENS_MAX_UNZIPPED_MB` (2000) and `LINEAGELENS_MAX_ZIP_FILES` (20000).
+- `docs/github-about.md` with the repository description and topics.
+- Tests for uploads: validation, traversal, zip-slip, symlinks, zip bombs, size limits, header and origin checks, persistence and CLI precedence.
+
+### Security
+- Upload paths are normalised and refused when absolute, using drive letters, `..`, control or reserved characters, or overlong segments. Only an allow-list of extensions is kept. Zips are checked for zip-slip, symlinks, encryption, entry count, declared and real unpacked size.
+- Upload requests need the `X-Requested-With: LineageLens` header in addition to the Origin and Host checks. Other JSON requests keep the 5 MB body limit.
+
+### Changed
+- Data precedence: `--config` / `--sample` on the command line, then uploaded data, then `LINEAGELENS_CONFIG`, then the sample.
+- README rewritten: shorter, with a walk-through, a features table, collapsible reference sections and new screenshots in `docs/screenshots/`.
+- New dependency: `python-multipart` 0.0.32 (hash-locked).
+
+### Fixed
+- Top-bar search: the shortcut hint no longer wraps or touches the edge. It now shows two keycaps, `Ctrl` `K` (or `⌘` `K` on macOS), that are hidden on narrow screens. The box is 36 px high, with an accent focus ring and the placeholder "Search columns, measures, visuals". Clicking anywhere in the box or pressing Ctrl/Cmd+K opens it.
+
 ## [2.2.0] - 2026-10-26
 
 ### Added

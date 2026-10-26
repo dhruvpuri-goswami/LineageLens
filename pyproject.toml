@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lineagelens"
-version = "2.2.0"
+version = "2.3.0"
 description = "Column-level impact analysis from dbt / Snowflake to Power BI measures, RLS and visuals. Local, offline, deterministic."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -31,6 +31,7 @@ dependencies = [
   "PyYAML==6.0.3",
   "RapidFuzz==3.14.6",
   "openpyxl==3.1.5",
+  "python-multipart==0.0.32",   # streaming multipart parser for in-app uploads
 ]
 
 [project.urls]

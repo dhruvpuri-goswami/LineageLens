@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   AlertTriangle, ArrowRight, BarChart3, Boxes, ChevronDown, Clock, Database, FileBarChart2, FileDown, CheckCircle2,
-  Info, Radar, RefreshCw, ScanLine, ShieldCheck, Sigma, Snowflake, Table2, Trash2, X,
+  HardDriveUpload, Info, Radar, RefreshCw, ScanLine, ShieldCheck, Sigma, Snowflake, Table2, Trash2, X,
 } from 'lucide-react'
 import { api, type Summary } from '@/lib/api'
 import { useApp } from '@/lib/store'
@@ -26,7 +26,8 @@ export default function Dashboard() {
         <EmptyState icon={<ScanLine />} title="No lineage yet">
           Scan your dbt project and Power BI files to see what depends on each column.
           <div className="mt-5 flex justify-center gap-2">
-            <Button onClick={() => nav('/settings')}><ScanLine /> Set up a scan</Button>
+            <Button onClick={() => nav('/load')}><HardDriveUpload /> Load your data</Button>
+            <Button variant="outline" onClick={() => nav('/settings')}><ScanLine /> Settings</Button>
           </div>
         </EmptyState>
         <div className="border-t px-6 py-5"><HowItWorks compact /></div>
@@ -58,6 +59,7 @@ function Hero({ s }: { s: Summary }) {
           <div className="flex flex-wrap items-center gap-2 text-[12px] font-medium text-muted-foreground">
             <span>{s.project_name}</span>
             {s.is_sample && <Badge className="text-muted-foreground">Synthetic sample{s.sample_name === 'large' ? ' · large' : ''}</Badge>}
+            {s.is_upload && <Badge className="text-muted-foreground">Uploaded data</Badge>}
           </div>
           <h1 className="mt-2 text-[22px] font-semibold leading-tight tracking-[-0.015em]">Which column are you changing?</h1>
           <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
@@ -85,7 +87,10 @@ function Hero({ s }: { s: Summary }) {
           <span>Last scan</span>
           <span className="text-sm font-medium text-foreground">{fmtTime(s.meta.scanned_at)}</span>
           {s.meta.duration !== undefined && <span>{s.meta.duration}s · {s.edges.toLocaleString()} lineage links</span>}
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => nav('/settings')}><RefreshCw /> Re-scan</Button>
+          <div className="mt-2 flex flex-wrap gap-2 lg:justify-end">
+            {s.is_sample && <Button size="sm" onClick={() => nav('/load')} title="Upload your dbt, Snowflake and Power BI files"><HardDriveUpload /> Load your data</Button>}
+            <Button variant="outline" size="sm" onClick={() => nav('/settings')}><RefreshCw /> Re-scan</Button>
+          </div>
         </div>
       </div>
     </section>
@@ -133,7 +138,7 @@ function HowItWorks({ compact }: { compact?: boolean }) {
   const nav = useNavigate()
   const steps = [
     { icon: FileDown, title: 'Export your files', body: <>Run <code className="rounded bg-muted px-1 font-mono text-[11.5px]">dbt docs generate</code> for <span className="font-mono">manifest.json</span> + <span className="font-mono">catalog.json</span>, and save Power BI reports as <b>PBIP</b> (TMDL + PBIR).</>, cta: null },
-    { icon: ScanLine, title: 'Scan', body: <>Add the folders in Settings and press <b>Scan</b>. SQL, DAX and M are parsed with fixed rules, so results are repeatable.</>, cta: { label: 'Open settings', to: '/settings' } },
+    { icon: ScanLine, title: 'Upload and scan', body: <>Drop the files on <b>Load your data</b> and press <b>Scan</b>. SQL, DAX and M are parsed with fixed rules, so results are repeatable.</>, cta: { label: 'Load your data', to: '/load' } },
     { icon: Radar, title: 'Ask impact', body: <>Search the column you plan to change and see what <b>breaks</b> or <b>may change</b>, down to each visual.</>, cta: { label: 'Try an example', to: '/impact' } },
   ]
   return (
