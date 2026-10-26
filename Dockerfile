@@ -13,6 +13,13 @@ RUN mkdir -p ../lineagelens/static && npm run build
 # ---------- Stage 2: runtime ----------
 FROM python:3.12-slim AS runtime
 
+ARG VERSION=dev
+LABEL org.opencontainers.image.title="LineageLens" \
+      org.opencontainers.image.description="Local, offline column-level lineage and impact analysis for dbt, Snowflake and Power BI." \
+      org.opencontainers.image.source="https://github.com/dhruvpuri-goswami/LineageLens" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.version="${VERSION}"
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -30,7 +37,8 @@ WORKDIR /app
 COPY requirements.lock ./
 RUN pip install --require-hashes -r requirements.lock
 
-COPY pyproject.toml README.md LICENSE ./
+COPY pyproject.toml README.md LICENSE THIRD_PARTY_NOTICES.md ./
+COPY LICENSES/ ./LICENSES/
 COPY lineagelens/ ./lineagelens/
 COPY --from=frontend /build/lineagelens/static/ ./lineagelens/static/
 RUN pip install --no-deps . \

@@ -280,7 +280,7 @@ def main() -> None:
     }
     catalog_nodes[suid] = {"metadata": {"type": "BASE TABLE", "schema": sschema, "name": sname.upper(), "database": DB},
                            "columns": {c: {"type": ty, "index": i + 1, "name": c} for i, (c, (ty, _)) in enumerate(scols.items())}, "stats": {}, "unique_id": suid}
-    (ROOT / "seeds" / f"{sname}.csv").write_text("country_code,country_name,region_group\nGB,United Kingdom,EMEA\nDE,Germany,EMEA\nUS,United States,AMER\nIN,India,APAC\n")
+    (ROOT / "seeds" / f"{sname}.csv").write_text("country_code,country_name,region_group\nGB,United Kingdom,EMEA\nDE,Germany,EMEA\nUS,United States,AMER\nIN,India,APAC\n", encoding="utf-8")
     parent_map[suid] = []
 
     # models
@@ -289,7 +289,7 @@ def main() -> None:
         compiled, deps = compile_sql(raw)
         folder = "staging" if name.startswith("stg_") else "intermediate" if name.startswith("int_") else "marts"
         (ROOT / "models" / folder / f"{name}.sql").write_text(
-            ("{{ config(materialized='%s') }}\n" % ("view" if mat == "ephemeral_view" else mat)) + raw.lstrip())
+            ("{{ config(materialized='%s') }}\n" % ("view" if mat == "ephemeral_view" else mat)) + raw.lstrip(), encoding="utf-8")
         materialized = "view" if mat == "ephemeral_view" else mat
         nodes[uid] = {
             "resource_type": "model", "unique_id": uid, "name": name, "package_name": PROJECT, "alias": name,
@@ -323,7 +323,7 @@ def main() -> None:
     sncols.update({"DBT_SCD_ID": "VARCHAR", "DBT_UPDATED_AT": "TIMESTAMP_NTZ", "DBT_VALID_FROM": "TIMESTAMP_NTZ", "DBT_VALID_TO": "TIMESTAMP_NTZ"})
     catalog_nodes[snuid] = {"metadata": {"type": "BASE TABLE", "schema": sns, "name": snm.upper(), "database": DB},
                             "columns": {c: {"type": ty, "index": i + 1, "name": c} for i, (c, ty) in enumerate(sncols.items())}, "stats": {}, "unique_id": snuid}
-    (ROOT / "snapshots" / f"{snm}.sql").write_text(snraw.lstrip())
+    (ROOT / "snapshots" / f"{snm}.sql").write_text(snraw.lstrip(), encoding="utf-8")
     parent_map[snuid] = deps
 
     child_map: dict = {k: [] for k in parent_map}
@@ -340,8 +340,8 @@ def main() -> None:
     catalog = {"metadata": {"dbt_schema_version": "https://schemas.getdbt.com/dbt/catalog/v1.json", "dbt_version": "1.9.4",
                             "generated_at": "2026-10-20T09:13:02.101Z", "invocation_id": "5d1c0f7e-sample", "env": {}},
                "nodes": catalog_nodes, "sources": catalog_sources, "errors": None}
-    (ROOT / "target" / "manifest.json").write_text(json.dumps(manifest, indent=2))
-    (ROOT / "target" / "catalog.json").write_text(json.dumps(catalog, indent=2))
+    (ROOT / "target" / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (ROOT / "target" / "catalog.json").write_text(json.dumps(catalog, indent=2), encoding="utf-8")
 
     # dbt_project.yml + schema.yml for realism
     (ROOT / "dbt_project.yml").write_text(f"""name: {PROJECT}
@@ -359,7 +359,7 @@ models:
       +schema: intermediate
     marts:
       +schema: gold
-""")
+""", encoding="utf-8")
     lines = ["version: 2", "", "models:"]
     for name, (schema, mat, desc, raw, coldesc) in MODELS.items():
         if not name.startswith(("dim_", "fct_")):
@@ -367,11 +367,11 @@ models:
         lines += [f"  - name: {name}", f"    description: \"{desc}\"", "    columns:"]
         for c, d in coldesc.items():
             lines += [f"      - name: {c.lower()}", f"        description: \"{d}\""]
-    (ROOT / "models" / "marts" / "schema.yml").write_text("\n".join(lines) + "\n")
+    (ROOT / "models" / "marts" / "schema.yml").write_text("\n".join(lines) + "\n", encoding="utf-8")
     src_lines = ["version: 2", "", "sources:", "  - name: raw", f"    database: {DB.lower()}", "    schema: raw", "    tables:"]
     for t in SOURCES:
         src_lines.append(f"      - name: {t}")
-    (ROOT / "models" / "staging" / "_sources.yml").write_text("\n".join(src_lines) + "\n")
+    (ROOT / "models" / "staging" / "_sources.yml").write_text("\n".join(src_lines) + "\n", encoding="utf-8")
     print(f"wrote samples to {ROOT}")
 
 

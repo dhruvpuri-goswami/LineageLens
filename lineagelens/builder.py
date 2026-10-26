@@ -655,7 +655,7 @@ class Builder:
                 code = ""
                 try:
                     if v.file and v.file.endswith("visual.json"):
-                        code = Path(v.file).read_text(encoding="utf-8")[:20000]
+                        code = Path(v.file).read_text(encoding="utf-8-sig", errors="replace")[:20000]
                 except OSError:
                     pass
                 g.add_node(Node(vid, "visual", v.name, parent=page.name, container=rep.name, file=v.file, code=code,

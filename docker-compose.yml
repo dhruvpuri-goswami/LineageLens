@@ -5,7 +5,7 @@ name: lineagelens
 services:
   lineagelens:
     build: .
-    image: lineagelens:2.3.0
+    image: lineagelens:2.3.1
     container_name: lineagelens
     restart: unless-stopped
     ports:

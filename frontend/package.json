@@ -1,7 +1,7 @@
 {
   "name": "lineagelens-ui",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Web UI for LineageLens: column-level lineage from dbt and Snowflake to Power BI.",
   "license": "MIT",
   "author": "Dhruvpuri Goswami",

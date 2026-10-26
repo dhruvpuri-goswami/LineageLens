@@ -124,7 +124,7 @@ export default function App() {
           </div>
         </div>
         <div className="flex h-11 items-center justify-between border-t px-4">
-          <span className="font-mono text-[11px] text-muted-foreground">v{health?.version ?? '2.3.0'}</span>
+          <span className="font-mono text-[11px] text-muted-foreground">v{health?.version ?? '2.3.1'}</span>
           <Button variant="ghost" size="icon" onClick={toggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} className="size-7">
             {theme === 'dark' ? <Sun /> : <Moon />}
           </Button>

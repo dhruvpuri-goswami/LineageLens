@@ -15,7 +15,7 @@ def test_write_parts_blocks_path_traversal(tmp_path):
         {"path": "definition/model.tmdl", "payload": b("model Model"), "payloadType": "InlineBase64"},
         {"path": "../escape.txt", "payload": b("x"), "payloadType": "InlineBase64"},
     ])
-    assert (tmp_path / "definition" / "model.tmdl").read_text() == "model Model"
+    assert (tmp_path / "definition" / "model.tmdl").read_text(encoding="utf-8") == "model Model"
     assert not (tmp_path.parent / "escape.txt").exists()
 
 

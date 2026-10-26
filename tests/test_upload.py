@@ -285,7 +285,7 @@ def test_cli_precedence(home, monkeypatch, tmp_path):
     ws = home / "workspace" / "proj"
     ws.mkdir(parents=True)
     (ws / "lineagelens.yml").write_text("project_name: P\n", encoding="utf-8")
-    (home / "workspace" / "active.json").write_text(json.dumps({"project": "proj", "active": True}))
+    (home / "workspace" / "active.json").write_text(json.dumps({"project": "proj", "active": True}), encoding="utf-8")
     from typer.testing import CliRunner
     CliRunner().invoke(cli.app, ["serve", "--no-browser"])
     assert captured["config"] == ws / "lineagelens.yml" and captured["default"] is None

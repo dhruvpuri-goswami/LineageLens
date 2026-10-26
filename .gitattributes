@@ -7,3 +7,8 @@ docker-compose.yml text eol=lf
 *.bat -text
 *.png binary
 *.woff2 binary
+*.woff binary
+*.ico binary
+*.zip binary
+*.pbix binary
+*.db binary

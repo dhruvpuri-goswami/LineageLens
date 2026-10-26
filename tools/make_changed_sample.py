@@ -6,8 +6,8 @@ ROOT = Path(__file__).resolve().parents[1] / "lineagelens" / "samples"
 src = ROOT / "dbt" / "target"
 dst = ROOT / "dbt_changed" / "target"
 dst.mkdir(parents=True, exist_ok=True)
-m = json.loads((src / "manifest.json").read_text())
-c = json.loads((src / "catalog.json").read_text())
+m = json.loads((src / "manifest.json").read_text(encoding="utf-8"))
+c = json.loads((src / "catalog.json").read_text(encoding="utf-8"))
 
 def edit(uid, old, new):
     n = m["nodes"][uid]
@@ -30,10 +30,10 @@ c["nodes"]["model.retail_analytics.fct_sales"]["columns"].pop("DISCOUNT_BAND")
 edit("model.retail_analytics.dim_product", "list_price >= 500", "list_price >= 350")
 # 4) type change fct_sales.QUANTITY
 c["nodes"]["model.retail_analytics.fct_sales"]["columns"]["QUANTITY"]["type"] = "FLOAT"
-(dst / "manifest.json").write_text(json.dumps(m, indent=1))
-(dst / "catalog.json").write_text(json.dumps(c, indent=1))
+(dst / "manifest.json").write_text(json.dumps(m, indent=1), encoding="utf-8")
+(dst / "catalog.json").write_text(json.dumps(c, indent=1), encoding="utf-8")
 (ROOT / "dbt_changed" / "README.md").write_text(
     "Synthetic 'pull request' version of the sample dbt project for `lineagelens diff`.\n\n"
     "Changes: dim_store.SALES_REGION renamed to REGION_NAME, fct_sales.DISCOUNT_BAND dropped, "
-    "dim_product.PRICE_BAND threshold changed, fct_sales.QUANTITY type NUMBER -> FLOAT.\n")
+    "dim_product.PRICE_BAND threshold changed, fct_sales.QUANTITY type NUMBER -> FLOAT.\n", encoding="utf-8")
 print("written", dst)

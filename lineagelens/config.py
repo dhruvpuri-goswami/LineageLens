@@ -142,7 +142,7 @@ def parse_config(data: dict, base_dir: Path, path: Path | None = None) -> Config
 
 def load_config(path: str | Path | None = None) -> Config:
     p = Path(path).resolve() if path else SAMPLE_CONFIG
-    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    data = yaml.safe_load(p.read_text(encoding="utf-8-sig")) or {}
     return parse_config(data, p.parent, p)
 
 

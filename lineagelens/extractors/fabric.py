@@ -147,7 +147,7 @@ def pull(cfg: dict, cache_dir: Path) -> FabricPull:
                 res.reports.append(folder)
                 pbir = folder / "definition.pbir"
                 if pbir.exists():
-                    txt = pbir.read_text(encoding="utf-8", errors="ignore")
+                    txt = pbir.read_text(encoding="utf-8-sig", errors="ignore")
                     mm = re.search(r"semanticmodelid=([0-9a-fA-F-]{36})", txt)
                     if mm and mm.group(1).lower() in id_to_model:
                         res.report_model_map[name] = id_to_model[mm.group(1).lower()]

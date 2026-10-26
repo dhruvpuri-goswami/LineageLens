@@ -143,38 +143,52 @@ def diff_graphs(old: LineageGraph, new: LineageGraph, base: LineageGraph | None 
     }
 
 
-ICON = {"drop": "🗑️ drop", "rename": "✏️ rename", "type": "🔤 type", "logic": "🧮 logic", "add": "➕ add"}
+CHANGE_LABEL = {"drop": "Drop", "rename": "Rename", "type": "Type change", "logic": "Logic change", "add": "Add"}
+
+
+def _impact(o: dict) -> str:
+    return "Breaks" if o["impact"] == BREAKS else "Values may change"
+
+
+def _cell(text: object) -> str:
+    """Escape a value for a markdown table cell."""
+    return str(text).replace("|", "\\|").replace("\n", " ")
 
 
 def to_markdown(result: dict, title: str = "LineageLens impact report", max_rows: int = 40) -> str:
+    """Render a diff result as GitHub-flavoured markdown (plain ASCII markup, no emoji)."""
     s = result["summary"]
-    lines = [f"## {'🔴' if result['breaking'] else '🟢'} {title}", ""]
     if result["breaking"]:
-        lines.append(f"**Breaking change detected:** {s['visuals_breaking']} visual(s) and {s['objects_breaking']} model object(s) will break.")
+        lines = [f"## {title}: breaking change", "",
+                 f"**Status: BREAKING.** {s['visuals_breaking']} visual(s) and {s['objects_breaking']} model object(s) will break."]
     else:
-        lines.append("No breaking downstream impact on Power BI detected.")
-    lines += ["", f"| Changes | Visuals affected | Visuals breaking | Model objects affected |", "|---:|---:|---:|---:|",
+        lines = [f"## {title}: no breaking change", "",
+                 "**Status: OK.** No breaking downstream impact on Power BI detected."]
+    lines += ["", "| Changes | Visuals affected | Visuals breaking | Model objects affected |", "|---:|---:|---:|---:|",
               f"| {s['changes']} | {s['visuals']} | {s['visuals_breaking']} | {s['objects']} |", ""]
     changes = [c for c in result["changes"] if c["change"] != "add"]
     if changes:
         lines += ["### Column changes", "", "| Change | Column | Detail | Power BI objects | Breaking |", "|---|---|---|---:|:---:|"]
         for c in changes[:max_rows]:
-            lines.append(f"| {ICON.get(c['change'], c['change'])} | `{c['display']}` | {c['detail']} | {c.get('pbi_objects', 0)} | {'❌' if c.get('breaking') else '—'} |")
+            lines.append(f"| {CHANGE_LABEL.get(c['change'], c['change'])} | `{c['display']}` | {_cell(c['detail'])} | "
+                         f"{c.get('pbi_objects', 0)} | {'**Yes**' if c.get('breaking') else 'No'} |")
+        if len(changes) > max_rows:
+            lines.append(f"| ... {len(changes) - max_rows} more | | | | |")
         lines.append("")
     if result["visuals"]:
-        lines += ["### Affected visuals", "", "| Report › Page › Visual | Impact | Confidence | Caused by |", "|---|---|---|---|"]
+        lines += ["### Affected visuals", "", "| Report / Page / Visual | Impact | Confidence | Caused by |", "|---|---|---|---|"]
         for v in result["visuals"][:max_rows]:
-            lines.append(f"| {v['display']} | {'breaks' if v['impact'] == BREAKS else 'values may change'} | {v['confidence']} | `{v['cause']}` ({v['cause_change']}) |")
+            lines.append(f"| {_cell(v['display'])} | {_impact(v)} | {v['confidence']} | `{v['cause']}` ({v['cause_change']}) |")
         if len(result["visuals"]) > max_rows:
-            lines.append(f"| … {len(result['visuals']) - max_rows} more | | | |")
+            lines.append(f"| ... {len(result['visuals']) - max_rows} more | | | |")
         lines.append("")
     rls = [o for o in result["objects"] if o["type"] == "rls_role"]
     if rls:
-        lines += ["### ⚠️ Row-level security roles affected", ""] + [f"- **{o['display']}** ({'breaks' if o['impact'] == BREAKS else 'values may change'}) ← `{o['cause']}`" for o in rls] + [""]
+        lines += ["### Row-level security roles affected", ""] + [f"- **{o['display']}**: {_impact(o).lower()} (caused by `{o['cause']}`)" for o in rls] + [""]
     meas = [o for o in result["objects"] if o["type"] == "measure"]
     if meas:
-        lines += ["<details><summary>Measures affected (" + str(len(meas)) + ")</summary>", ""]
-        lines += [f"- {o['display']} — {'breaks' if o['impact'] == BREAKS else 'values may change'}" for o in meas[:max_rows * 2]]
+        lines += [f"<details><summary>Measures affected ({len(meas)})</summary>", ""]
+        lines += [f"- {o['display']}: {_impact(o).lower()}" for o in meas[:max_rows * 2]]
         lines += ["", "</details>", ""]
-    lines.append("_Generated offline by LineageLens — deterministic parsing, no data leaves your machine._")
+    lines.append("_Generated offline by LineageLens. Deterministic parsing; no data leaves your machine._")
     return "\n".join(lines)

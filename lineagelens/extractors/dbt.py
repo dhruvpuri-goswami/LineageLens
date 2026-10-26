@@ -71,7 +71,7 @@ def _yaml_descriptions(project_dir: Path) -> dict[str, dict]:
         if any(part in ("target", "dbt_packages", "logs", "node_modules") for part in f.parts):
             continue
         try:
-            doc = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+            doc = yaml.safe_load(f.read_text(encoding="utf-8-sig")) or {}
         except Exception:
             continue
         if not isinstance(doc, dict):
@@ -91,7 +91,7 @@ def _yaml_descriptions(project_dir: Path) -> dict[str, dict]:
 
 def load_dbt(manifest: str | Path, catalog: str | Path | None = None, project_dir: str | Path | None = None) -> DbtProject:
     manifest = Path(manifest)
-    data = json.loads(manifest.read_text(encoding="utf-8"))
+    data = json.loads(manifest.read_text(encoding="utf-8-sig"))
     meta = data.get("metadata", {})
     proj = DbtProject(meta.get("project_name") or (Path(project_dir).name if project_dir else manifest.parent.name), str(manifest))
     version = meta.get("dbt_schema_version", "")
@@ -124,7 +124,7 @@ def load_dbt(manifest: str | Path, catalog: str | Path | None = None, project_di
 
     if catalog and Path(catalog).exists():
         proj.has_catalog = True
-        cat = json.loads(Path(catalog).read_text(encoding="utf-8"))
+        cat = json.loads(Path(catalog).read_text(encoding="utf-8-sig"))
         for section in ("nodes", "sources"):
             for uid, cn in (cat.get(section) or {}).items():
                 node = proj.nodes.get(uid)

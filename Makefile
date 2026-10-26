@@ -18,7 +18,7 @@ dev: install     ## + test tools
 	$(BIN)/pip install "pytest==9.1.1" "httpx==0.28.1"
 
 test:            ## python + frontend tests
-	$(BIN)/python -m pytest -q
+	$(BIN)/python -X warn_default_encoding -m pytest -q
 	cd frontend && npm ci && npm run typecheck && npm test
 
 frontend:        ## rebuild the UI into lineagelens/static

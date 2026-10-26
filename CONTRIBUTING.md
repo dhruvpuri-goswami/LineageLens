@@ -13,7 +13,7 @@ git clone https://github.com/dhruvpuri-goswami/LineageLens.git
 cd LineageLens
 python -m venv .venv
 .venv/bin/pip install -e ".[dev]"        # Windows: .venv\Scripts\pip install -e ".[dev]"
-.venv/bin/pytest
+.venv/bin/python -X warn_default_encoding -m pytest   # or: make test
 
 cd frontend
 npm ci
@@ -29,7 +29,9 @@ Run the backend while you develop the UI: `.venv/bin/lineagelens serve --no-brow
 - Report bugs and request features in [GitHub Issues](https://github.com/dhruvpuri-goswami/LineageLens/issues). Use the templates.
 
 - Keep each PR focused, and add or adjust tests (pytest for parsers and the API, vitest for the graph layout).
-- Run `pytest`, `npm run typecheck`, `npm test` and `npm run build` before you push. CI runs the same checks.
+- Run `python -X warn_default_encoding -m pytest`, `npm run typecheck`, `npm test` and `npm run build` before you push. CI runs the same checks on Linux, macOS and Windows.
+- Always pass `encoding="utf-8"` (or `"utf-8-sig"` for files Windows tools may save with a BOM) to `open()`, `read_text()` and `write_text()`. The test suite turns an implicit locale encoding into an error.
+- Keep the generated reports and console output plain text (no emoji); they are read in Windows consoles and CI logs.
 - For UI changes, include a screenshot in light **and** dark mode. Follow the existing design tokens in `frontend/src/index.css` (one accent colour, neutral greys, 1 px borders, 6-8 px radii).
 - Add a line to `CHANGELOG.md` under *Unreleased*.
 

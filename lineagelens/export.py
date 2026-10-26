@@ -6,6 +6,7 @@ import datetime as dt
 import html
 import io
 import json
+import warnings
 from pathlib import Path
 
 from . import __version__
@@ -98,7 +99,11 @@ def to_xlsx(result: dict) -> bytes:
     sheet("Warehouse", [r for r in rows if r["id"].startswith(("dbt:", "sf:"))], ["impact", "confidence", "type", "object", "reason", "path"])
     sheet("All", rows, COLUMNS)
     out = io.BytesIO()
-    wb.save(out)
+    with warnings.catch_warnings():
+        # openpyxl opens a text-mode NamedTemporaryFile without an encoding (it only ever
+        # writes ASCII XML there). Silence that third-party EncodingWarning here only.
+        warnings.filterwarnings("ignore", category=EncodingWarning, module=r"openpyxl\.")
+        wb.save(out)
     return out.getvalue()
 
 

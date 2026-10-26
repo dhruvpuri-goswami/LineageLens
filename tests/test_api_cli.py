@@ -41,7 +41,7 @@ def test_api_config_sample_read_only(tmp_path):
     target = tmp_path / "copy.yml"
     ok = c.put("/api/config", json={"path": str(target), "yaml": cfg["yaml"]})
     assert ok.status_code == 200, ok.text
-    assert target.read_text().startswith("base_dir:")
+    assert target.read_text(encoding="utf-8").startswith("base_dir:")
     assert c.put("/api/config", json={"path": str(tmp_path / "nope.yml")}).status_code == 404
 
 
@@ -76,7 +76,7 @@ def test_cli_diff_fails_on_breaking(tmp_path, samples):
     r = runner.invoke(cli_app, ["diff", str(samples / "dbt" / "target" / "manifest.json"),
                                 str(samples / "dbt_changed" / "target" / "manifest.json"), "-m", str(md)])
     assert r.exit_code == 1
-    assert md.exists() and "breaking" in md.read_text().lower()
+    assert md.exists() and "breaking" in md.read_text(encoding="utf-8").lower()
     r = runner.invoke(cli_app, ["diff", str(samples / "dbt" / "target" / "manifest.json"),
                                 str(samples / "dbt_changed" / "target" / "manifest.json"), "--fail-on", "never"])
     assert r.exit_code == 0

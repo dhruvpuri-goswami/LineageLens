@@ -243,7 +243,7 @@ def diff(old: Path = typer.Argument(..., help="Old version: lineage .db, manifes
         _echo_err(f"Markdown written to {markdown}")
     if output_json:
         output_json.write_text(json.dumps(res, indent=2, default=str), encoding="utf-8")
-    typer.echo(md.encode(sys.stdout.encoding or "utf-8", "replace").decode(sys.stdout.encoding or "utf-8"))
+    typer.echo(md)
     affected = res["summary"]["visuals"] + res["summary"]["objects"]
     if (fail_on == "breaking" and res["breaking"]) or (fail_on == "any" and affected):
         raise typer.Exit(1)
@@ -270,7 +270,28 @@ def samples(dest: Path = typer.Argument(Path("lineagelens-samples"))):
                f"  (or {dest / 'large' / 'lineagelens.sample.yml'})")
 
 
+def _safe_console() -> None:
+    """Never crash on characters the console cannot show.
+
+    Windows consoles and redirected output often use a legacy code page (e.g. cp1252),
+    which cannot encode arrows such as '->' in Unicode form. Keep the console's own
+    encoding (so pipes and PowerShell decode it correctly) but replace unencodable
+    characters instead of raising UnicodeEncodeError.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        enc = (getattr(stream, "encoding", None) or "").lower().replace("_", "-")
+        if enc not in ("utf-8", "utf8"):
+            try:
+                reconfigure(errors="replace")
+            except (ValueError, OSError):  # stream already closed or not reconfigurable
+                pass
+
+
 def run() -> None:
+    _safe_console()
     app()
 
 

@@ -268,7 +268,7 @@ def create_app(config_path: str | Path | None = None, scan_on_start: bool = True
     @app.get("/api/config")
     def get_config():
         path = state.config_path or SAMPLE_CONFIG
-        text = Path(path).read_text(encoding="utf-8") if Path(path).exists() else ""
+        text = Path(path).read_text(encoding="utf-8-sig") if Path(path).exists() else ""
         return {"path": str(path), "is_sample": state.is_sample, "sample_name": state.sample_name, "is_upload": state.is_upload, "yaml": text,
                 "config": state.cfg.to_public_dict(), "samples_dir": str(SAMPLES_DIR),
                 "samples": [{"name": k, "description": d, "path": str(c)} for k, (c, d) in SAMPLES.items()]}

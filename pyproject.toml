@@ -1,21 +1,37 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "lineagelens"
-version = "2.3.0"
+version = "2.3.1"
 description = "Column-level impact analysis from dbt / Snowflake to Power BI measures, RLS and visuals. Local, offline, deterministic."
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "LICENSES/*.txt"]
 authors = [{ name = "Dhruvpuri Goswami" }]
-keywords = ["lineage", "dbt", "snowflake", "power bi", "impact analysis", "tmdl", "pbir"]
+maintainers = [{ name = "Dhruvpuri Goswami" }]
+keywords = ["lineage", "column-level lineage", "dbt", "snowflake", "power bi", "impact analysis", "tmdl", "pbir", "pbip", "dax", "data governance"]
 classifiers = [
-  "Programming Language :: Python :: 3",
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Framework :: FastAPI",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: MacOS",
   "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Database",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 # Exact pins: same, tested versions on every machine.
 dependencies = [
@@ -39,6 +55,8 @@ Homepage = "https://github.com/dhruvpuri-goswami/LineageLens"
 Repository = "https://github.com/dhruvpuri-goswami/LineageLens.git"
 Issues = "https://github.com/dhruvpuri-goswami/LineageLens/issues"
 Changelog = "https://github.com/dhruvpuri-goswami/LineageLens/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/dhruvpuri-goswami/LineageLens#readme"
+Security = "https://github.com/dhruvpuri-goswami/LineageLens/security/policy"
 
 [project.optional-dependencies]
 snowflake = ["snowflake-connector-python==4.8.0"]
@@ -59,4 +77,7 @@ lineagelens = ["static/**/*", "samples/**/*", "samples_large/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-filterwarnings = ["ignore::DeprecationWarning", "ignore:Using `httpx`"]
+# Any implicit locale-encoding text I/O is an error. EncodingWarning is only emitted when
+# Python runs with `-X warn_default_encoding` (or PYTHONWARNDEFAULTENCODING=1), which CI
+# and `make test` do on every OS. This catches Windows cp1252 bugs on Linux and macOS too.
+filterwarnings = ["ignore::DeprecationWarning", "ignore:Using `httpx`", "error::EncodingWarning"]

@@ -326,7 +326,7 @@ LineageLens only sees what is in the artifacts you give it.
 
 ```bash
 python -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/pytest                         # parsers, impact, diff, export, API, CLI, uploads, security
+.venv/bin/python -X warn_default_encoding -m pytest   # parsers, impact, diff, export, API, CLI, uploads, security
 cd frontend && npm ci
 npm run typecheck && npm test            # TypeScript + vitest (graph layout)
 npm run build                            # outputs to lineagelens/static
