@@ -59,7 +59,7 @@ Documentation = "https://github.com/dhruvpuri-goswami/LineageLens#readme"
 Security = "https://github.com/dhruvpuri-goswami/LineageLens/security/policy"
 
 [project.optional-dependencies]
-snowflake = ["snowflake-connector-python==4.8.0"]
+snowflake = ["snowflake-connector-python==5.1.0"]
 fabric = ["azure-identity==1.26.0"]
 dev = ["pytest==9.1.1", "httpx==0.28.1"]
 
