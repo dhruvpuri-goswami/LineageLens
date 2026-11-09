@@ -35,19 +35,19 @@ classifiers = [
 ]
 # Exact pins: same, tested versions on every machine.
 dependencies = [
-  "sqlglot==30.24.0",
+  "sqlglot==30.30.0",
   "networkx==3.7; python_version >= '3.12'",
   "networkx==3.5; python_version < '3.12'",
   "fastapi==0.162.0",
   "starlette==1.10.0",
-  "pydantic==2.14.1",
+  "pydantic==2.14.3",
   "uvicorn==0.54.0",
-  "typer==0.27.3",
+  "typer==0.28.0",
   "click==8.5.0",
   "PyYAML==6.0.3",
   "RapidFuzz==3.14.6",
   "openpyxl==3.1.5",
-  "python-multipart==0.0.32",   # streaming multipart parser for in-app uploads
+  "python-multipart==0.0.33",   # streaming multipart parser for in-app uploads
 ]
 
 [project.urls]
@@ -60,8 +60,8 @@ Security = "https://github.com/dhruvpuri-goswami/LineageLens/security/policy"
 
 [project.optional-dependencies]
 snowflake = ["snowflake-connector-python==4.8.0"]
-fabric = ["azure-identity==1.26.0"]
-dev = ["pytest==9.1.1", "httpx==0.28.1"]
+fabric = ["azure-identity==1.27.0"]
+dev = ["pytest==9.2.0", "httpx==0.28.1"]
 
 [project.scripts]
 lineagelens = "lineagelens.cli:run"
