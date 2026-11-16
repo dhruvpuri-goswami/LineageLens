@@ -11,7 +11,7 @@ COPY frontend/ ./
 RUN mkdir -p ../lineagelens/static && npm run build
 
 # ---------- Stage 2: runtime ----------
-FROM python:3.12-slim AS runtime
+FROM python:3.15-slim AS runtime
 
 ARG VERSION=dev
 LABEL org.opencontainers.image.title="LineageLens" \
